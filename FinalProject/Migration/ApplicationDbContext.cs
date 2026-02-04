@@ -10,8 +10,8 @@ namespace FinalProject.Data
         {
         }
 
-        public DbSet<Route> Routes { get; set; }
-        public DbSet<Reservation> Reservations { get; set; }
-        public DbSet<Review> Reviews { get; set; }
+        /////public DbSet<Route> Routes { get; set; }
+        ///public DbSet<Reservation> Reservations { get; set; }
+        ////public DbSet<Review> Reviews { get; set; }
     }
 }

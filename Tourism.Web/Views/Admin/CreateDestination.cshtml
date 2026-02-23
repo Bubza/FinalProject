@@ -1,0 +1,32 @@
+﻿@model Tourism.Web.Models.Entities.Destination
+@{
+    ViewData["Title"] = "Нова дестинация";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Нова дестинация</h1>
+
+    <div class="card shadow-sm p-4">
+        <form asp-action="CreateDestination" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Название</label>
+                <input asp-for="Name" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Country" class="form-label">Държава</label>
+                <input asp-for="Country" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Описание</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">URL на снимка</label>
+                <input asp-for="ImageUrl" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Добави дестинация</button>
+            <a asp-action="Destinations" class="btn btn-outline-secondary ms-2">Назад</a>
+        </form>
+    </div>
+</div>

@@ -32,6 +32,12 @@
                                 <a class="nav-link" asp-controller="Bookings" asp-action="Index">Резервации</a>
                             </li>
                         }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark fw-bold text-danger" asp-controller="Admin" asp-action="Index">Админ панел</a>
+                            </li>
+                        }
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>

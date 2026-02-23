@@ -1,0 +1,70 @@
+﻿@model IEnumerable<Tourism.Web.Models.Entities.Booking>
+@{
+    ViewData["Title"] = "Управление на резервации";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Управление на резервации</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Потребител</th>
+                <th>Маршрут</th>
+                <th>Дестинация</th>
+                <th>Хора</th>
+                <th>Обща цена</th>
+                <th>Дата</th>
+                <th>Статус</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.UserId.Substring(0, 8)...</td>
+                    <td>@booking.Tour?.Title</td>
+                    <td>@booking.Tour?.Destination?.Name</td>
+                    <td>@booking.NumberOfPeople</td>
+                    <td>@booking.TotalPrice.ToString("C")</td>
+                    <td>@booking.BookedAt.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        @{
+                            var badgeClass = booking.Status switch
+                            {
+                                Tourism.Web.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
+                                Tourism.Web.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
+                                Tourism.Web.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
+                                _ => "badge bg-warning text-dark"
+                            };
+                        }
+                        <span class="@badgeClass">@booking.Status</span>
+                    </td>
+                    <td>
+                        @if (booking.Status == Tourism.Web.Models.Enums.BookingStatus.Pending)
+                        {
+                            <form asp-action="ConfirmBooking" asp-route-id="@booking.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-success">Потвърди</button>
+                            </form>
+                            <form asp-action="CancelBooking" asp-route-id="@booking.Id" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Откажи</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

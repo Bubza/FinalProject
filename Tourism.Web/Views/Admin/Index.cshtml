@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Административен панел";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Административен панел</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Stats -->
+    <div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
+        <div class="col">
+            <div class="card text-center shadow-sm border-primary">
+                <div class="card-body">
+                    <h2 class="text-primary">@ViewBag.TotalTours</h2>
+                    <p class="mb-0">Маршрути</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center shadow-sm border-success">
+                <div class="card-body">
+                    <h2 class="text-success">@ViewBag.TotalBookings</h2>
+                    <p class="mb-0">Резервации</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center shadow-sm border-warning">
+                <div class="card-body">
+                    <h2 class="text-warning">@ViewBag.PendingBookings</h2>
+                    <p class="mb-0">Чакащи</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center shadow-sm border-info">
+                <div class="card-body">
+                    <h2 class="text-info">@ViewBag.TotalReviews</h2>
+                    <p class="mb-0">Ревюта</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center shadow-sm border-secondary">
+                <div class="card-body">
+                    <h2 class="text-secondary">@ViewBag.TotalOperators</h2>
+                    <p class="mb-0">Оператори</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a asp-action="Tours" class="btn btn-outline-primary w-100 py-3">
+                <i class="bi bi-map"></i> Управление на маршрути
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Bookings" class="btn btn-outline-success w-100 py-3">
+                <i class="bi bi-calendar-check"></i> Управление на резервации
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Destinations" class="btn btn-outline-info w-100 py-3">
+                <i class="bi bi-geo-alt"></i> Управление на дестинации
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-controller="TourOperators" asp-action="Index" class="btn btn-outline-secondary w-100 py-3">
+                <i class="bi bi-building"></i> Туроператори
+            </a>
+        </div>
+    </div>
+
+    <!-- Popular Tours -->
+    <h4>Най-популярни маршрути</h4>
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Маршрут</th>
+                <th>Дестинация</th>
+                <th>Резервации</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tour in ViewBag.PopularTours)
+            {
+                <tr>
+                    <td>@tour.Title</td>
+                    <td>@tour.DestinationName</td>
+                    <td><span class="badge bg-primary">@tour.BookingCount</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

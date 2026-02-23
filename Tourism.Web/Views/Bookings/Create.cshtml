@@ -1,0 +1,65 @@
+﻿@model Tourism.Web.Models.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "Резервация";
+}
+
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Начало</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Tours" asp-action="Index">Маршрути</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId">@Model.TourTitle</a></li>
+            <li class="breadcrumb-item active">Резервация</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm p-4">
+                <h2 class="mb-4">Резервирай маршрут</h2>
+
+                <div class="mb-3">
+                    <p><strong>Маршрут:</strong> @Model.TourTitle</p>
+                    <p><strong>Дестинация:</strong> @Model.DestinationName</p>
+                    <p><strong>Дата на тръгване:</strong> @Model.TourStartDate.ToString("dd.MM.yyyy")</p>
+                    <p><strong>Цена на човек:</strong> @Model.PricePerPerson.ToString("C")</p>
+                </div>
+
+                <hr />
+
+                <form asp-action="Create" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="TourId" />
+                    <input type="hidden" asp-for="TourTitle" />
+                    <input type="hidden" asp-for="DestinationName" />
+                    <input type="hidden" asp-for="TourStartDate" />
+                    <input type="hidden" asp-for="PricePerPerson" />
+
+                    <div class="mb-3">
+                        <label asp-for="NumberOfPeople" class="form-label">Брой хора</label>
+                        <input asp-for="NumberOfPeople" class="form-control" type="number" min="1" max="50" />
+                        <span asp-validation-for="NumberOfPeople" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <p class="fw-bold">Обща цена: <span id="totalPrice">@Model.PricePerPerson.ToString("C")</span></p>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Потвърди резервацията</button>
+                    <a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId"
+                       class="btn btn-outline-secondary w-100 mt-2">Назад</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        const pricePerPerson = @Model.PricePerPerson;
+        document.querySelector('input[name="NumberOfPeople"]').addEventListener('input', function () {
+            const total = this.value * pricePerPerson;
+            document.getElementById('totalPrice').textContent = total.toLocaleString('bg-BG', { style: 'currency', currency: 'BGN' });
+        });
+    </script>
+}

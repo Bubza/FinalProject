@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Tourism.Web.Models.ViewModels.BookingViewModel>
+@{
+    ViewData["Title"] = "Моите резервации";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Моите резервации</h1>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            Нямате резервации. <a asp-controller="Tours" asp-action="Index">Разгледайте маршрутите</a>.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead class="table-light">
+                    <tr>
+                        <th>Маршрут</th>
+                        <th>Дестинация</th>
+                        <th>Дата</th>
+                        <th>Хора</th>
+                        <th>Обща цена</th>
+                        <th>Статус</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>@booking.TourTitle</td>
+                            <td>@booking.DestinationName</td>
+                            <td>@booking.TourStartDate.ToString("dd.MM.yyyy")</td>
+                            <td>@booking.NumberOfPeople</td>
+                            <td>@booking.TotalPrice.ToString("C")</td>
+                            <td>
+                                @{
+                                    var badgeClass = booking.Status switch
+                                    {
+                                        Tourism.Web.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
+                                        Tourism.Web.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
+                                        Tourism.Web.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
+                                        _ => "badge bg-warning text-dark"
+                                    };
+                                }
+                                <span class="@badgeClass">@booking.Status</span>
+                            </td>
+                            <td>
+                                @if (booking.Status == Tourism.Web.Models.Enums.BookingStatus.Pending)
+                                {
+                                    <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"
+                                          onsubmit="return confirm('Сигурни ли сте?')">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Откажи</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourOperatorViewModel>
+@{
+    ViewData["Title"] = "Туроператори";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Нашите туроператори</h1>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var op in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm text-center p-3">
+                    @if (!string.IsNullOrEmpty(op.LogoUrl))
+                    {
+                        <img src="@op.LogoUrl" class="mx-auto mb-3 rounded-circle"
+                             style="width:80px;height:80px;object-fit:cover;" alt="@op.Name">
+                    }
+                    <h5>@op.Name</h5>
+                    <p class="text-muted small">@op.Description.Substring(0, Math.Min(100, op.Description.Length))...</p>
+                    <p><i class="bi bi-envelope"></i> @op.Email</p>
+                    <p><i class="bi bi-telephone"></i> @op.PhoneNumber</p>
+                    <p class="text-primary fw-bold">@op.TourCount маршрута</p>
+                    <a asp-action="Details" asp-route-id="@op.Id" class="btn btn-outline-primary btn-sm">Виж маршрути</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

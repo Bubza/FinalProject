@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
+@{
+    ViewData["Title"] = "Начало";
+}
+
+<!-- Hero Section -->
+<section class="hero bg-primary text-white py-5 mb-5">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">Открий света с нас</h1>
+        <p class="lead">Незабравими маршрути, невероятни дестинации</p>
+        <a asp-controller="Tours" asp-action="Index" class="btn btn-light btn-lg mt-3">
+            Разгледай маршрутите
+        </a>
+    </div>
+</section>
+
+<!-- Featured Tours -->
+<section class="container mb-5">
+    <h2 class="mb-4">Препоръчани маршрути</h2>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var tour in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    @if (!string.IsNullOrEmpty(tour.ImageUrl))
+                    {
+                        <img src="@tour.ImageUrl" class="card-img-top" alt="@tour.Title" style="height:200px;object-fit:cover;">
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@tour.Title</h5>
+                        <p class="text-muted"><i class="bi bi-geo-alt"></i> @tour.DestinationName</p>
+                        <p class="card-text">@tour.Description.Substring(0, Math.Min(100, tour.Description.Length))...</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <strong class="text-primary">@tour.PricePerPerson.ToString("C") / човек</strong>
+                        <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id"
+                           class="btn btn-outline-primary btn-sm">Детайли</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

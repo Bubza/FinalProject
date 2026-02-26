@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Tourism.Data;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Tourism.Web.Data;
 using Tourism.Web.Models.ViewModels;
 
 namespace Tourism.Web.Controllers

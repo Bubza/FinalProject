@@ -1,4 +1,4 @@
-﻿namespace Tourism.Web.Models.Entities
+﻿namespace Tourism.Data.Models.Entities
 {
     public class Destination
     {

@@ -48,16 +48,16 @@
                                 @{
                                     var badgeClass = booking.Status switch
                                     {
-                                        Tourism.Web.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
-                                        Tourism.Web.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
-                                        Tourism.Web.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
+                                        Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
+                                        Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
+                                        Tourism.Data.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
                                         _ => "badge bg-warning text-dark"
                                     };
                                 }
                                 <span class="@badgeClass">@booking.Status</span>
                             </td>
                             <td>
-                                @if (booking.Status == Tourism.Web.Models.Enums.BookingStatus.Pending)
+                                @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)
                                 {
                                     <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"
                                           onsubmit="return confirm('Сигурни ли сте?')">

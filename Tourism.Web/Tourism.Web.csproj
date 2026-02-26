@@ -20,4 +20,11 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.23" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Entities\" />
+    <Folder Include="Models\Enums\" />
+  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Tourism.Data\Tourism.Data.csproj" />
+	</ItemGroup>
 </Project>

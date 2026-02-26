@@ -1,6 +1,6 @@
-﻿using Tourism.Web.Models.Enums;
+﻿using Tourism.Data.Models.Enums;
 
-namespace Tourism.Web.Models.Entities
+namespace Tourism.Data.Models.Entities
 {
     public class Booking
     {

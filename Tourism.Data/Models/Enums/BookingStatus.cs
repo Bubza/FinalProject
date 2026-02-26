@@ -1,4 +1,4 @@
-﻿namespace Tourism.Web.Models.Enums
+﻿namespace Tourism.Data.Models.Enums
 {
     public enum BookingStatus
     {

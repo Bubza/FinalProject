@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Tourism.Web.Data;
+using Tourism.Data;
 using Tourism.Web.Models.ViewModels;
+using Tourism.Data.Models.Entities;
+using Tourism.Data.Models.Enums;
 
 namespace Tourism.Web.Controllers
 {

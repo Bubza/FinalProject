@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Tourism.Web.Data;
+using Tourism.Data;
 
 #nullable disable
 
@@ -224,7 +224,7 @@ namespace Tourism.Web.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Booking", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -258,7 +258,7 @@ namespace Tourism.Web.Data.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Destination", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Destination", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -329,7 +329,7 @@ namespace Tourism.Web.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Review", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Review", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -361,7 +361,7 @@ namespace Tourism.Web.Data.Migrations
                     b.ToTable("Reviews");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Tour", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Tour", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -491,7 +491,7 @@ namespace Tourism.Web.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.TourOperator", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.TourOperator", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -610,9 +610,9 @@ namespace Tourism.Web.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Booking", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Booking", b =>
                 {
-                    b.HasOne("Tourism.Web.Models.Entities.Tour", "Tour")
+                    b.HasOne("Tourism.Data.Models.Entities.Tour", "Tour")
                         .WithMany("Bookings")
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -621,9 +621,9 @@ namespace Tourism.Web.Data.Migrations
                     b.Navigation("Tour");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Review", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Review", b =>
                 {
-                    b.HasOne("Tourism.Web.Models.Entities.Tour", "Tour")
+                    b.HasOne("Tourism.Data.Models.Entities.Tour", "Tour")
                         .WithMany("Reviews")
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -632,15 +632,15 @@ namespace Tourism.Web.Data.Migrations
                     b.Navigation("Tour");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Tour", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Tour", b =>
                 {
-                    b.HasOne("Tourism.Web.Models.Entities.Destination", "Destination")
+                    b.HasOne("Tourism.Data.Models.Entities.Destination", "Destination")
                         .WithMany("Tours")
                         .HasForeignKey("DestinationId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Tourism.Web.Models.Entities.TourOperator", "TourOperator")
+                    b.HasOne("Tourism.Data.Models.Entities.TourOperator", "TourOperator")
                         .WithMany("Tours")
                         .HasForeignKey("TourOperatorId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -651,19 +651,19 @@ namespace Tourism.Web.Data.Migrations
                     b.Navigation("TourOperator");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Destination", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Destination", b =>
                 {
                     b.Navigation("Tours");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.Tour", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.Tour", b =>
                 {
                     b.Navigation("Bookings");
 
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("Tourism.Web.Models.Entities.TourOperator", b =>
+            modelBuilder.Entity("Tourism.Data.Models.Entities.TourOperator", b =>
                 {
                     b.Navigation("Tours");
                 });

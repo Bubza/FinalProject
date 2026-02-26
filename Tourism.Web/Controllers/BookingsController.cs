@@ -2,10 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using Tourism.Web.Data;
-using Tourism.Web.Models.Entities;
-using Tourism.Web.Models.Enums;
+using Tourism.Data.Models.Entities;
+using Tourism.Data.Models.Enums;
 using Tourism.Web.Models.ViewModels;
+using Tourism.Data;
 
 namespace Tourism.Web.Controllers
 {

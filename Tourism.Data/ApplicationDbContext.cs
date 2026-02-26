@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Tourism.Web.Models.Entities;
-
-namespace Tourism.Web.Data
+using Tourism.Data.Models.Entities;
+namespace Tourism.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {

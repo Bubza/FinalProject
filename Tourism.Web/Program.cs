@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Tourism.Web.Data;
+using Tourism.Data;
+using Tourism.Data.Seeding;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

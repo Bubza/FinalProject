@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using Tourism.Web.Models.Enums;
+using Tourism.Data.Models.Enums;
 
 namespace Tourism.Web.Models.ViewModels
 {

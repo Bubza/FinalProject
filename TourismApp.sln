@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35913.81 d17.13
+VisualStudioVersion = 17.13.35913.81
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Web", "Tourism.Web\Tourism.Web.csproj", "{706CA88D-D8E1-468D-A41B-E3AD9872D5CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Data", "Tourism.Data\Tourism.Data.csproj", "{EF79525C-2DAC-483D-853D-FF1565539802}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Services", "Tourism.Services\Tourism.Services.csproj", "{F975FEE9-CD7E-4B6B-B8E0-9E235D1C753C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{706CA88D-D8E1-468D-A41B-E3AD9872D5CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{706CA88D-D8E1-468D-A41B-E3AD9872D5CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{706CA88D-D8E1-468D-A41B-E3AD9872D5CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF79525C-2DAC-483D-853D-FF1565539802}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF79525C-2DAC-483D-853D-FF1565539802}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF79525C-2DAC-483D-853D-FF1565539802}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF79525C-2DAC-483D-853D-FF1565539802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F975FEE9-CD7E-4B6B-B8E0-9E235D1C753C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F975FEE9-CD7E-4B6B-B8E0-9E235D1C753C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F975FEE9-CD7E-4B6B-B8E0-9E235D1C753C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F975FEE9-CD7E-4B6B-B8E0-9E235D1C753C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

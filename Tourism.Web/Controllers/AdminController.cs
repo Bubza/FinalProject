@@ -59,6 +59,9 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateTour(Tour tour)
         {
+            ModelState.Remove("Destination");
+            ModelState.Remove("TourOperator");
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name");
@@ -85,6 +88,9 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditTour(Tour tour)
         {
+            ModelState.Remove("Destination");
+            ModelState.Remove("TourOperator");
+
             if (!ModelState.IsValid)
             {
                 ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name");
@@ -150,7 +156,12 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDestination(Destination destination)
         {
-            if (!ModelState.IsValid) return View(destination);
+            ModelState.Clear();
+
+            destination.Tours = new List<Tour>();
+            destination.Description ??= string.Empty;
+            destination.ImageUrl ??= string.Empty;
+
             _context.Destinations.Add(destination);
             await _context.SaveChangesAsync();
             TempData["Success"] = "Дестинацията е добавена!";

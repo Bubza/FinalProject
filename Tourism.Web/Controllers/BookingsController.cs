@@ -102,5 +102,30 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Резервацията е отказана.";
             return RedirectToAction(nameof(Index));
         }
+        // GET: /Bookings/Profile — Профил с история на пътуванията
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var bookings = await _bookingService.GetByUserIdAsync(userId);
+
+            var viewModels = bookings.Select(b => new BookingViewModel
+            {
+                Id = b.Id,
+                TourId = b.TourId,
+                TourTitle = b.Tour.Title,
+                DestinationName = b.Tour.Destination.Name,
+                TourStartDate = b.Tour.StartDate,
+                NumberOfPeople = b.NumberOfPeople,
+                TotalPrice = b.TotalPrice,
+                Status = b.Status,
+                BookedAt = b.BookedAt
+            }).ToList();
+
+            ViewBag.UserEmail = User.FindFirstValue(ClaimTypes.Email);
+            ViewBag.TotalTrips = viewModels.Count(b => b.Status == BookingStatus.Completed || b.Status == BookingStatus.Confirmed);
+            ViewBag.TotalSpent = viewModels.Where(b => b.Status != BookingStatus.Cancelled).Sum(b => b.TotalPrice);
+
+            return View(viewModels);
+        }
     }
 }

@@ -3,7 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Tourism.Data;
 using Tourism.Data.Seeding;
 using Tourism.Services;
+using System.Globalization;
 
+var cultureInfo = new CultureInfo("de-DE");
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 var builder = WebApplication.CreateBuilder(args);
 

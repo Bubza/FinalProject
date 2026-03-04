@@ -1,39 +1,54 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
-using Tourism.Data;
+using Tourism.Services;
 
 namespace Tourism.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITourService _tourService;
+        private readonly IBookingService _bookingService;
+        private readonly IReviewService _reviewService;
+        private readonly IDestinationService _destinationService;
+        private readonly ITourOperatorService _tourOperatorService;
 
-        public AdminController(ApplicationDbContext context)
+        public AdminController(
+            ITourService tourService,
+            IBookingService bookingService,
+            IReviewService reviewService,
+            IDestinationService destinationService,
+            ITourOperatorService tourOperatorService)
         {
-            _context = context;
+            _tourService = tourService;
+            _bookingService = bookingService;
+            _reviewService = reviewService;
+            _destinationService = destinationService;
+            _tourOperatorService = tourOperatorService;
         }
 
         // GET: /Admin — Dashboard
         public async Task<IActionResult> Index()
         {
-            ViewBag.TotalTours = await _context.Tours.CountAsync();
-            ViewBag.TotalBookings = await _context.Bookings.CountAsync();
-            ViewBag.TotalReviews = await _context.Reviews.CountAsync();
-            ViewBag.TotalOperators = await _context.TourOperators.CountAsync();
-            ViewBag.PendingBookings = await _context.Bookings.CountAsync(b => b.Status == BookingStatus.Pending);
+            var tours = await _tourService.GetAllAsync();
+            var bookings = await _bookingService.GetAllAsync();
+            var reviews = await _reviewService.GetAllAsync();
+            var operators = await _tourOperatorService.GetAllAsync();
 
-            ViewBag.PopularTours = await _context.Tours
-                .Include(t => t.Destination)
-                .Include(t => t.Bookings)
+            ViewBag.TotalTours = tours.Count();
+            ViewBag.TotalBookings = bookings.Count();
+            ViewBag.TotalReviews = reviews.Count();
+            ViewBag.TotalOperators = operators.Count();
+            ViewBag.PendingBookings = bookings.Count(b => b.Status == BookingStatus.Pending);
+
+            ViewBag.PopularTours = tours
                 .OrderByDescending(t => t.Bookings.Count)
                 .Take(5)
                 .Select(t => new { t.Title, DestinationName = t.Destination.Name, BookingCount = t.Bookings.Count })
-                .ToListAsync();
+                .ToList();
 
             return View();
         }
@@ -41,17 +56,17 @@ namespace Tourism.Web.Controllers
         // ===== TOURS =====
         public async Task<IActionResult> Tours()
         {
-            var tours = await _context.Tours
-                .Include(t => t.Destination)
-                .Include(t => t.TourOperator)
-                .ToListAsync();
+            var tours = await _tourService.GetAllAsync();
             return View(tours);
         }
 
         public async Task<IActionResult> CreateTour()
         {
-            ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name");
-            ViewBag.TourOperators = new SelectList(await _context.TourOperators.ToListAsync(), "Id", "Name");
+            var destinations = await _destinationService.GetAllAsync();
+            var operators = await _tourOperatorService.GetAllAsync();
+
+            ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
+            ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
             return View();
         }
 
@@ -64,23 +79,29 @@ namespace Tourism.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name");
-                ViewBag.TourOperators = new SelectList(await _context.TourOperators.ToListAsync(), "Id", "Name");
+                var destinations = await _destinationService.GetAllAsync();
+                var operators = await _tourOperatorService.GetAllAsync();
+
+                ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
+                ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
                 return View(tour);
             }
-            tour.CreatedAt = DateTime.UtcNow;
-            _context.Tours.Add(tour);
-            await _context.SaveChangesAsync();
+
+            await _tourService.CreateAsync(tour);
             TempData["Success"] = "Маршрутът е добавен успешно!";
             return RedirectToAction(nameof(Tours));
         }
 
         public async Task<IActionResult> EditTour(int id)
         {
-            var tour = await _context.Tours.FindAsync(id);
+            var tour = await _tourService.GetByIdAsync(id);
             if (tour == null) return NotFound();
-            ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name", tour.DestinationId);
-            ViewBag.TourOperators = new SelectList(await _context.TourOperators.ToListAsync(), "Id", "Name", tour.TourOperatorId);
+
+            var destinations = await _destinationService.GetAllAsync();
+            var operators = await _tourOperatorService.GetAllAsync();
+
+            ViewBag.Destinations = new SelectList(destinations, "Id", "Name", tour.DestinationId);
+            ViewBag.TourOperators = new SelectList(operators, "Id", "Name", tour.TourOperatorId);
             return View(tour);
         }
 
@@ -93,12 +114,15 @@ namespace Tourism.Web.Controllers
 
             if (!ModelState.IsValid)
             {
-                ViewBag.Destinations = new SelectList(await _context.Destinations.ToListAsync(), "Id", "Name");
-                ViewBag.TourOperators = new SelectList(await _context.TourOperators.ToListAsync(), "Id", "Name");
+                var destinations = await _destinationService.GetAllAsync();
+                var operators = await _tourOperatorService.GetAllAsync();
+
+                ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
+                ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
                 return View(tour);
             }
-            _context.Tours.Update(tour);
-            await _context.SaveChangesAsync();
+
+            await _tourService.UpdateAsync(tour);
             TempData["Success"] = "Маршрутът е обновен!";
             return RedirectToAction(nameof(Tours));
         }
@@ -107,8 +131,7 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteTour(int id)
         {
-            var tour = await _context.Tours.FindAsync(id);
-            if (tour != null) { _context.Tours.Remove(tour); await _context.SaveChangesAsync(); }
+            await _tourService.DeleteAsync(id);
             TempData["Success"] = "Маршрутът е изтрит.";
             return RedirectToAction(nameof(Tours));
         }
@@ -116,10 +139,7 @@ namespace Tourism.Web.Controllers
         // ===== BOOKINGS =====
         public async Task<IActionResult> Bookings()
         {
-            var bookings = await _context.Bookings
-                .Include(b => b.Tour).ThenInclude(t => t.Destination)
-                .OrderByDescending(b => b.BookedAt)
-                .ToListAsync();
+            var bookings = await _bookingService.GetAllAsync();
             return View(bookings);
         }
 
@@ -127,8 +147,12 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking != null) { booking.Status = BookingStatus.Confirmed; await _context.SaveChangesAsync(); }
+            var booking = await _bookingService.GetByIdAsync(id);
+            if (booking != null)
+            {
+                booking.Status = BookingStatus.Confirmed;
+                await _bookingService.UpdateAsync(booking);
+            }
             TempData["Success"] = "Резервацията е потвърдена!";
             return RedirectToAction(nameof(Bookings));
         }
@@ -137,8 +161,12 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
-            if (booking != null) { booking.Status = BookingStatus.Cancelled; await _context.SaveChangesAsync(); }
+            var booking = await _bookingService.GetByIdAsync(id);
+            if (booking != null)
+            {
+                booking.Status = BookingStatus.Cancelled;
+                await _bookingService.UpdateAsync(booking);
+            }
             TempData["Success"] = "Резервацията е отказана.";
             return RedirectToAction(nameof(Bookings));
         }
@@ -146,7 +174,7 @@ namespace Tourism.Web.Controllers
         // ===== DESTINATIONS =====
         public async Task<IActionResult> Destinations()
         {
-            var destinations = await _context.Destinations.Include(d => d.Tours).ToListAsync();
+            var destinations = await _destinationService.GetAllAsync();
             return View(destinations);
         }
 
@@ -158,12 +186,7 @@ namespace Tourism.Web.Controllers
         {
             ModelState.Clear();
 
-            destination.Tours = new List<Tour>();
-            destination.Description ??= string.Empty;
-            destination.ImageUrl ??= string.Empty;
-
-            _context.Destinations.Add(destination);
-            await _context.SaveChangesAsync();
+            await _destinationService.CreateAsync(destination);
             TempData["Success"] = "Дестинацията е добавена!";
             return RedirectToAction(nameof(Destinations));
         }
@@ -172,11 +195,9 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDestination(int id)
         {
-            var destination = await _context.Destinations.FindAsync(id);
-            if (destination != null) { _context.Destinations.Remove(destination); await _context.SaveChangesAsync(); }
+            await _destinationService.DeleteAsync(id);
             TempData["Success"] = "Дестинацията е изтрита.";
             return RedirectToAction(nameof(Destinations));
         }
     }
 }
-

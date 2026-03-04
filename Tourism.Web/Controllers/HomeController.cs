@@ -1,26 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
-using Tourism.Data;
 
 namespace Tourism.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITourService _tourService;
 
-        public HomeController(ApplicationDbContext context)
+        public HomeController(ITourService tourService)
         {
-            _context = context;
+            _tourService = tourService;
         }
 
         // GET: / — Начална страница
         public async Task<IActionResult> Index()
         {
-            // Show latest 6 tours on the home page
-            var featuredTours = await _context.Tours
-                .Include(t => t.Destination)
-                .Include(t => t.TourOperator)
+            var tours = await _tourService.GetAllAsync();
+
+            var featuredTours = tours
                 .OrderByDescending(t => t.CreatedAt)
                 .Take(6)
                 .Select(t => new TourViewModel
@@ -35,7 +33,7 @@ namespace Tourism.Web.Controllers
                     DestinationName = t.Destination.Name,
                     TourOperatorName = t.TourOperator.Name
                 })
-                .ToListAsync();
+                .ToList();
 
             return View(featuredTours);
         }

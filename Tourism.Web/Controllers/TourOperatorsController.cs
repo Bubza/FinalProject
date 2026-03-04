@@ -1,47 +1,41 @@
-﻿using Tourism.Data;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
 
 namespace Tourism.Web.Controllers
 {
     public class TourOperatorsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITourOperatorService _tourOperatorService;
 
-        public TourOperatorsController(ApplicationDbContext context)
+        public TourOperatorsController(ITourOperatorService tourOperatorService)
         {
-            _context = context;
+            _tourOperatorService = tourOperatorService;
         }
 
         // GET: /TourOperators — Всички туроператори
         public async Task<IActionResult> Index()
         {
-            var operators = await _context.TourOperators
-                .Include(o => o.Tours)
-                .Select(o => new TourOperatorViewModel
-                {
-                    Id = o.Id,
-                    Name = o.Name,
-                    Description = o.Description,
-                    Email = o.Email,
-                    PhoneNumber = o.PhoneNumber,
-                    LogoUrl = o.LogoUrl,
-                    TourCount = o.Tours.Count
-                })
-                .ToListAsync();
+            var operators = await _tourOperatorService.GetAllAsync();
 
-            return View(operators);
+            var viewModels = operators.Select(o => new TourOperatorViewModel
+            {
+                Id = o.Id,
+                Name = o.Name,
+                Description = o.Description,
+                Email = o.Email,
+                PhoneNumber = o.PhoneNumber,
+                LogoUrl = o.LogoUrl,
+                TourCount = o.Tours.Count
+            }).ToList();
+
+            return View(viewModels);
         }
 
         // GET: /TourOperators/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var op = await _context.TourOperators
-                .Include(o => o.Tours)
-                    .ThenInclude(t => t.Destination)
-                .FirstOrDefaultAsync(o => o.Id == id);
-
+            var op = await _tourOperatorService.GetByIdAsync(id);
             if (op == null) return NotFound();
 
             var viewModel = new TourOperatorViewModel

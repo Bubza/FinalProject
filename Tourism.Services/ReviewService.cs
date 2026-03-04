@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Tourism.Web.Data;
 using Tourism.Data.Models.Entities;
 using Tourism.Data;
 

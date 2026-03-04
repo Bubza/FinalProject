@@ -1,58 +1,51 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
+using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
-using Tourism.Data;
 
 namespace Tourism.Web.Controllers
 {
     [Authorize]
     public class BookingsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IBookingService _bookingService;
+        private readonly ITourService _tourService;
 
-        public BookingsController(ApplicationDbContext context)
+        public BookingsController(IBookingService bookingService, ITourService tourService)
         {
-            _context = context;
+            _bookingService = bookingService;
+            _tourService = tourService;
         }
 
         // GET: /Bookings — Моите резервации
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var bookings = await _bookingService.GetByUserIdAsync(userId);
 
-            var bookings = await _context.Bookings
-                .Include(b => b.Tour)
-                    .ThenInclude(t => t.Destination)
-                .Where(b => b.UserId == userId)
-                .OrderByDescending(b => b.BookedAt)
-                .Select(b => new BookingViewModel
-                {
-                    Id = b.Id,
-                    TourId = b.TourId,
-                    TourTitle = b.Tour.Title,
-                    DestinationName = b.Tour.Destination.Name,
-                    TourStartDate = b.Tour.StartDate,
-                    NumberOfPeople = b.NumberOfPeople,
-                    TotalPrice = b.TotalPrice,
-                    Status = b.Status,
-                    BookedAt = b.BookedAt
-                })
-                .ToListAsync();
+            var viewModels = bookings.Select(b => new BookingViewModel
+            {
+                Id = b.Id,
+                TourId = b.TourId,
+                TourTitle = b.Tour.Title,
+                DestinationName = b.Tour.Destination.Name,
+                TourStartDate = b.Tour.StartDate,
+                NumberOfPeople = b.NumberOfPeople,
+                TotalPrice = b.TotalPrice,
+                Status = b.Status,
+                BookedAt = b.BookedAt
+            }).ToList();
 
-            return View(bookings);
+            return View(viewModels);
         }
 
         // GET: /Bookings/Create?tourId=5
         public async Task<IActionResult> Create(int tourId)
         {
-            var tour = await _context.Tours
-                .Include(t => t.Destination)
-                .FirstOrDefaultAsync(t => t.Id == tourId);
-
+            var tour = await _tourService.GetByIdAsync(tourId);
             if (tour == null) return NotFound();
 
             var viewModel = new BookingViewModel
@@ -75,7 +68,7 @@ namespace Tourism.Web.Controllers
         {
             if (!ModelState.IsValid) return View(model);
 
-            var tour = await _context.Tours.FindAsync(model.TourId);
+            var tour = await _tourService.GetByIdAsync(model.TourId);
             if (tour == null) return NotFound();
 
             var booking = new Booking
@@ -87,8 +80,7 @@ namespace Tourism.Web.Controllers
                 Status = BookingStatus.Pending
             };
 
-            _context.Bookings.Add(booking);
-            await _context.SaveChangesAsync();
+            await _bookingService.CreateAsync(booking);
 
             TempData["Success"] = "Резервацията е направена успешно!";
             return RedirectToAction(nameof(Index));
@@ -100,17 +92,15 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> Cancel(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-            var booking = await _context.Bookings
-                .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
+            var booking = await _bookingService.GetByIdAsync(id);
 
-            if (booking == null) return NotFound();
+            if (booking == null || booking.UserId != userId) return NotFound();
 
             booking.Status = BookingStatus.Cancelled;
-            await _context.SaveChangesAsync();
+            await _bookingService.UpdateAsync(booking);
 
             TempData["Success"] = "Резервацията е отказана.";
             return RedirectToAction(nameof(Index));
         }
     }
 }
-

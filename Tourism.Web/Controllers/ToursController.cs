@@ -1,68 +1,46 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Tourism.Data;
+using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
-using Tourism.Data.Models.Entities;
-using Tourism.Data.Models.Enums;
 
 namespace Tourism.Web.Controllers
 {
     public class ToursController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ITourService _tourService;
 
-        public ToursController(ApplicationDbContext context)
+        public ToursController(ITourService tourService)
         {
-            _context = context;
+            _tourService = tourService;
         }
 
         // GET: /Tours — Каталог маршрути
         public async Task<IActionResult> Index(string? search, int? destinationId, decimal? maxPrice)
         {
-            var query = _context.Tours
-                .Include(t => t.Destination)
-                .Include(t => t.TourOperator)
-                .Include(t => t.Reviews)
-                .AsQueryable();
+            var tours = await _tourService.SearchAsync(search, destinationId, maxPrice);
 
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(t => t.Title.Contains(search) || t.Destination.Name.Contains(search));
+            var viewModels = tours.Select(t => new TourViewModel
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                PricePerPerson = t.PricePerPerson,
+                DurationDays = t.DurationDays,
+                ImageUrl = t.ImageUrl,
+                StartDate = t.StartDate,
+                EndDate = t.EndDate,
+                DestinationName = t.Destination.Name,
+                TourOperatorName = t.TourOperator.Name,
+                AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
+                ReviewCount = t.Reviews.Count
+            }).ToList();
 
-            if (destinationId.HasValue)
-                query = query.Where(t => t.DestinationId == destinationId);
-
-            if (maxPrice.HasValue)
-                query = query.Where(t => t.PricePerPerson <= maxPrice);
-
-            var tours = await query
-                .Select(t => new TourViewModel
-                {
-                    Id = t.Id,
-                    Title = t.Title,
-                    Description = t.Description,
-                    PricePerPerson = t.PricePerPerson,
-                    DurationDays = t.DurationDays,
-                    ImageUrl = t.ImageUrl,
-                    StartDate = t.StartDate,
-                    EndDate = t.EndDate,
-                    DestinationName = t.Destination.Name,
-                    TourOperatorName = t.TourOperator.Name,
-                    AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
-                    ReviewCount = t.Reviews.Count
-                })
-                .ToListAsync();
-
-            return View(tours);
+            return View(viewModels);
         }
 
-        // GET: /Tours/Details/5 — Страница на маршрута
+        // GET: /Tours/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var tour = await _context.Tours
-                .Include(t => t.Destination)
-                .Include(t => t.TourOperator)
-                .Include(t => t.Reviews)
-                .FirstOrDefaultAsync(t => t.Id == id);
+            var tour = await _tourService.GetByIdAsync(id);
 
             if (tour == null) return NotFound();
 
@@ -89,4 +67,3 @@ namespace Tourism.Web.Controllers
         }
     }
 }
-

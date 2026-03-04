@@ -3,20 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.Data;
 
 #nullable disable
 
-namespace Tourism.Web.Data.Migrations
+namespace Tourism.Data.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260223171653_SeedData")]
-    partial class SeedData
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -288,48 +285,34 @@ namespace Tourism.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Destinations");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Country = "Италия",
-                            Description = "Вечният град с хиляди години история, включително Колизеума, Ватикана и Трефонтана.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c0/Rome_Skyline.jpg/1200px-Rome_Skyline.jpg",
-                            Name = "Рим"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Country = "Франция",
-                            Description = "Градът на любовта с Айфеловата кула, Лувъра и романтичната атмосфера.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_August_2014_%282%29.jpg/800px-La_Tour_Eiffel_vue_de_la_Tour_Saint-Jacques%2C_Paris_August_2014_%282%29.jpg",
-                            Name = "Париж"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Country = "Испания",
-                            Description = "Слънчев крайбрежен град с архитектурата на Гауди и оживения Лас Рамблас.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Sagrada_Familia_01.jpg/800px-Sagrada_Familia_01.jpg",
-                            Name = "Барселона"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Country = "Хърватия",
-                            Description = "Перлата на Адриатика с невероятни стари стени и кристално море.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Dubrovnik_-_Old_City_Walls.jpg/1200px-Dubrovnik_-_Old_City_Walls.jpg",
-                            Name = "Дубровник"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Country = "Гърция",
-                            Description = "Люлката на цивилизацията с Акропола, Партенона и вкусната средиземноморска кухня.",
-                            ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/The_Parthenon_in_Athens.jpg/1200px-The_Parthenon_in_Athens.jpg",
-                            Name = "Атина"
-                        });
+            modelBuilder.Entity("Tourism.Data.Models.Entities.FavoriteTour", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TourId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TourId");
+
+                    b.HasIndex("UserId", "TourId")
+                        .IsUnique();
+
+                    b.ToTable("FavoriteTours");
                 });
 
             modelBuilder.Entity("Tourism.Data.Models.Entities.Review", b =>
@@ -415,83 +398,6 @@ namespace Tourism.Web.Data.Migrations
                     b.HasIndex("TourOperatorId");
 
                     b.ToTable("Tours");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Разгледайте Вечния град с нашия 5-дневен тур включващ Колизеума, Ватикана, Трефонтана и много повече.",
-                            DestinationId = 1,
-                            DurationDays = 5,
-                            EndDate = new DateTime(2026, 4, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "",
-                            MaxParticipants = 20,
-                            PricePerPerson = 899m,
-                            StartDate = new DateTime(2026, 4, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Класически Рим",
-                            TourOperatorId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2026, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "7 дни в Града на светлините — Айфелова кула, Лувър, Монмартър и круиз по Сена.",
-                            DestinationId = 2,
-                            DurationDays = 7,
-                            EndDate = new DateTime(2026, 5, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "",
-                            MaxParticipants = 15,
-                            PricePerPerson = 1199m,
-                            StartDate = new DateTime(2026, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Романтичен Париж",
-                            TourOperatorId = 2
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2026, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Открийте магията на Барселона — Саграда Фамилия, Парк Гуел, Лас Рамблас и плажовете.",
-                            DestinationId = 3,
-                            DurationDays = 4,
-                            EndDate = new DateTime(2026, 6, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "",
-                            MaxParticipants = 25,
-                            PricePerPerson = 799m,
-                            StartDate = new DateTime(2026, 6, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Барселона и Гауди",
-                            TourOperatorId = 3
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Дубровник и хърватското крайбрежие — стари стени, островчета и кристално море.",
-                            DestinationId = 4,
-                            DurationDays = 6,
-                            EndDate = new DateTime(2026, 7, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "",
-                            MaxParticipants = 18,
-                            PricePerPerson = 699m,
-                            StartDate = new DateTime(2026, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Адриатическа перла",
-                            TourOperatorId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Потопете се в историята на Древна Гърция — Акропол, Национален музей, Плака и о-в Хидра.",
-                            DestinationId = 5,
-                            DurationDays = 5,
-                            EndDate = new DateTime(2026, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ImageUrl = "",
-                            MaxParticipants = 22,
-                            PricePerPerson = 649m,
-                            StartDate = new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Title = "Атинско приключение",
-                            TourOperatorId = 2
-                        });
                 });
 
             modelBuilder.Entity("Tourism.Data.Models.Entities.TourOperator", b =>
@@ -528,38 +434,6 @@ namespace Tourism.Web.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TourOperators");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Водеща туристическа агенция с над 20 години опит в организирането на незабравими европейски турове.",
-                            Email = "info@balkantravel.bg",
-                            LogoUrl = "",
-                            Name = "Балкан Травел",
-                            PhoneNumber = "+359 2 123 4567"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2018, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Специалисти в средиземноморския туризъм с индивидуален подход към всеки клиент.",
-                            Email = "contact@suntourism.bg",
-                            LogoUrl = "",
-                            Name = "Сън Туризъм",
-                            PhoneNumber = "+359 2 987 6543"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2015, 3, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Организираме групови и индивидуални пътувания до най-красивите градове на Европа.",
-                            Email = "hello@europaexplorer.bg",
-                            LogoUrl = "",
-                            Name = "Европа Експлорър",
-                            PhoneNumber = "+359 2 555 1234"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -617,6 +491,17 @@ namespace Tourism.Web.Data.Migrations
                 {
                     b.HasOne("Tourism.Data.Models.Entities.Tour", "Tour")
                         .WithMany("Bookings")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tour");
+                });
+
+            modelBuilder.Entity("Tourism.Data.Models.Entities.FavoriteTour", b =>
+                {
+                    b.HasOne("Tourism.Data.Models.Entities.Tour", "Tour")
+                        .WithMany()
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

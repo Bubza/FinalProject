@@ -9,7 +9,7 @@ using Tourism.Data;
 
 #nullable disable
 
-namespace Tourism.Web.Data.Migrations
+namespace Tourism.Data.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20260223163131_AddTourismEntities")]

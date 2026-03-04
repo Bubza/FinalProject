@@ -44,6 +44,10 @@
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
+                    <form asp-controller="Favorites" asp-action="Add" asp-route-id="@Model.Id" method="post">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger w-100 mt-2">♥ Добави в любими</button>
+                    </form>
                     <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
                        class="btn btn-primary w-100 mt-2">Резервирай сега</a>
                     <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"

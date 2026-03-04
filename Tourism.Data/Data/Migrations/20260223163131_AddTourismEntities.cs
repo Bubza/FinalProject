@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Tourism.Web.Data.Migrations
+namespace Tourism.Data.Data.Migrations
 {
     /// <inheritdoc />
     public partial class AddTourismEntities : Migration

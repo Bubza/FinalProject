@@ -5,14 +5,54 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace Tourism.Web.Data.Migrations
+namespace Tourism.Data.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class SeedData : Migration
+    public partial class AddFavoriteTours : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+         
+            migrationBuilder.CreateTable(
+                name: "FavoriteTours",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TourId = table.Column<int>(type: "int", nullable: false),
+                    AddedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteTours", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FavoriteTours_Tours_TourId",
+                        column: x => x.TourId,
+                        principalTable: "Tours",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteTours_TourId",
+                table: "FavoriteTours",
+                column: "TourId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteTours_UserId_TourId",
+                table: "FavoriteTours",
+                columns: new[] { "UserId", "TourId" },
+                unique: true);
+        }
+
+        /// <inheritdoc />
+        protected override void Down(MigrationBuilder migrationBuilder)
+        {
+            migrationBuilder.DropTable(
+                name: "FavoriteTours");
+
             migrationBuilder.InsertData(
                 table: "Destinations",
                 columns: new[] { "Id", "Country", "Description", "ImageUrl", "Name" },
@@ -46,75 +86,6 @@ namespace Tourism.Web.Data.Migrations
                     { 4, new DateTime(2026, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "Дубровник и хърватското крайбрежие — стари стени, островчета и кристално море.", 4, 6, new DateTime(2026, 7, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), "", 18, 699m, new DateTime(2026, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Адриатическа перла", 1 },
                     { 5, new DateTime(2026, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), "Потопете се в историята на Древна Гърция — Акропол, Национален музей, Плака и о-в Хидра.", 5, 5, new DateTime(2026, 8, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), "", 22, 649m, new DateTime(2026, 8, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), "Атинско приключение", 2 }
                 });
-        }
-
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            migrationBuilder.DeleteData(
-                table: "Tours",
-                keyColumn: "Id",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "Tours",
-                keyColumn: "Id",
-                keyValue: 2);
-
-            migrationBuilder.DeleteData(
-                table: "Tours",
-                keyColumn: "Id",
-                keyValue: 3);
-
-            migrationBuilder.DeleteData(
-                table: "Tours",
-                keyColumn: "Id",
-                keyValue: 4);
-
-            migrationBuilder.DeleteData(
-                table: "Tours",
-                keyColumn: "Id",
-                keyValue: 5);
-
-            migrationBuilder.DeleteData(
-                table: "Destinations",
-                keyColumn: "Id",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "Destinations",
-                keyColumn: "Id",
-                keyValue: 2);
-
-            migrationBuilder.DeleteData(
-                table: "Destinations",
-                keyColumn: "Id",
-                keyValue: 3);
-
-            migrationBuilder.DeleteData(
-                table: "Destinations",
-                keyColumn: "Id",
-                keyValue: 4);
-
-            migrationBuilder.DeleteData(
-                table: "Destinations",
-                keyColumn: "Id",
-                keyValue: 5);
-
-            migrationBuilder.DeleteData(
-                table: "TourOperators",
-                keyColumn: "Id",
-                keyValue: 1);
-
-            migrationBuilder.DeleteData(
-                table: "TourOperators",
-                keyColumn: "Id",
-                keyValue: 2);
-
-            migrationBuilder.DeleteData(
-                table: "TourOperators",
-                keyColumn: "Id",
-                keyValue: 3);
         }
     }
 }

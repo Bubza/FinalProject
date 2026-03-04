@@ -15,6 +15,7 @@ namespace Tourism.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<TourOperator> TourOperators { get; set; }
+        public DbSet<FavoriteTour> FavoriteTours { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -48,7 +49,17 @@ namespace Tourism.Data
                 .HasForeignKey(r => r.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // FavoriteTour → Tour (many-to-one)
+            builder.Entity<FavoriteTour>()
+                .HasOne(f => f.Tour)
+                .WithMany()
+                .HasForeignKey(f => f.TourId)
+                .OnDelete(DeleteBehavior.Cascade);
 
+            // Unique constraint: един потребител не може да добави един маршрут два пъти
+            builder.Entity<FavoriteTour>()
+                .HasIndex(f => new { f.UserId, f.TourId })
+                .IsUnique();
         }
     }
 }

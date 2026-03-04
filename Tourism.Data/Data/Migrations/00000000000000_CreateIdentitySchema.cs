@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Tourism.Web.Data.Migrations
+namespace Tourism.Data.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {

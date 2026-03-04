@@ -31,6 +31,7 @@ builder.Services.AddScoped<IBookingService, BookingService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 builder.Services.AddScoped<ITourOperatorService, TourOperatorService>();
+builder.Services.AddScoped<IFavoriteTourService, FavoriteTourService>();
 
 // Add MVC Controllers + Razor Pages
 builder.Services.AddControllersWithViews();

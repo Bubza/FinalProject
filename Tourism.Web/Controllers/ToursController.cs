@@ -71,6 +71,17 @@ namespace Tourism.Web.Controllers
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId, id);
             }
+            var reviews = tour.Reviews.Select(r => new ReviewViewModel
+            {
+                Id = r.Id,
+                TourId = r.TourId,
+                Rating = r.Rating,
+                Comment = r.Comment,
+                CreatedAt = r.CreatedAt,
+                UserName = r.UserId.Substring(0, 8) + "..."
+            }).ToList();
+
+            ViewBag.Reviews = reviews;
             return View(viewModel);
         }
     }

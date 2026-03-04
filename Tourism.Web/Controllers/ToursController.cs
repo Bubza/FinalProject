@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
 
@@ -7,10 +8,12 @@ namespace Tourism.Web.Controllers
     public class ToursController : Controller
     {
         private readonly ITourService _tourService;
+        private readonly IFavoriteTourService _favoriteService;
 
-        public ToursController(ITourService tourService)
+        public ToursController(ITourService tourService, IFavoriteTourService favoriteService)
         {
             _tourService = tourService;
+            _favoriteService = favoriteService;
         }
 
         // GET: /Tours — Каталог маршрути
@@ -63,6 +66,11 @@ namespace Tourism.Web.Controllers
                 ReviewCount = tour.Reviews.Count
             };
 
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId, id);
+            }
             return View(viewModel);
         }
     }

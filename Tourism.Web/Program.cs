@@ -4,6 +4,7 @@ using Tourism.Data;
 using Tourism.Data.Seeding;
 using Tourism.Services;
 using System.Globalization;
+using Tourism.Data.Models.Entities;
 
 var cultureInfo = new CultureInfo("de-DE");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -21,7 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();

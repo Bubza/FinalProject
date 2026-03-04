@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Tourism.Data.Models.Entities;
 
 namespace Tourism.Data.Seeding
 {
@@ -8,7 +9,7 @@ namespace Tourism.Data.Seeding
         public static async Task SeedAsync(IServiceProvider serviceProvider)
         {
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             if (!await roleManager.RoleExistsAsync("Admin"))
             {
@@ -20,11 +21,13 @@ namespace Tourism.Data.Seeding
 
             if (adminUser == null)
             {
-                adminUser = new IdentityUser
+                adminUser = new ApplicationUser
                 {
                     UserName = adminEmail,
                     Email = adminEmail,
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    FirstName = "Admin",
+                    LastName = "Tourism"
                 };
 
                 await userManager.CreateAsync(adminUser, "Admin123!");

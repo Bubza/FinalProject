@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Tourism.Data.Models.Entities;
 using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
 
@@ -9,11 +11,13 @@ namespace Tourism.Web.Controllers
     {
         private readonly ITourService _tourService;
         private readonly IFavoriteTourService _favoriteService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ToursController(ITourService tourService, IFavoriteTourService favoriteService)
+        public ToursController(ITourService tourService, IFavoriteTourService favoriteService, UserManager<ApplicationUser> userManager)
         {
             _tourService = tourService;
             _favoriteService = favoriteService;
+            _userManager = userManager;
         }
 
         // GET: /Tours — Каталог маршрути
@@ -71,17 +75,24 @@ namespace Tourism.Web.Controllers
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
                 ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId, id);
             }
-            var reviews = tour.Reviews.Select(r => new ReviewViewModel
+
+            var reviews = new List<ReviewViewModel>();
+            foreach (var r in tour.Reviews)
             {
-                Id = r.Id,
-                TourId = r.TourId,
-                Rating = r.Rating,
-                Comment = r.Comment,
-                CreatedAt = r.CreatedAt,
-                UserName = r.UserId.Substring(0, 8) + "..."
-            }).ToList();
+                var user = await _userManager.FindByIdAsync(r.UserId);
+                reviews.Add(new ReviewViewModel
+                {
+                    Id = r.Id,
+                    TourId = r.TourId,
+                    Rating = r.Rating,
+                    Comment = r.Comment,
+                    CreatedAt = r.CreatedAt,
+                    UserName = !string.IsNullOrEmpty(user?.FullName) ? user.FullName : user?.Email ?? "Анонимен"
+                });
+            }
 
             ViewBag.Reviews = reviews;
+
             return View(viewModel);
         }
     }

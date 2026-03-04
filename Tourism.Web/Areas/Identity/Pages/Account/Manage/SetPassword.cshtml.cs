@@ -8,16 +8,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Tourism.Data.Models.Entities;
 
 namespace Tourism.Web.Areas.Identity.Pages.Account.Manage
 {
     public class SetPasswordModel : PageModel
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
 
         public SetPasswordModel(
-            UserManager<IdentityUser> userManager,
+            UserManager<ApplicationUser> userManager,
             SignInManager<IdentityUser> signInManager)
         {
             _userManager = userManager;

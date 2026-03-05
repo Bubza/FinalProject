@@ -20,12 +20,33 @@ namespace Tourism.Web.Controllers
             _userManager = userManager;
         }
 
-        // GET: /Tours — Каталог маршрути
-        public async Task<IActionResult> Index(string? search, int? destinationId, decimal? maxPrice)
+        // GET: /Tours
+        public async Task<IActionResult> Index(string? search, decimal? minPrice, decimal? maxPrice,
+            string? duration, int? minRating, string? sortBy)
         {
-            var tours = await _tourService.SearchAsync(search, destinationId, maxPrice);
+            var tours = await _tourService.SearchAsync(search, null, maxPrice);
 
-            var viewModels = tours.Select(t => new TourViewModel
+            // Допълнителни филтри
+            var filtered = tours.AsEnumerable();
+
+            if (minPrice.HasValue)
+                filtered = filtered.Where(t => t.PricePerPerson >= minPrice);
+
+            if (!string.IsNullOrEmpty(duration))
+            {
+                filtered = duration switch
+                {
+                    "1-3" => filtered.Where(t => t.DurationDays >= 1 && t.DurationDays <= 3),
+                    "4-7" => filtered.Where(t => t.DurationDays >= 4 && t.DurationDays <= 7),
+                    "8+" => filtered.Where(t => t.DurationDays >= 8),
+                    _ => filtered
+                };
+            }
+
+            if (minRating.HasValue)
+                filtered = filtered.Where(t => t.Reviews.Any() && t.Reviews.Average(r => r.Rating) >= minRating);
+
+            var viewModels = filtered.Select(t => new TourViewModel
             {
                 Id = t.Id,
                 Title = t.Title,
@@ -39,9 +60,20 @@ namespace Tourism.Web.Controllers
                 TourOperatorName = t.TourOperator.Name,
                 AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
                 ReviewCount = t.Reviews.Count
-            }).ToList();
+            });
 
-            return View(viewModels);
+            // Сортиране
+            viewModels = sortBy switch
+            {
+                "price_asc" => viewModels.OrderBy(t => t.PricePerPerson),
+                "price_desc" => viewModels.OrderByDescending(t => t.PricePerPerson),
+                "rating" => viewModels.OrderByDescending(t => t.AverageRating),
+                "duration" => viewModels.OrderBy(t => t.DurationDays),
+                "newest" => viewModels.OrderByDescending(t => t.StartDate),
+                _ => viewModels
+            };
+
+            return View(viewModels.ToList());
         }
 
         // GET: /Tours/Details/5

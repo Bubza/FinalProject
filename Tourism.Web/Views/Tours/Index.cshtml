@@ -6,23 +6,63 @@
 <div class="container my-4">
     <h1 class="mb-4">Каталог маршрути</h1>
 
-    <!-- Filters -->
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-5">
-            <input type="text" name="search" class="form-control" placeholder="Търси по дестинация или маршрут..."
-                   value="@Context.Request.Query["search"]" />
+    <!-- Филтри -->
+    <form method="get" class="card shadow-sm p-3 mb-4">
+        <div class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label">Търсене</label>
+                <input type="text" name="search" class="form-control" placeholder="Търси по име или дестинация..."
+                       value="@Context.Request.Query["search"]" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Мин. цена (€)</label>
+                <input type="number" name="minPrice" class="form-control" placeholder="0"
+                       value="@Context.Request.Query["minPrice"]" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Макс. цена (€)</label>
+                <input type="number" name="maxPrice" class="form-control" placeholder="10000"
+                       value="@Context.Request.Query["maxPrice"]" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Продължителност</label>
+                <select name="duration" class="form-select">
+                    <option value="">Всички</option>
+                    <option value="1-3" selected="@(Context.Request.Query["duration"] == "1-3")">1-3 дни</option>
+                    <option value="4-7" selected="@(Context.Request.Query["duration"] == "4-7")">4-7 дни</option>
+                    <option value="8+" selected="@(Context.Request.Query["duration"] == "8+")">8+ дни</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Мин. рейтинг</label>
+                <select name="minRating" class="form-select">
+                    <option value="">Всички</option>
+                    <option value="3" selected="@(Context.Request.Query["minRating"] == "3")">★★★ 3+</option>
+                    <option value="4" selected="@(Context.Request.Query["minRating"] == "4")">★★★★ 4+</option>
+                    <option value="5" selected="@(Context.Request.Query["minRating"] == "5")">★★★★★ 5</option>
+                </select>
+            </div>
         </div>
-        <div class="col-md-3">
-            <input type="number" name="maxPrice" class="form-control" placeholder="Макс. цена"
-                   value="@Context.Request.Query["maxPrice"]" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Търси</button>
-        </div>
-        <div class="col-md-2">
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Изчисти</a>
+        <div class="row g-3 mt-1">
+            <div class="col-md-3">
+                <label class="form-label">Сортирай по</label>
+                <select name="sortBy" class="form-select">
+                    <option value="">По подразбиране</option>
+                    <option value="price_asc" selected="@(Context.Request.Query["sortBy"] == "price_asc")">Цена: ниска → висока</option>
+                    <option value="price_desc" selected="@(Context.Request.Query["sortBy"] == "price_desc")">Цена: висока → ниска</option>
+                    <option value="rating" selected="@(Context.Request.Query["sortBy"] == "rating")">Най-висок рейтинг</option>
+                    <option value="duration" selected="@(Context.Request.Query["sortBy"] == "duration")">Продължителност</option>
+                    <option value="newest" selected="@(Context.Request.Query["sortBy"] == "newest")">Най-нови</option>
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary me-2">Търси</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Изчисти</a>
+            </div>
         </div>
     </form>
+
+    <p class="text-muted mb-3">Намерени: @Model.Count() маршрута</p>
 
     <!-- Tour Cards -->
     @if (!Model.Any())

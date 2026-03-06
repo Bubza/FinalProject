@@ -60,6 +60,8 @@ namespace Tourism.Data
             builder.Entity<FavoriteTour>()
                 .HasIndex(f => new { f.UserId, f.TourId })
                 .IsUnique();
+
+            Tourism.Data.Seeding.DataSeeder.Seed(builder);
         }
     }
 }

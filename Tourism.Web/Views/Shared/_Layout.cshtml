@@ -5,64 +5,459 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - Tourism</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        :root {
+            --viator-green: #00AA6C;
+            --viator-green-dark: #008A57;
+            --viator-green-light: #E6F7F1;
+            --viator-dark: #1A1A1A;
+            --viator-gray: #6B7280;
+            --viator-light: #F9FAFB;
+            --viator-border: #E5E7EB;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            color: var(--viator-dark);
+            background: #fff;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        /* ── NAVBAR ── */
+        .site-nav {
+            background: #fff;
+            border-bottom: 1px solid var(--viator-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s;
+        }
+
+            .site-nav .container {
+                display: flex;
+                align-items: center;
+                height: 64px;
+                gap: 8px;
+            }
+
+        .nav-brand {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.6rem;
+            color: var(--viator-green) !important;
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            flex-shrink: 0;
+            margin-right: 16px;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            gap: 2px;
+            flex: 1;
+        }
+
+            .nav-links a {
+                color: var(--viator-dark);
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                padding: 8px 12px;
+                border-radius: 8px;
+                transition: all 0.15s;
+                white-space: nowrap;
+                display: block;
+            }
+
+                .nav-links a:hover {
+                    background: var(--viator-green-light);
+                    color: var(--viator-green);
+                }
+
+            .nav-links .admin-link {
+                color: #DC2626 !important;
+            }
+
+                .nav-links .admin-link:hover {
+                    background: #FEE2E2;
+                    color: #DC2626 !important;
+                }
+
+        /* Override Bootstrap login partial styles */
+        .nav-login-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+            .nav-login-area .nav-item {
+                list-style: none;
+            }
+
+            .nav-login-area .nav-link,
+            .nav-login-area a {
+                color: var(--viator-dark);
+                text-decoration: none;
+                font-size: 0.875rem;
+                font-weight: 500;
+                padding: 7px 16px;
+                border-radius: 8px;
+                border: 1.5px solid var(--viator-border);
+                transition: all 0.15s;
+                white-space: nowrap;
+            }
+
+                .nav-login-area .nav-link:hover,
+                .nav-login-area a:hover {
+                    border-color: var(--viator-green);
+                    color: var(--viator-green);
+                }
+                /* Register button — filled green */
+                .nav-login-area .nav-link[href*="Register"],
+                .nav-login-area a[href*="Register"] {
+                    background: var(--viator-green);
+                    border-color: var(--viator-green);
+                    color: #fff !important;
+                }
+
+                    .nav-login-area .nav-link[href*="Register"]:hover,
+                    .nav-login-area a[href*="Register"]:hover {
+                        background: var(--viator-green-dark);
+                    }
+
+        /* ── BUTTONS (shared across pages) ── */
+        .btn-viator {
+            background: var(--viator-green);
+            color: #fff !important;
+            border: none;
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+            .btn-viator:hover {
+                background: var(--viator-green-dark);
+                transform: translateY(-1px);
+            }
+
+        .btn-viator-outline {
+            background: transparent;
+            color: var(--viator-green) !important;
+            border: 1.5px solid var(--viator-green);
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: all 0.15s;
+            display: inline-block;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+            .btn-viator-outline:hover {
+                background: var(--viator-green);
+                color: #fff !important;
+            }
+
+        /* ── TOUR CARDS ── */
+        .tour-card {
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: #fff;
+            border: 1px solid var(--viator-border);
+            transition: box-shadow 0.2s, transform 0.2s;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .tour-card:hover {
+                box-shadow: var(--shadow-lg);
+                transform: translateY(-3px);
+            }
+
+        .tour-card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .tour-card-img-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #e0f2eb, #c5e8d8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--viator-green);
+            font-size: 2.5rem;
+        }
+
+        .tour-card-body {
+            padding: 16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tour-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: var(--viator-gray);
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tour-card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .tour-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+            .tour-rating .stars {
+                color: #F59E0B;
+            }
+
+            .tour-rating .count {
+                color: var(--viator-gray);
+            }
+
+        .tour-card-desc {
+            font-size: 0.85rem;
+            color: var(--viator-gray);
+            flex: 1;
+            margin-bottom: 12px;
+        }
+
+        .tour-card-footer {
+            padding: 14px 16px;
+            border-top: 1px solid var(--viator-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .tour-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--viator-dark);
+        }
+
+            .tour-price small {
+                font-size: 0.75rem;
+                font-weight: 400;
+                color: var(--viator-gray);
+            }
+
+        /* ── BREADCRUMB ── */
+        .breadcrumb-viator {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            list-style: none;
+            padding: 16px 0;
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+            .breadcrumb-viator li + li::before {
+                content: '/';
+                color: var(--viator-border);
+                margin-right: 8px;
+            }
+
+            .breadcrumb-viator a {
+                color: var(--viator-green);
+                text-decoration: none;
+            }
+
+            .breadcrumb-viator .active {
+                color: var(--viator-gray);
+            }
+
+        /* ── PAGE WRAPPER ── */
+        .page-content {
+            min-height: calc(100vh - 64px - 200px);
+        }
+
+        /* ── FOOTER ── */
+        .site-footer {
+            background: var(--viator-dark);
+            color: #9CA3AF;
+            margin-top: 80px;
+        }
+
+        .site-footer-top {
+            padding: 48px 0;
+            border-bottom: 1px solid #374151;
+        }
+
+        .footer-brand {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+            .footer-brand span {
+                color: var(--viator-green);
+            }
+
+        .footer-tagline {
+            font-size: 0.875rem;
+            margin-bottom: 0;
+        }
+
+        .footer-heading {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+            .footer-links li {
+                margin-bottom: 8px;
+            }
+
+            .footer-links a {
+                color: #9CA3AF;
+                text-decoration: none;
+                font-size: 0.875rem;
+                transition: color 0.15s;
+            }
+
+                .footer-links a:hover {
+                    color: var(--viator-green);
+                }
+
+        .site-footer-bottom {
+            padding: 20px 0;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        /* ── MOBILE ── */
+        @@media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-controller="Home" asp-action="Index">Tourism</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">Начало</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Tours" asp-action="Index">Маршрути</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Destinations" asp-action="Index">Дестинации</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="TourOperators" asp-action="Index">Туроператори</a>
-                        </li>
-                        @if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Bookings" asp-action="Index">Резервации</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Bookings" asp-action="Profile">Моят профил</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Favorites" asp-action="Index">Любими</a>
-                            </li>
-                        }
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark fw-bold text-danger" asp-controller="Admin" asp-action="Index">Админ панел</a>
-                            </li>
-                        }
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-    </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <nav class="site-nav">
+        <div class="container">
+            <a class="nav-brand" asp-controller="Home" asp-action="Index">Tourism</a>
+
+            <ul class="nav-links">
+                <li><a asp-controller="Home" asp-action="Index">Начало</a></li>
+                <li><a asp-controller="Tours" asp-action="Index">Маршрути</a></li>
+                <li><a asp-controller="Destinations" asp-action="Index">Дестинации</a></li>
+                <li><a asp-controller="TourOperators" asp-action="Index">Туроператори</a></li>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <li><a asp-controller="Bookings" asp-action="Index">Резервации</a></li>
+                    <li><a asp-controller="Bookings" asp-action="Profile">Моят профил</a></li>
+                    <li><a asp-controller="Favorites" asp-action="Index">Любими</a></li>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <li><a class="admin-link" asp-controller="Admin" asp-action="Index">Админ панел</a></li>
+                }
+            </ul>
+
+            <div class="nav-login-area">
+                <partial name="_LoginPartial" />
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        @RenderBody()
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container text-center py-3">
-            &copy; @DateTime.Now.Year - Tourism Web
+    <footer class="site-footer">
+        <div class="site-footer-top">
+            <div class="container">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="footer-brand">Tourism<span>BG</span></div>
+                        <p class="footer-tagline">Открий България и света с незабравими маршрути.</p>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="footer-heading">Маршрути</p>
+                        <ul class="footer-links">
+                            <li><a asp-controller="Tours" asp-action="Index">Всички маршрути</a></li>
+                            <li><a asp-controller="Destinations" asp-action="Index">Дестинации</a></li>
+                            <li><a asp-controller="TourOperators" asp-action="Index">Туроператори</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-2">
+                        <p class="footer-heading">Акаунт</p>
+                        <ul class="footer-links">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <li><a asp-controller="Bookings" asp-action="Profile">Моят профил</a></li>
+                                <li><a asp-controller="Bookings" asp-action="Index">Резервации</a></li>
+                                <li><a asp-controller="Favorites" asp-action="Index">Любими</a></li>
+                            }
+                            else
+                            {
+                                <li><a asp-area="Identity" asp-page="/Account/Login">Вход</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Register">Регистрация</a></li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="site-footer-bottom">
+            <div class="container">
+                &copy; @DateTime.Now.Year - Tourism Web
+            </div>
         </div>
     </footer>
 
@@ -71,4 +466,3 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
-

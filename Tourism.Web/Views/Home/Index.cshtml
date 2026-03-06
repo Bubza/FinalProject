@@ -3,41 +3,416 @@
     ViewData["Title"] = "Начало";
 }
 
-<!-- Hero Section -->
-<section class="hero bg-primary text-white py-5 mb-5">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold">Открий света с нас</h1>
-        <p class="lead">Незабравими маршрути, невероятни дестинации</p>
-        <a asp-controller="Tours" asp-action="Index" class="btn btn-light btn-lg mt-3">
-            Разгледай маршрутите
-        </a>
+<!-- ── HERO ── -->
+<section class="hero-section">
+    <div class="hero-bg">
+        <div class="hero-overlay"></div>
+    </div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Открий нещо невероятно,<br>близо и далеч</h1>
+        <p class="hero-subtitle">Над 500 маршрута, избрани от истински пътешественици</p>
+
+        <div class="hero-search">
+            <form asp-controller="Tours" asp-action="Index" method="get" class="search-bar">
+                <div class="search-field search-field-main">
+                    <i class="bi bi-search"></i>
+                    <input type="text" name="search" placeholder="Търси дестинация или маршрут..." class="search-input" />
+                </div>
+                <div class="search-field search-field-price">
+                    <i class="bi bi-currency-dollar"></i>
+                    <input type="number" name="maxPrice" placeholder="Макс. цена" class="search-input" />
+                </div>
+                <button type="submit" class="search-btn">
+                    <i class="bi bi-search me-2"></i>Търси
+                </button>
+            </form>
+        </div>
+
+        <div class="hero-badges">
+            <span class="hero-badge"><i class="bi bi-shield-check"></i> Сигурно плащане</span>
+            <span class="hero-badge"><i class="bi bi-arrow-counterclockwise"></i> Безплатно отказване</span>
+            <span class="hero-badge"><i class="bi bi-star"></i> Проверени отзиви</span>
+        </div>
     </div>
 </section>
 
-<!-- Featured Tours -->
-<section class="container mb-5">
-    <h2 class="mb-4">Препоръчани маршрути</h2>
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        @foreach (var tour in Model)
-        {
-            <div class="col">
-                <div class="card h-100 shadow-sm">
-                    @if (!string.IsNullOrEmpty(tour.ImageUrl))
-                    {
-                        <img src="@tour.ImageUrl" class="card-img-top" alt="@tour.Title" style="height:200px;object-fit:cover;">
-                    }
-                    <div class="card-body">
-                        <h5 class="card-title">@tour.Title</h5>
-                        <p class="text-muted"><i class="bi bi-geo-alt"></i> @tour.DestinationName</p>
-                        <p class="card-text">@tour.Description.Substring(0, Math.Min(100, tour.Description.Length))...</p>
-                    </div>
-                    <div class="card-footer d-flex justify-content-between align-items-center">
-                        <strong class="text-primary">@tour.PricePerPerson.ToString("C") / човек</strong>
-                        <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id"
-                           class="btn btn-outline-primary btn-sm">Детайли</a>
-                    </div>
+<!-- ── WHY US ── -->
+<section class="why-section">
+    <div class="container">
+        <div class="why-grid">
+            <div class="why-item">
+                <div class="why-icon"><i class="bi bi-telephone"></i></div>
+                <div>
+                    <strong>Поддръжка 24/7</strong>
+                    <p>Всегда на линия</p>
                 </div>
             </div>
+            <div class="why-item">
+                <div class="why-icon why-icon-teal"><i class="bi bi-lightbulb"></i></div>
+                <div>
+                    <strong>Уникални преживявания</strong>
+                    <p>Открий скрити места</p>
+                </div>
+            </div>
+            <div class="why-item">
+                <div class="why-icon why-icon-yellow"><i class="bi bi-star"></i></div>
+                <div>
+                    <strong>Проверени ревюта</strong>
+                    <p>Реални оценки</p>
+                </div>
+            </div>
+            <div class="why-item">
+                <div class="why-icon why-icon-blue"><i class="bi bi-calendar-check"></i></div>
+                <div>
+                    <strong>Гъвкаво резервиране</strong>
+                    <p>Промени по всяко време</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FEATURED TOURS ── -->
+<section class="container section-gap">
+    <div class="section-header">
+        <div>
+            <h2 class="section-title">Препоръчани маршрути</h2>
+            <p class="section-subtitle">Най-популярните преживявания тази седмица</p>
+        </div>
+        <a asp-controller="Tours" asp-action="Index" class="btn-viator-outline">
+            Виж всички <i class="bi bi-arrow-right"></i>
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+            @foreach (var tour in Model)
+            {
+                <div class="col">
+                    <div class="tour-card">
+                        @if (!string.IsNullOrEmpty(tour.ImageUrl))
+                        {
+                            <img src="@tour.ImageUrl" class="tour-card-img" alt="@tour.Title" />
+                        }
+                        else
+                        {
+                            <div class="tour-card-img-placeholder">
+                                <i class="bi bi-map"></i>
+                            </div>
+                        }
+                        <div class="tour-card-body">
+                            <div class="tour-card-meta">
+                                <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.DestinationName</span>
+                                <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                            </div>
+                            <h3 class="tour-card-title">@tour.Title</h3>
+                            @if (tour.ReviewCount > 0)
+                            {
+                                <div class="tour-rating">
+                                    <span class="stars">
+                                        @for (int i = 0; i < (int)Math.Round(tour.AverageRating); i++)
+                                        {
+                                            <text>★</text>
+                                        }
+                                    </span>
+                                    <strong>@tour.AverageRating.ToString("0.0")</strong>
+                                    <span class="count">(@tour.ReviewCount ревюта)</span>
+                                </div>
+                            }
+                            <p class="tour-card-desc">
+                                @(tour.Description.Length > 90 ? tour.Description.Substring(0, 90) + "…" : tour.Description)
+                            </p>
+                        </div>
+                        <div class="tour-card-footer">
+                            <div>
+                                <div class="tour-price">
+                                    @tour.PricePerPerson.ToString("C")
+                                    <small>/ човек</small>
+                                </div>
+                            </div>
+                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">
+                                Виж детайли
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert-viator">
+            <i class="bi bi-info-circle me-2"></i>Все още няма налични маршрути.
+        </div>
+    }
+</section>
+
+<!-- ── CTA BANNER ── -->
+<section class="cta-section">
+    <div class="container cta-content">
+        <h2>Готов за следващото пътешествие?</h2>
+        <p>Регистрирай се безплатно и получи персонализирани препоръки</p>
+        @if (User.Identity?.IsAuthenticated != true)
+        {
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn-viator btn-viator-white">
+                Регистрирай се безплатно
+            </a>
+        }
+        else
+        {
+            <a asp-controller="Tours" asp-action="Index" class="btn-viator btn-viator-white">
+                Разгледай маршрутите
+            </a>
         }
     </div>
 </section>
+
+<style>
+    /* ── HERO ── */
+    .hero-section {
+        position: relative;
+        min-height: 520px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .hero-bg {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, #0a4d35 0%, #00AA6C 50%, #1a7a52 100%);
+    }
+
+    .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 72px 0 60px;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: clamp(1.8rem, 4vw, 3rem);
+        color: #fff;
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        color: rgba(255,255,255,0.85);
+        font-size: 1.1rem;
+        margin-bottom: 36px;
+    }
+
+    /* ── SEARCH BAR ── */
+    .hero-search {
+        margin-bottom: 24px;
+    }
+
+    .search-bar {
+        background: #fff;
+        border-radius: 12px;
+        padding: 8px;
+        display: flex;
+        gap: 0;
+        max-width: 700px;
+        margin: 0 auto;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+
+    .search-field {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        flex: 1;
+        color: #9CA3AF;
+    }
+
+        .search-field + .search-field {
+            border-left: 1px solid #E5E7EB;
+        }
+
+    .search-input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 0.9rem;
+        color: #1A1A1A;
+    }
+
+        .search-input::placeholder {
+            color: #9CA3AF;
+        }
+
+    .search-btn {
+        background: var(--viator-green);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 28px;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.15s;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+        .search-btn:hover {
+            background: var(--viator-green-dark);
+        }
+
+    /* ── HERO BADGES ── */
+    .hero-badges {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .hero-badge {
+        background: rgba(255,255,255,0.15);
+        color: #fff;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255,255,255,0.2);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    /* ── WHY SECTION ── */
+    .why-section {
+        padding: 28px 0;
+        border-bottom: 1px solid var(--viator-border);
+    }
+
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+    }
+
+    @@media (max-width: 768px) {
+        .why-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .why-item {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .why-icon {
+        width: 44px;
+        height: 44px;
+        background: #FFF0F0;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #EF4444;
+        flex-shrink: 0;
+    }
+
+    .why-icon-teal {
+        background: var(--viator-green-light);
+        color: var(--viator-green);
+    }
+
+    .why-icon-yellow {
+        background: #FEF3C7;
+        color: #D97706;
+    }
+
+    .why-icon-blue {
+        background: #EFF6FF;
+        color: #3B82F6;
+    }
+
+    .why-item strong {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+    }
+
+    .why-item p {
+        margin: 0;
+        font-size: 0.8rem;
+        color: var(--viator-gray);
+    }
+
+    /* ── SECTION ── */
+    .section-gap {
+        padding: 56px 0;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 32px;
+    }
+
+    .section-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.75rem;
+        margin-bottom: 4px;
+    }
+
+    .section-subtitle {
+        color: var(--viator-gray);
+        font-size: 0.9rem;
+        margin: 0;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+        background: linear-gradient(135deg, #0a4d35 0%, #00AA6C 100%);
+        margin-top: 60px;
+    }
+
+    .cta-content {
+        text-align: center;
+        padding: 64px 20px;
+        color: #fff;
+    }
+
+        .cta-content h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .cta-content p {
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 28px;
+            font-size: 1.05rem;
+        }
+
+    .btn-viator-white {
+        background: #fff !important;
+        color: var(--viator-green) !important;
+        padding: 14px 36px !important;
+        font-size: 1rem !important;
+    }
+
+        .btn-viator-white:hover {
+            background: #f0fdf6 !important;
+        }
+</style>

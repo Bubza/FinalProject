@@ -10,5 +10,6 @@ namespace Tourism.Services
         Task CreateAsync(Booking booking);
         Task UpdateAsync(Booking booking);
         Task DeleteAsync(int id);
+        Task<int> GetBookedSpotsAsync(int tourId);
     }
 }

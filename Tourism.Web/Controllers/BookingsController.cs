@@ -20,7 +20,7 @@ namespace Tourism.Web.Controllers
             _tourService = tourService;
         }
 
-        // GET: /Bookings — Моите резервации
+        // GET: /Bookings
         public async Task<IActionResult> Index()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
@@ -48,6 +48,15 @@ namespace Tourism.Web.Controllers
             var tour = await _tourService.GetByIdAsync(tourId);
             if (tour == null) return NotFound();
 
+            var bookedSpots = await _bookingService.GetBookedSpotsAsync(tourId);
+            var availableSpots = tour.MaxParticipants - bookedSpots;
+
+            if (availableSpots <= 0)
+            {
+                TempData["Error"] = "За съжаление маршрутът е напълно запълнен.";
+                return RedirectToAction("Details", "Tours", new { id = tourId });
+            }
+
             var viewModel = new BookingViewModel
             {
                 TourId = tour.Id,
@@ -58,6 +67,7 @@ namespace Tourism.Web.Controllers
                 NumberOfPeople = 1
             };
 
+            ViewBag.AvailableSpots = availableSpots;
             return View(viewModel);
         }
 
@@ -70,6 +80,18 @@ namespace Tourism.Web.Controllers
 
             var tour = await _tourService.GetByIdAsync(model.TourId);
             if (tour == null) return NotFound();
+
+            // Re-check availability at time of submission
+            var bookedSpots = await _bookingService.GetBookedSpotsAsync(model.TourId);
+            var availableSpots = tour.MaxParticipants - bookedSpots;
+
+            if (model.NumberOfPeople > availableSpots)
+            {
+                ModelState.AddModelError("NumberOfPeople",
+                    $"Недостатъчно свободни места. Налични: {availableSpots}.");
+                ViewBag.AvailableSpots = availableSpots;
+                return View(model);
+            }
 
             var booking = new Booking
             {
@@ -102,7 +124,8 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Резервацията е отказана.";
             return RedirectToAction(nameof(Index));
         }
-        // GET: /Bookings/Profile — Профил с история на пътуванията
+
+        // GET: /Bookings/Profile
         public async Task<IActionResult> Profile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;

@@ -35,7 +35,7 @@
             margin: 0;
         }
 
-        /* ── NAVBAR ── */
+        /* ══ NAVBAR ══ */
         .site-nav {
             background: #fff;
             border-bottom: 1px solid var(--viator-border);
@@ -43,14 +43,13 @@
             top: 0;
             z-index: 1000;
             box-shadow: var(--shadow-sm);
-            transition: box-shadow 0.2s;
         }
 
             .site-nav .container {
                 display: flex;
                 align-items: center;
                 height: 64px;
-                gap: 8px;
+                gap: 4px;
             }
 
         .nav-brand {
@@ -60,9 +59,10 @@
             text-decoration: none;
             letter-spacing: -0.5px;
             flex-shrink: 0;
-            margin-right: 16px;
+            margin-right: 12px;
         }
 
+        /* ── flat links ── */
         .nav-links {
             display: flex;
             list-style: none;
@@ -70,35 +70,135 @@
             padding: 0;
             gap: 2px;
             flex: 1;
+            align-items: center;
         }
 
-            .nav-links a {
-                color: var(--viator-dark);
-                text-decoration: none;
-                font-size: 0.875rem;
-                font-weight: 500;
-                padding: 8px 12px;
-                border-radius: 8px;
-                transition: all 0.15s;
-                white-space: nowrap;
-                display: block;
+            .nav-links > li {
+                position: relative;
             }
 
-                .nav-links a:hover {
-                    background: var(--viator-green-light);
-                    color: var(--viator-green);
+                .nav-links > li > a,
+                .nav-links > li > button.nav-drop-btn {
+                    color: var(--viator-dark);
+                    text-decoration: none;
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    padding: 8px 12px;
+                    border-radius: 8px;
+                    transition: all 0.15s;
+                    white-space: nowrap;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    font-family: 'DM Sans', sans-serif;
+                    line-height: 1;
                 }
 
-            .nav-links .admin-link {
+                    .nav-links > li > a:hover,
+                    .nav-links > li > button.nav-drop-btn:hover,
+                    .nav-links > li.open > button.nav-drop-btn {
+                        background: var(--viator-green-light);
+                        color: var(--viator-green);
+                    }
+
+        .nav-drop-chevron {
+            font-size: 0.65rem;
+            transition: transform 0.2s;
+            display: inline-block;
+        }
+
+        .nav-links > li.open .nav-drop-chevron {
+            transform: rotate(180deg);
+        }
+
+        /* ── dropdown panel ── */
+        .nav-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: #fff;
+            border: 1px solid var(--viator-border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            min-width: 210px;
+            padding: 6px;
+            z-index: 999;
+            animation: dropIn 0.15s ease;
+        }
+
+        .nav-links > li.open .nav-dropdown {
+            display: block;
+        }
+
+        @@keyframes dropIn {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .nav-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 14px;
+            border-radius: 8px;
+            color: var(--viator-dark);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.12s;
+        }
+
+            .nav-dropdown a:hover {
+                background: var(--viator-green-light);
+                color: var(--viator-green);
+            }
+
+        .nav-dropdown .drop-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--viator-green-light);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--viator-green);
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+
+        .nav-dropdown .drop-divider {
+            border: none;
+            border-top: 1px solid var(--viator-border);
+            margin: 4px 8px;
+        }
+
+        /* admin pill */
+        .admin-pill {
+            background: #FEE2E2;
+            color: #DC2626 !important;
+            border-radius: 6px;
+            padding: 6px 12px !important;
+            font-size: 0.8rem !important;
+            font-weight: 600 !important;
+        }
+
+            .admin-pill:hover {
+                background: #FECACA !important;
                 color: #DC2626 !important;
             }
 
-                .nav-links .admin-link:hover {
-                    background: #FEE2E2;
-                    color: #DC2626 !important;
-                }
-
-        /* Override Bootstrap login partial styles */
+        /* ── login area ── */
         .nav-login-area {
             display: flex;
             align-items: center;
@@ -129,7 +229,7 @@
                     border-color: var(--viator-green);
                     color: var(--viator-green);
                 }
-                /* Register button — filled green */
+
                 .nav-login-area .nav-link[href*="Register"],
                 .nav-login-area a[href*="Register"] {
                     background: var(--viator-green);
@@ -142,7 +242,7 @@
                         background: var(--viator-green-dark);
                     }
 
-        /* ── BUTTONS (shared across pages) ── */
+        /* ══ SHARED BUTTONS ══ */
         .btn-viator {
             background: var(--viator-green);
             color: #fff !important;
@@ -182,7 +282,7 @@
                 color: #fff !important;
             }
 
-        /* ── TOUR CARDS ── */
+        /* ══ TOUR CARDS ══ */
         .tour-card {
             border-radius: var(--radius);
             overflow: hidden;
@@ -277,13 +377,7 @@
             color: var(--viator-dark);
         }
 
-            .tour-price small {
-                font-size: 0.75rem;
-                font-weight: 400;
-                color: var(--viator-gray);
-            }
-
-        /* ── BREADCRUMB ── */
+        /* ══ BREADCRUMB ══ */
         .breadcrumb-viator {
             display: flex;
             gap: 8px;
@@ -309,12 +403,11 @@
                 color: var(--viator-gray);
             }
 
-        /* ── PAGE WRAPPER ── */
+        /* ══ PAGE / FOOTER ══ */
         .page-content {
             min-height: calc(100vh - 64px - 200px);
         }
 
-        /* ── FOOTER ── */
         .site-footer {
             background: var(--viator-dark);
             color: #9CA3AF;
@@ -378,7 +471,6 @@
             font-size: 0.8rem;
         }
 
-        /* ── MOBILE ── */
         @@media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -393,20 +485,69 @@
             <a class="nav-brand" asp-controller="Home" asp-action="Index">Tourism</a>
 
             <ul class="nav-links">
+
                 <li><a asp-controller="Home" asp-action="Index">Начало</a></li>
-                <li><a asp-controller="Tours" asp-action="Index">Маршрути</a></li>
-                <li><a asp-controller="Destinations" asp-action="Index">Дестинации</a></li>
-                <li><a asp-controller="TourOperators" asp-action="Index">Туроператори</a></li>
+
+                <!-- ── Разгледай dropdown ── -->
+                <li>
+                    <button class="nav-drop-btn" onclick="toggleDrop(this)">
+                        Разгледай <span class="nav-drop-chevron">▼</span>
+                    </button>
+                    <div class="nav-dropdown">
+                        <a asp-controller="Tours" asp-action="Index">
+                            <span class="drop-icon"><i class="bi bi-map"></i></span>
+                            Всички маршрути
+                        </a>
+                        <a asp-controller="Destinations" asp-action="Index">
+                            <span class="drop-icon"><i class="bi bi-geo-alt"></i></span>
+                            Дестинации
+                        </a>
+                        <a asp-controller="TourOperators" asp-action="Index">
+                            <span class="drop-icon"><i class="bi bi-building"></i></span>
+                            Туроператори
+                        </a>
+                    </div>
+                </li>
+
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <li><a asp-controller="Bookings" asp-action="Index">Резервации</a></li>
-                    <li><a asp-controller="Bookings" asp-action="Profile">Моят профил</a></li>
-                    <li><a asp-controller="Favorites" asp-action="Index">Любими</a></li>
+                    <!-- ── Моят акаунт dropdown ── -->
+                    <li>
+                        <button class="nav-drop-btn" onclick="toggleDrop(this)">
+                            <i class="bi bi-person-circle" style="font-size:1rem"></i>
+                            Моят акаунт <span class="nav-drop-chevron">▼</span>
+                        </button>
+                        <div class="nav-dropdown">
+                            <a asp-controller="Bookings" asp-action="Profile">
+                                <span class="drop-icon"><i class="bi bi-person"></i></span>
+                                Профил
+                            </a>
+                            <a asp-controller="Bookings" asp-action="Index">
+                                <span class="drop-icon"><i class="bi bi-calendar-check"></i></span>
+                                Резервации
+                            </a>
+                            <a asp-controller="Favorites" asp-action="Index">
+                                <span class="drop-icon"><i class="bi bi-heart"></i></span>
+                                Любими маршрути
+                            </a>
+                            <hr class="drop-divider" />
+                            <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                <span class="drop-icon"><i class="bi bi-gear"></i></span>
+                                Настройки
+                            </a>
+                        </div>
+                    </li>
                 }
+
                 @if (User.IsInRole("Admin"))
                 {
-                    <li><a class="admin-link" asp-controller="Admin" asp-action="Index">Админ панел</a></li>
+                    <li>
+                        <a asp-controller="Admin" asp-action="Index" class="admin-pill">
+                            <i class="bi bi-shield-lock"></i> Админ панел
+                        </a>
+                    </li>
                 }
+
             </ul>
 
             <div class="nav-login-area">
@@ -425,7 +566,7 @@
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="footer-brand">Tourism<span>BG</span></div>
-                        <p class="footer-tagline">Открий България и света с незабравими маршрути.</p>
+                        <p class="footer-tagline">Открий България и света с незабравими маршрути и екскурзии.</p>
                     </div>
                     <div class="col-md-2">
                         <p class="footer-heading">Маршрути</p>
@@ -451,18 +592,42 @@
                             }
                         </ul>
                     </div>
+                    <div class="col-md-4">
+                        <p class="footer-heading">Контакти</p>
+                        <ul class="footer-links">
+                            <li><i class="bi bi-envelope me-2"></i>info@tourismbg.com</li>
+                            <li><i class="bi bi-telephone me-2"></i>+359 2 000 1234</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="site-footer-bottom">
             <div class="container">
-                &copy; @DateTime.Now.Year - Tourism Web
+                &copy; @DateTime.Now.Year - TourismBG &nbsp;·&nbsp; Всички права запазени
             </div>
         </div>
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // Dropdown toggle
+        function toggleDrop(btn) {
+            const li = btn.closest('li');
+            const isOpen = li.classList.contains('open');
+            // close all
+            document.querySelectorAll('.nav-links > li').forEach(l => l.classList.remove('open'));
+            if (!isOpen) li.classList.add('open');
+        }
+        // Close on outside click
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.nav-links')) {
+                document.querySelectorAll('.nav-links > li').forEach(l => l.classList.remove('open'));
+            }
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+

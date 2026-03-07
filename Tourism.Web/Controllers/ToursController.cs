@@ -26,7 +26,6 @@ namespace Tourism.Web.Controllers
         {
             var tours = await _tourService.SearchAsync(search, null, maxPrice);
 
-            // Допълнителни филтри
             var filtered = tours.AsEnumerable();
 
             if (minPrice.HasValue)
@@ -62,7 +61,6 @@ namespace Tourism.Web.Controllers
                 ReviewCount = t.Reviews.Count
             });
 
-            // Сортиране
             viewModels = sortBy switch
             {
                 "price_asc" => viewModels.OrderBy(t => t.PricePerPerson),
@@ -80,8 +78,9 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var tour = await _tourService.GetByIdAsync(id);
-
             if (tour == null) return NotFound();
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var viewModel = new TourViewModel
             {
@@ -104,10 +103,10 @@ namespace Tourism.Web.Controllers
 
             if (User.Identity?.IsAuthenticated == true)
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
-                ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId, id);
+                ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId!, id);
             }
 
+            // Reviews with user names
             var reviews = new List<ReviewViewModel>();
             foreach (var r in tour.Reviews)
             {
@@ -122,8 +121,26 @@ namespace Tourism.Web.Controllers
                     UserName = !string.IsNullOrEmpty(user?.FullName) ? user.FullName : user?.Email ?? "Анонимен"
                 });
             }
-
             ViewBag.Reviews = reviews;
+
+            // Personalised recommendations
+            var recommendations = await _tourService.GetRecommendationsAsync(id, userId, 3);
+            ViewBag.Recommendations = recommendations.Select(t => new TourViewModel
+            {
+                Id = t.Id,
+                Title = t.Title,
+                Description = t.Description,
+                PricePerPerson = t.PricePerPerson,
+                DurationDays = t.DurationDays,
+                ImageUrl = t.ImageUrl,
+                DestinationName = t.Destination.Name,
+                AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
+                ReviewCount = t.Reviews.Count
+            }).ToList();
+
+            // Booked spots for availability display
+            ViewBag.BookedSpots = tour.Bookings
+                .Count(b => b.Status != Tourism.Data.Models.Enums.BookingStatus.Cancelled);
 
             return View(viewModel);
         }

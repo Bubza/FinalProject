@@ -3,109 +3,788 @@
     ViewData["Title"] = Model.Title;
 }
 
-<div class="container my-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Начало</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Tours" asp-action="Index">Маршрути</a></li>
-            <li class="breadcrumb-item active">@Model.Title</li>
-        </ol>
-    </nav>
+<!-- Breadcrumb -->
+<div style="background:var(--viator-light);border-bottom:1px solid var(--viator-border)">
+    <div class="container">
+        <ul class="breadcrumb-viator">
+            <li><a asp-controller="Home" asp-action="Index">Начало</a></li>
+            <li><a asp-controller="Tours" asp-action="Index">Маршрути</a></li>
+            <li class="active">@Model.Title</li>
+        </ul>
+    </div>
+</div>
 
-    <div class="row">
-        <!-- Main Info -->
-        <div class="col-md-8">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <img src="@Model.ImageUrl" class="img-fluid rounded mb-4" alt="@Model.Title">
-            }
-            <h1>@Model.Title</h1>
-            <p class="text-muted">
-                <i class="bi bi-geo-alt"></i> @Model.DestinationName &nbsp;|&nbsp;
-                <i class="bi bi-person"></i> @Model.TourOperatorName
-            </p>
-            @if (Model.ReviewCount > 0)
-            {
-                <p class="text-warning fs-5">★ @Model.AverageRating.ToString("0.0") <small class="text-muted">(@Model.ReviewCount ревюта)</small></p>
-            }
-            <p>@Model.Description</p>
+<!-- Hero image -->
+@if (!string.IsNullOrEmpty(Model.ImageUrl))
+{
+    <div class="vt-detail-hero">
+        <img src="@Model.ImageUrl" alt="@Model.Title" class="vt-detail-hero-img" />
+        <div class="vt-detail-hero-gradient"></div>
+    </div>
+}
+
+<div class="container vt-detail-layout">
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <article class="vt-detail-main">
+        <h1 class="vt-detail-title">@Model.Title</h1>
+
+        <div class="vt-detail-meta">
+            <span class="vt-meta-pill">
+                <i class="bi bi-geo-alt-fill"></i> @Model.DestinationName
+            </span>
+            <span class="vt-meta-pill">
+                <i class="bi bi-building"></i> @Model.TourOperatorName
+            </span>
+            <span class="vt-meta-pill">
+                <i class="bi bi-clock"></i> @Model.DurationDays дни
+            </span>
+            <span class="vt-meta-pill">
+                <i class="bi bi-people"></i> до @Model.MaxParticipants участника
+            </span>
         </div>
 
-        <!-- Booking Sidebar -->
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-                <h4 class="text-primary">@Model.PricePerPerson.ToString("C") <small class="text-muted fs-6">/ човек</small></h4>
-                <ul class="list-unstyled mt-3">
-                    <li><i class="bi bi-calendar-check"></i> <strong>Старт:</strong> @Model.StartDate.ToString("dd.MM.yyyy")</li>
-                    <li><i class="bi bi-calendar-x"></i> <strong>Край:</strong> @Model.EndDate.ToString("dd.MM.yyyy")</li>
-                    <li><i class="bi bi-clock"></i> <strong>Продължителност:</strong> @Model.DurationDays дни</li>
-                    <li><i class="bi bi-people"></i> <strong>Макс. участници:</strong> @Model.MaxParticipants</li>
-                </ul>
+        @if (Model.ReviewCount > 0)
+        {
+            <div class="vt-rating-row">
+                <div class="vt-rating-stars">@(new string('★', (int)Math.Round(Model.AverageRating)))</div>
+                <div class="vt-rating-score">@Model.AverageRating.ToString("0.0")</div>
+                <div class="vt-rating-label">@Model.ReviewCount ревюта</div>
+                <div class="vt-rating-bar-wrap">
+                    <div class="vt-rating-bar" style="width:@((Model.AverageRating / 5.0 * 100).ToString("0"))%"></div>
+                </div>
+            </div>
+        }
 
-                @if (User.Identity?.IsAuthenticated == true)
-                {
-                    @if (ViewBag.IsFavorite == true)
-                    {
-                        <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" method="post">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger w-100 mt-2">♥ Премахни от любими</button>
-                        </form>
-                    }
-                    else
-                    {
-                        <form asp-controller="Favorites" asp-action="Add" asp-route-id="@Model.Id" method="post">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-outline-danger w-100 mt-2">♥ Добави в любими</button>
-                        </form>
-                    }
-                    <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
-                       class="btn btn-primary w-100 mt-2">Резервирай сега</a>
-                    <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"
-                       class="btn btn-outline-secondary w-100 mt-2">Напиши ревю</a>
-                }
-                else
-                {
-                    <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary w-100 mt-2">
-                        Влез за да резервираш
-                    </a>
-                }
+        <div class="vt-detail-divider"></div>
+
+        <h2 class="vt-detail-section-title">За маршрута</h2>
+        <p class="vt-detail-desc">@Model.Description</p>
+
+        <div class="vt-detail-divider"></div>
+
+        <!-- Key Details -->
+        <h2 class="vt-detail-section-title">Детайли</h2>
+        <div class="vt-info-grid">
+            <div class="vt-info-item">
+                <i class="bi bi-calendar-check"></i>
+                <div>
+                    <div class="vt-info-label">Начало</div>
+                    <div class="vt-info-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                </div>
+            </div>
+            <div class="vt-info-item">
+                <i class="bi bi-calendar-x"></i>
+                <div>
+                    <div class="vt-info-label">Край</div>
+                    <div class="vt-info-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                </div>
+            </div>
+            <div class="vt-info-item">
+                <i class="bi bi-clock-history"></i>
+                <div>
+                    <div class="vt-info-label">Продължителност</div>
+                    <div class="vt-info-value">@Model.DurationDays дни</div>
+                </div>
+            </div>
+            <div class="vt-info-item">
+                <i class="bi bi-people-fill"></i>
+                <div>
+                    <div class="vt-info-label">Максимален брой</div>
+                    <div class="vt-info-value">@Model.MaxParticipants участника</div>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- Ревюта -->
-    <section class="mt-5">
-        <h3 class="mb-3">Ревюта</h3>
+
+        <div class="vt-detail-divider"></div>
+
+        <!-- Reviews -->
+        <h2 class="vt-detail-section-title">
+            Ревюта
+            @if (Model.ReviewCount > 0)
+            {
+                <span class="vt-review-badge">@Model.ReviewCount</span>
+            }
+        </h2>
 
         @if (ViewBag.Reviews != null && ((IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews).Any())
         {
-            @foreach (var review in (IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews)
-            {
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="vt-reviews-list">
+                @foreach (var review in (IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews)
+                {
+                    <div class="vt-review-card">
+                        <div class="vt-review-header">
+                            <div class="vt-reviewer-avatar">@review.UserName.Substring(0, 1).ToUpper()</div>
                             <div>
-                                <strong>@review.UserName</strong>
-                                <span class="text-warning ms-2">
-                                    @for (int i = 0; i < review.Rating; i++)
-                                    {
-                                        <text>★</text>
-                                    }
-                                    @for (int i = review.Rating; i < 5; i++)
-                                    {
-                                        <text>☆</text>
-                                    }
-                                </span>
+                                <div class="vt-reviewer-name">@review.UserName</div>
+                                <div class="vt-review-date">@review.CreatedAt.ToString("dd MMM yyyy")</div>
                             </div>
-                            <small class="text-muted">@review.CreatedAt.ToString("dd.MM.yyyy")</small>
+                            <div class="vt-review-stars ms-auto">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <span class="@(i <= review.Rating ? "star-filled" : "star-empty")">★</span>
+                                }
+                            </div>
                         </div>
-                        <p class="mb-0">@review.Comment</p>
+                        <p class="vt-review-text">@review.Comment</p>
                     </div>
-                </div>
-            }
+                }
+            </div>
         }
         else
         {
-            <p class="text-muted">Все още няма ревюта за този маршрут.</p>
+            <div class="vt-no-reviews">
+                <div style="font-size:2.5rem;margin-bottom:12px">💬</div>
+                <p>Все още няма ревюта. Бъди първият!</p>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"
+                       class="btn-viator-outline" style="margin-top:8px">Напиши ревю</a>
+                }
+            </div>
         }
-    </section>
+
+        <div class="vt-detail-divider"></div>
+
+        <!-- ══ GOOGLE MAP ══ -->
+        <h2 class="vt-detail-section-title"><i class="bi bi-map" style="color:var(--viator-green)"></i> Локация</h2>
+        <div id="tour-map" style="width:100%;height:340px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--viator-border);"></div>
+        <p style="font-size:0.8rem;color:var(--viator-gray);margin-top:8px">
+            <i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @Model.DestinationName
+        </p>
+
+        <div class="vt-detail-divider"></div>
+
+        <!-- ══ RECOMMENDATIONS ══ -->
+        @if (ViewBag.Recommendations != null && ((IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>)ViewBag.Recommendations).Any())
+        {
+            <h2 class="vt-detail-section-title">Може да те заинтересува и</h2>
+            <div class="row g-3">
+                @foreach (var rec in (IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>)ViewBag.Recommendations)
+                {
+                    <div class="col-12">
+                        <a asp-action="Details" asp-route-id="@rec.Id" class="vt-rec-card">
+                            @if (!string.IsNullOrEmpty(rec.ImageUrl))
+                            {
+                                <img src="@rec.ImageUrl" class="vt-rec-img" alt="@rec.Title" />
+                            }
+                            else
+                            {
+                                <div class="vt-rec-img" style="background:var(--viator-green-light);display:flex;align-items:center;justify-content:center;color:var(--viator-green);font-size:1.5rem">
+                                    <i class="bi bi-map"></i>
+                                </div>
+                            }
+                            <div class="vt-rec-body">
+                                <div style="font-size:0.75rem;color:var(--viator-gray)">
+                                    <i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @rec.DestinationName &middot; @rec.DurationDays дни
+                                </div>
+                                <div class="vt-rec-title">@rec.Title</div>
+                                @if (rec.ReviewCount > 0)
+                                {
+                                    <div style="font-size:0.78rem;color:#F59E0B">★ @rec.AverageRating.ToString("0.0") <span style="color:var(--viator-gray)">(@rec.ReviewCount)</span></div>
+                                }
+                            </div>
+                            <div class="vt-rec-price">@rec.PricePerPerson.ToString("0") €</div>
+                        </a>
+                    </div>
+                }
+            </div>
+        }
+    </article>
+
+    <!-- ══ BOOKING SIDEBAR ══ -->
+    <aside class="vt-booking-card">
+        <div class="vt-booking-price">
+            <span class="vt-price-big">@Model.PricePerPerson.ToString("0.00") €</span>
+            <span class="vt-price-per">на човек</span>
+        </div>
+
+        @if (Model.ReviewCount > 0)
+        {
+            <div class="vt-booking-rating">
+                <span style="color:#F59E0B">★ @Model.AverageRating.ToString("0.0")</span>
+                <span style="color:var(--viator-gray);font-size:0.82rem">(@Model.ReviewCount ревюта)</span>
+            </div>
+        }
+
+        <div class="vt-booking-dates">
+            <div class="vt-booking-date-row">
+                <i class="bi bi-calendar2-check" style="color:var(--viator-green)"></i>
+                <span>@Model.StartDate.ToString("dd.MM.yyyy") → @Model.EndDate.ToString("dd.MM.yyyy")</span>
+            </div>
+            <div class="vt-booking-date-row">
+                <i class="bi bi-clock" style="color:var(--viator-green)"></i>
+                <span>@Model.DurationDays дни</span>
+            </div>
+            <div class="vt-booking-date-row">
+                <i class="bi bi-people" style="color:var(--viator-green)"></i>
+                <span>до @Model.MaxParticipants участника</span>
+            </div>
+        </div>
+
+        @{
+            int bookedSpots = ViewBag.BookedSpots ?? 0;
+            int availableSpots = Model.MaxParticipants - bookedSpots;
+            bool isFull = availableSpots <= 0;
+            bool isLow = availableSpots > 0 && availableSpots <= 5;
+        }
+        @if (isFull)
+        {
+            <div class="vt-avail-badge vt-avail-full">
+                <i class="bi bi-x-circle-fill"></i> Напълно запълнен
+            </div>
+        }
+        else if (isLow)
+        {
+            <div class="vt-avail-badge vt-avail-low">
+                <i class="bi bi-fire"></i> Само @availableSpots места останали!
+            </div>
+        }
+        else
+        {
+            <div class="vt-avail-badge vt-avail-ok">
+                <i class="bi bi-check-circle-fill"></i> @availableSpots свободни места
+            </div>
+        }
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
+               class="btn-viator vt-book-btn">Резервирай сега</a>
+
+            @if (ViewBag.IsFavorite == true)
+            {
+                <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" method="post" style="margin-top:10px">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="vt-fav-btn vt-fav-active">
+                        <i class="bi bi-heart-fill"></i> Премахни от любими
+                    </button>
+                </form>
+            }
+            else
+            {
+                <form asp-controller="Favorites" asp-action="Add" asp-route-id="@Model.Id" method="post" style="margin-top:10px">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="vt-fav-btn">
+                        <i class="bi bi-heart"></i> Добави в любими
+                    </button>
+                </form>
+            }
+
+            <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"
+               class="vt-review-btn">
+                <i class="bi bi-pencil-square"></i> Напиши ревю
+            </a>
+        }
+        else
+        {
+            <a asp-area="Identity" asp-page="/Account/Login" class="btn-viator vt-book-btn">
+                Влез за да резервираш
+            </a>
+            <p class="vt-booking-hint">Нямаш акаунт? <a asp-area="Identity" asp-page="/Account/Register">Регистрирай се безплатно</a></p>
+        }
+
+        <div class="vt-booking-guarantee">
+            <i class="bi bi-shield-check"></i>
+            <span>Безопасно резервиране. Поддръжка 24/7.</span>
+        </div>
+    </aside>
+
 </div>
+
+<style>
+    .vt-detail-hero {
+        position: relative;
+        height: 420px;
+        overflow: hidden;
+    }
+
+    .vt-detail-hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .vt-detail-hero-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 120px;
+        background: linear-gradient(to bottom, transparent, #fff);
+    }
+
+    .vt-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 340px;
+        gap: 40px;
+        padding-top: 32px;
+        padding-bottom: 60px;
+        align-items: start;
+    }
+
+    /* Main */
+    .vt-detail-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 2rem;
+        margin-bottom: 16px;
+        line-height: 1.25;
+    }
+
+    .vt-detail-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .vt-meta-pill {
+        background: var(--viator-light);
+        border: 1px solid var(--viator-border);
+        border-radius: 50px;
+        padding: 5px 14px;
+        font-size: 0.82rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .vt-meta-pill i {
+            color: var(--viator-green);
+        }
+
+    .vt-rating-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
+
+    .vt-rating-stars {
+        color: #F59E0B;
+        font-size: 1.3rem;
+        letter-spacing: 2px;
+    }
+
+    .vt-rating-score {
+        font-size: 1.3rem;
+        font-weight: 700;
+    }
+
+    .vt-rating-label {
+        color: var(--viator-gray);
+        font-size: 0.875rem;
+    }
+
+    .vt-rating-bar-wrap {
+        flex: 1;
+        min-width: 80px;
+        height: 6px;
+        background: var(--viator-border);
+        border-radius: 3px;
+        overflow: hidden;
+    }
+
+    .vt-rating-bar {
+        height: 100%;
+        background: var(--viator-green);
+        border-radius: 3px;
+    }
+
+    .vt-detail-divider {
+        border: none;
+        border-top: 1px solid var(--viator-border);
+        margin: 28px 0;
+    }
+
+    .vt-detail-section-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.3rem;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .vt-review-badge {
+        background: var(--viator-green);
+        color: #fff;
+        font-size: 0.75rem;
+        border-radius: 50px;
+        padding: 2px 10px;
+        font-family: 'DM Sans', sans-serif;
+    }
+
+    .vt-detail-desc {
+        color: #374151;
+        line-height: 1.75;
+        font-size: 0.95rem;
+    }
+
+    .vt-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .vt-info-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px;
+        border: 1px solid var(--viator-border);
+        border-radius: 10px;
+    }
+
+        .vt-info-item > i {
+            color: var(--viator-green);
+            font-size: 1.2rem;
+            margin-top: 2px;
+        }
+
+    .vt-info-label {
+        font-size: 0.75rem;
+        color: var(--viator-gray);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .vt-info-value {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Reviews */
+    .vt-reviews-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .vt-review-card {
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 20px;
+    }
+
+    .vt-review-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .vt-reviewer-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--viator-green);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1rem;
+        flex-shrink: 0;
+    }
+
+    .vt-reviewer-name {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .vt-review-date {
+        font-size: 0.78rem;
+        color: var(--viator-gray);
+    }
+
+    .vt-review-stars .star-filled {
+        color: #F59E0B;
+    }
+
+    .vt-review-stars .star-empty {
+        color: #D1D5DB;
+    }
+
+    .vt-review-text {
+        color: #374151;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    .vt-no-reviews {
+        text-align: center;
+        padding: 40px;
+        background: var(--viator-light);
+        border-radius: var(--radius);
+        color: var(--viator-gray);
+    }
+
+    /* Booking sidebar */
+    .vt-booking-card {
+        position: sticky;
+        top: 80px;
+        background: #fff;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 16px;
+        padding: 28px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .vt-booking-price {
+        margin-bottom: 6px;
+    }
+
+    .vt-price-big {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--viator-dark);
+    }
+
+    .vt-price-per {
+        font-size: 0.85rem;
+        color: var(--viator-gray);
+        margin-left: 6px;
+    }
+
+    .vt-booking-rating {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .vt-booking-dates {
+        background: var(--viator-light);
+        border-radius: 10px;
+        padding: 14px 16px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .vt-booking-date-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 0.875rem;
+    }
+
+    .vt-book-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 14px !important;
+        font-size: 1rem !important;
+        border-radius: 10px !important;
+    }
+
+    .vt-fav-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border: 1.5px solid #E5E7EB;
+        border-radius: 10px;
+        background: transparent;
+        cursor: pointer;
+        font-size: 0.875rem;
+        font-family: 'DM Sans', sans-serif;
+        font-weight: 600;
+        color: var(--viator-dark);
+        transition: all 0.15s;
+        text-align: center;
+    }
+
+        .vt-fav-btn:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .vt-fav-btn.vt-fav-active {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #FEF2F2;
+        }
+
+    .vt-review-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 10px;
+        text-align: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--viator-gray);
+        text-decoration: none;
+        margin-top: 8px;
+        transition: all 0.15s;
+    }
+
+        .vt-review-btn:hover {
+            border-color: var(--viator-green);
+            color: var(--viator-green);
+        }
+
+    .vt-booking-hint {
+        font-size: 0.8rem;
+        color: var(--viator-gray);
+        text-align: center;
+        margin-top: 12px;
+    }
+
+        .vt-booking-hint a {
+            color: var(--viator-green);
+        }
+
+    .vt-booking-guarantee {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        color: var(--viator-gray);
+        border-top: 1px solid var(--viator-border);
+        margin-top: 20px;
+        padding-top: 16px;
+    }
+
+        .vt-booking-guarantee i {
+            color: var(--viator-green);
+        }
+
+    /* Availability badges */
+    .vt-avail-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        font-weight: 600;
+        margin-bottom: 16px;
+    }
+
+    .vt-avail-ok {
+        background: var(--viator-green-light);
+        color: var(--viator-green-dark);
+    }
+
+    .vt-avail-low {
+        background: #FFF7ED;
+        color: #C2410C;
+    }
+
+    .vt-avail-full {
+        background: #FEF2F2;
+        color: #DC2626;
+    }
+
+    /* Recommendation cards */
+    .vt-rec-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border: 1px solid var(--viator-border);
+        border-radius: 10px;
+        overflow: hidden;
+        text-decoration: none;
+        color: var(--viator-dark);
+        transition: box-shadow 0.15s, transform 0.15s;
+    }
+
+        .vt-rec-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            color: var(--viator-dark);
+        }
+
+    .vt-rec-img {
+        width: 80px;
+        height: 72px;
+        object-fit: cover;
+        flex-shrink: 0;
+    }
+
+    .vt-rec-body {
+        flex: 1;
+        padding: 8px 0;
+    }
+
+    .vt-rec-title {
+        font-weight: 600;
+        font-size: 0.875rem;
+        margin: 2px 0 4px;
+    }
+
+    .vt-rec-price {
+        font-weight: 700;
+        font-size: 0.95rem;
+        padding-right: 16px;
+        flex-shrink: 0;
+        color: var(--viator-dark);
+    }
+
+    @@media (max-width: 900px) {
+        .vt-detail-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .vt-booking-card {
+            position: static;
+        }
+
+        .vt-detail-hero {
+            height: 280px;
+        }
+
+        .vt-info-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // Google Maps — geocode the destination name and show a marker
+        function initMap() {
+            const destinationName = "@Model.DestinationName, @Model.DestinationName";
+            const geocoder = new google.maps.Geocoder();
+            const mapDiv = document.getElementById('tour-map');
+
+            geocoder.geocode({ address: "@Model.DestinationName" }, function(results, status) {
+                if (status === 'OK') {
+                    const map = new google.maps.Map(mapDiv, {
+                        center: results[0].geometry.location,
+                        zoom: 12,
+                        styles: [
+                            { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] }
+                        ]
+                    });
+                    new google.maps.Marker({
+                        map: map,
+                        position: results[0].geometry.location,
+                        title: "@Model.DestinationName",
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 10,
+                            fillColor: '#00AA6C',
+                            fillOpacity: 1,
+                            strokeColor: '#fff',
+                            strokeWeight: 2
+                        }
+                    });
+                } else {
+                    mapDiv.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--viator-gray);font-size:0.9rem;background:var(--viator-light)"><i class="bi bi-map me-2"></i> Картата не е налична</div>';
+                }
+            });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+    </script>
+}

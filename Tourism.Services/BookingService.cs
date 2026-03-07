@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Tourism.Data.Models.Entities;
 using Tourism.Data;
+using Tourism.Data.Models.Enums;
 
 namespace Tourism.Services
 {
@@ -58,6 +59,14 @@ namespace Tourism.Services
                 _context.Bookings.Remove(booking);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        // Returns total number of people already booked (excluding cancelled)
+        public async Task<int> GetBookedSpotsAsync(int tourId)
+        {
+            return await _context.Bookings
+                .Where(b => b.TourId == tourId && b.Status != BookingStatus.Cancelled)
+                .SumAsync(b => b.NumberOfPeople);
         }
     }
 }

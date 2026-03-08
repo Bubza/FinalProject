@@ -2,43 +2,188 @@
 @model RegisterModel
 @{
     ViewData["Title"] = "Регистрация";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
-<h1>@ViewData["Title"]</h1>
-<div class="row">
-    <div class="col-md-4">
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <div class="auth-logo">
+            <a href="/" style="text-decoration:none">
+                <span style="font-family:'DM Serif Display',serif;font-size:2rem;color:var(--viator-green)">NaviGo</span>
+            </a>
+        </div>
+
+        <h1 class="auth-title">Създай акаунт</h1>
+        <p class="auth-sub">Регистрирай се</p>
+
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Създай нов акаунт</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" placeholder="Име" />
-                <label asp-for="Input.FirstName">Име</label>
-                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            <div asp-validation-summary="ModelOnly" class="auth-error" role="alert"></div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0">
+                <div class="auth-field">
+                    <label class="auth-label">Име</label>
+                    <input asp-for="Input.FirstName" class="auth-input" placeholder="Иван" />
+                    <span asp-validation-for="Input.FirstName" class="auth-validation"></span>
+                </div>
+                <div class="auth-field">
+                    <label class="auth-label">Фамилия</label>
+                    <input asp-for="Input.LastName" class="auth-input" placeholder="Петров" />
+                    <span asp-validation-for="Input.LastName" class="auth-validation"></span>
+                </div>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" placeholder="Фамилия" />
-                <label asp-for="Input.LastName">Фамилия</label>
-                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+
+            <div class="auth-field">
+                <label class="auth-label">Имейл</label>
+                <input asp-for="Input.Email" class="auth-input" autocomplete="username"
+                       aria-required="true" placeholder="name@example.com" />
+                <span asp-validation-for="Input.Email" class="auth-validation"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+            <div class="auth-field">
+                <label class="auth-label">Парола</label>
+                <input asp-for="Input.Password" class="auth-input" autocomplete="new-password"
+                       aria-required="true" placeholder="••••••••" />
+                <span asp-validation-for="Input.Password" class="auth-validation"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Парола</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+
+            <div class="auth-field">
+                <label class="auth-label">Потвърди парола</label>
+                <input asp-for="Input.ConfirmPassword" class="auth-input" autocomplete="new-password"
+                       aria-required="true" placeholder="••••••••" />
+                <span asp-validation-for="Input.ConfirmPassword" class="auth-validation"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Потвърди парола</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Регистрация</button>
+
+            <button id="registerSubmit" type="submit" class="btn-viator auth-btn" style="margin-top:8px">
+                Регистрирай се
+            </button>
         </form>
+
+        <div class="auth-divider"><span>Вече имаш акаунт?</span></div>
+
+        <a asp-page="./Login" class="btn-viator-outline auth-btn">Влез</a>
+
     </div>
 </div>
+
+<style>
+    .auth-page {
+        min-height: calc(100vh - 64px);
+        background: var(--viator-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: 16px;
+        padding: 40px;
+        width: 100%;
+        max-width: 460px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .auth-logo {
+        text-align: center;
+        margin-bottom: 24px;
+    }
+
+    .auth-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.6rem;
+        text-align: center;
+        margin-bottom: 6px;
+    }
+
+    .auth-sub {
+        color: var(--viator-gray);
+        text-align: center;
+        font-size: 0.9rem;
+        margin-bottom: 28px;
+    }
+
+    .auth-error {
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        border-radius: 8px;
+        padding: 12px 16px;
+        color: #DC2626;
+        font-size: 0.875rem;
+        margin-bottom: 16px;
+    }
+
+    .auth-field {
+        margin-bottom: 16px;
+    }
+
+    .auth-label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.82rem;
+        margin-bottom: 6px;
+        color: var(--viator-dark);
+    }
+
+    .auth-input {
+        width: 100%;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 8px;
+        padding: 11px 14px;
+        font-size: 0.9rem;
+        font-family: 'DM Sans', sans-serif;
+        outline: none;
+        transition: border-color 0.15s;
+    }
+
+        .auth-input:focus {
+            border-color: var(--viator-green);
+            box-shadow: 0 0 0 3px rgba(0,170,108,0.12);
+        }
+
+    .auth-validation {
+        color: #ef4444;
+        font-size: 0.78rem;
+        margin-top: 4px;
+        display: block;
+    }
+
+    .auth-btn {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 13px !important;
+        font-size: 0.95rem !important;
+        border-radius: 8px !important;
+    }
+
+    .auth-divider {
+        text-align: center;
+        margin: 20px 0 12px;
+        position: relative;
+        color: var(--viator-gray);
+        font-size: 0.82rem;
+    }
+
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--viator-border);
+        }
+
+        .auth-divider span {
+            background: #fff;
+            padding: 0 12px;
+            position: relative;
+        }
+</style>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

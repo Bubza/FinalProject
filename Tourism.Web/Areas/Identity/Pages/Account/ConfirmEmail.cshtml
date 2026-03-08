@@ -1,8 +1,52 @@
 ﻿@page
 @model ConfirmEmailModel
 @{
-    ViewData["Title"] = "Confirm email";
+    ViewData["Title"] = "Потвърждение на имейл";
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="auth-page">
+    <div class="auth-card" style="text-align:center">
+
+        <div style="font-size:3.5rem;margin-bottom:16px">✅</div>
+
+        <h1 class="auth-title">Имейлът е потвърден!</h1>
+        <p style="color:var(--viator-gray);font-size:0.95rem;margin-bottom:28px">
+            Акаунтът ти е активиран успешно.
+        </p>
+
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+
+        <a asp-page="./Login" class="btn-viator" style="display:inline-block;padding:12px 28px">
+            Влез в акаунта
+        </a>
+
+    </div>
+</div>
+
+<style>
+    .auth-page {
+        min-height: calc(100vh - 64px);
+        background: var(--viator-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 16px;
+    }
+
+    .auth-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: 16px;
+        padding: 48px 40px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: var(--shadow-md);
+    }
+
+    .auth-title {
+        font-family: 'DM Serif Display', serif;
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+    }
+</style>

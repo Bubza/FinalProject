@@ -1,28 +1,133 @@
 ﻿@{
-    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout !=  null)
-    {
-        Layout = parentLayout.ToString();
-    }
-    else
-    {
-        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
-    }
+    Layout = "/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Manage your account</h1>
-
-<div>
-    <h2>Change your account settings</h2>
-    <hr />
-    <div class="row">
-        <div class="col-md-3">
-            <partial name="_ManageNav" />
-        </div>
-        <div class="col-md-9">
-            @RenderBody()
-        </div>
+<div style="background:var(--viator-light);border-bottom:1px solid var(--viator-border)">
+    <div class="container">
+        <ul class="breadcrumb-viator">
+            <li><a href="/">Начало</a></li>
+            <li class="active">Управление на акаунт</li>
+        </ul>
     </div>
 </div>
+
+<div class="container" style="padding:40px 16px 80px">
+    <div class="row g-4">
+
+        <!-- Sidebar nav -->
+        <div class="col-md-3">
+            <div class="manage-nav-card">
+                <div class="manage-nav-header">
+                    <i class="bi bi-person-circle manage-nav-avatar"></i>
+                    <div class="manage-nav-email">Акаунт</div>
+                </div>
+                <partial name="_ManageNav" />
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="col-md-9">
+            <div class="manage-content-card">
+                @RenderBody()
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .manage-nav-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+    }
+
+    .manage-nav-header {
+        background: var(--viator-green);
+        padding: 24px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .manage-nav-avatar {
+        font-size: 2rem;
+        color: #fff;
+    }
+
+    .manage-nav-email {
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    /* Override the default identity nav pills */
+    .manage-nav-card .nav-pills {
+        padding: 8px;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+        .manage-nav-card .nav-pills .nav-link {
+            color: var(--viator-dark);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            padding: 9px 14px;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+            .manage-nav-card .nav-pills .nav-link:hover {
+                background: var(--viator-green-light);
+                color: var(--viator-green);
+            }
+
+            .manage-nav-card .nav-pills .nav-link.active {
+                background: var(--viator-green-light);
+                color: var(--viator-green);
+                font-weight: 600;
+            }
+
+    .manage-content-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 32px;
+    }
+
+        .manage-content-card h3 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+        }
+
+        .manage-content-card .text-danger {
+            color: #ef4444 !important;
+        }
+
+        .manage-content-card .btn-primary {
+            background: var(--viator-green);
+            border-color: var(--viator-green);
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 24px;
+        }
+
+            .manage-content-card .btn-primary:hover {
+                background: var(--viator-green-dark);
+                border-color: var(--viator-green-dark);
+            }
+
+        .manage-content-card .form-control:focus {
+            border-color: var(--viator-green);
+            box-shadow: 0 0 0 3px rgba(0,170,108,0.15);
+        }
+</style>
 
 @section Scripts {
     @RenderSection("Scripts", required: false)

@@ -1,292 +1,757 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
 @{
     ViewData["Title"] = "Каталог маршрути";
+    var qSearch = Context.Request.Query["search"].ToString();
+    var qMinPrice = Context.Request.Query["minPrice"].ToString();
+    var qMaxPrice = Context.Request.Query["maxPrice"].ToString();
+    var qDuration = Context.Request.Query["duration"].ToString();
+    var qRating = Context.Request.Query["minRating"].ToString();
+    var qSort = Context.Request.Query["sortBy"].ToString();
+    var qStartDate = Context.Request.Query["startDate"].ToString();
+    var qEndDate = Context.Request.Query["endDate"].ToString();
+    var qPeople = Context.Request.Query["people"].ToString();
+    int.TryParse(qPeople, out int qPeopleInt);
 }
 
 <style>
     :root {
-        --viator-green: #00AA6C;
-        --viator-green-dark: #008A57;
-        --viator-green-light: #E6F7F1;
-        --viator-dark: #1A1A1A;
-        --viator-gray: #6B7280;
-        --viator-border: #E5E7EB;
-        --radius: 12px;
-        --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        --g: #00AA6C;
+        --gd: #008A57;
+        --gl: #E6F7F1;
+        --dark: #1A1A1A;
+        --gray: #6B7280;
+        --border: #E5E7EB;
+        --r: 12px;
     }
 
-    .btn-viator {
-        background: var(--viator-green);
-        color: #fff !important;
-        border: none;
-        padding: 9px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.875rem;
+    /* ── Top bar ── */
+    .catalog-header {
+        margin-bottom: 1.25rem;
+    }
+
+    .filter-pills {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .pill-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        background: #fff;
+        color: var(--dark);
         cursor: pointer;
-        transition: background 0.15s;
+        white-space: nowrap;
+        transition: border-color .15s, background .15s;
         text-decoration: none;
-        display: inline-block;
     }
 
-        .btn-viator:hover {
-            background: var(--viator-green-dark);
+        .pill-btn:hover, .pill-btn.active {
+            border-color: var(--dark);
+            background: #fff;
+            color: var(--dark);
         }
 
-    .tour-card {
-        border-radius: var(--radius);
+        .pill-btn.pill-filter {
+            font-weight: 600;
+        }
+
+    .pill-search {
+        flex: 1;
+        min-width: 220px;
+        max-width: 420px;
+        position: relative;
+    }
+
+        .pill-search input {
+            width: 100%;
+            padding: 9px 16px 9px 40px;
+            border: 1.5px solid var(--border);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            outline: none;
+            transition: border-color .15s;
+            font-family: 'Poppins',sans-serif;
+        }
+
+            .pill-search input:focus {
+                border-color: var(--dark);
+            }
+
+        .pill-search .si {
+            position: absolute;
+            left: 13px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+    .results-meta {
+        font-size: 0.875rem;
+        color: var(--gray);
+        margin-bottom: 1rem;
+    }
+
+        .results-meta strong {
+            color: var(--dark);
+        }
+
+    /* ── Cards ── */
+    .tour-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+    }
+
+    @@media(max-width:1100px) {
+        .tour-grid {
+            grid-template-columns: repeat(3,1fr);
+        }
+    }
+
+    @@media(max-width:768px) {
+        .tour-grid {
+            grid-template-columns: repeat(2,1fr);
+        }
+    }
+
+    @@media(max-width:480px) {
+        .tour-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .tcard {
+        border-radius: var(--r);
         overflow: hidden;
         background: #fff;
-        border: 1px solid var(--viator-border);
-        transition: box-shadow 0.2s, transform 0.2s;
-        height: 100%;
+        border: 1px solid var(--border);
+        transition: box-shadow .2s, transform .2s;
         display: flex;
         flex-direction: column;
+        position: relative;
     }
 
-        .tour-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-3px);
+        .tcard:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,.11);
+            transform: translateY(-2px);
         }
 
-    .tour-card-img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
+    .tcard-img-wrap {
+        position: relative;
+        overflow: hidden;
     }
 
-    .tour-card-img-placeholder {
+    .tcard-img {
         width: 100%;
-        height: 200px;
-        background: linear-gradient(135deg, #e0f2eb, #c5e8d8);
+        height: 185px;
+        object-fit: cover;
+        display: block;
+        transition: transform .3s;
+    }
+
+    .tcard:hover .tcard-img {
+        transform: scale(1.04);
+    }
+
+    .tcard-img-placeholder {
+        width: 100%;
+        height: 185px;
+        background: linear-gradient(135deg,#e0f2eb,#c5e8d8);
         display: flex;
         align-items: center;
         justify-content: center;
-        color: var(--viator-green);
+        color: var(--g);
         font-size: 2.5rem;
     }
 
-    .tour-card-body {
-        padding: 16px;
+    .tcard-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #fff;
+        color: var(--dark);
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 50px;
+        box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    }
+
+    .tcard-heart {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 6px rgba(0,0,0,.15);
+        transition: transform .15s;
+    }
+
+        .tcard-heart:hover {
+            transform: scale(1.1);
+        }
+
+        .tcard-heart i {
+            font-size: 1rem;
+            color: #6B7280;
+        }
+
+    .tcard-body {
+        padding: 12px 14px 8px;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
-    .tour-card-meta {
+    .tcard-rating {
         display: flex;
         align-items: center;
-        gap: 12px;
-        font-size: 0.8rem;
-        color: var(--viator-gray);
-        margin-bottom: 8px;
-        flex-wrap: wrap;
+        gap: 5px;
+        font-size: 0.82rem;
+        margin-bottom: 5px;
     }
 
-    .tour-card-title {
-        font-size: 1rem;
-        font-weight: 600;
-        margin-bottom: 6px;
-        line-height: 1.4;
-    }
-
-    .tour-rating {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-    }
-
-        .tour-rating .stars {
+        .tcard-rating .star {
             color: #F59E0B;
+            font-size: 0.85rem;
         }
 
-        .tour-rating .count {
-            color: var(--viator-gray);
+        .tcard-rating .rval {
+            font-weight: 700;
         }
 
-    .tour-card-desc {
-        font-size: 0.85rem;
-        color: var(--viator-gray);
+        .tcard-rating .rcnt {
+            color: var(--gray);
+        }
+
+    .tcard-title {
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 6px;
+        color: var(--dark);
         flex: 1;
-        margin-bottom: 12px;
     }
 
-    .tour-card-footer {
-        padding: 14px 16px;
-        border-top: 1px solid var(--viator-border);
+    .tcard-meta {
+        font-size: 0.8rem;
+        color: var(--gray);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        margin-bottom: 8px;
+    }
+
+        .tcard-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+    .tcard-footer {
+        padding: 10px 14px 12px;
+        border-top: 1px solid var(--border);
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
 
-    .tour-price {
-        font-size: 1.1rem;
+    .tcard-price-label {
+        font-size: 0.72rem;
+        color: var(--gray);
+    }
+
+    .tcard-price {
+        font-size: 1rem;
         font-weight: 700;
-        color: var(--viator-dark);
+        color: var(--dark);
     }
 
-    .filter-box {
-        background: #fff;
-        border: 1px solid var(--viator-border);
-        border-radius: var(--radius);
-        padding: 1.25rem;
-        margin-bottom: 1.5rem;
+    .btn-details {
+        background: var(--g);
+        color: #fff !important;
+        border: none;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-decoration: none;
+        transition: background .15s;
+        white-space: nowrap;
     }
 
-        .filter-box .form-control, .filter-box .form-select {
-            border-radius: 8px;
-            border-color: var(--viator-border);
-            font-size: 0.875rem;
+        .btn-details:hover {
+            background: var(--gd);
         }
 
-            .filter-box .form-control:focus, .filter-box .form-select:focus {
-                border-color: var(--viator-green);
-                box-shadow: 0 0 0 3px rgba(0,170,108,0.15);
+    /* ── Drawer filter ── */
+    .filter-drawer {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: var(--r);
+        padding: 1.25rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: none;
+    }
+
+        .filter-drawer.open {
+            display: block;
+        }
+
+    .filter-row {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .fg {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        flex: 1;
+        min-width: 130px;
+    }
+
+        .fg label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gray);
+            text-transform: uppercase;
+        }
+
+        .fg input, .fg select {
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            font-family: 'Poppins',sans-serif;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+            .fg input:focus, .fg select:focus {
+                border-color: var(--g);
             }
 
-    .btn-search {
-        background: var(--viator-green);
+    .btn-apply {
+        background: var(--g);
         color: #fff;
         border: none;
-        padding: 9px 24px;
+        padding: 9px 22px;
         border-radius: 8px;
         font-weight: 600;
         font-size: 0.875rem;
         cursor: pointer;
-        transition: background 0.15s;
     }
 
-        .btn-search:hover {
-            background: var(--viator-green-dark);
-            color: #fff;
+        .btn-apply:hover {
+            background: var(--gd);
         }
 
-    .btn-clear {
+    .btn-reset {
         background: #fff;
-        color: var(--viator-dark);
-        border: 1.5px solid var(--viator-border);
-        padding: 9px 20px;
+        color: var(--dark);
+        border: 1.5px solid var(--border);
+        padding: 9px 18px;
         border-radius: 8px;
         font-weight: 600;
         font-size: 0.875rem;
         text-decoration: none;
-        transition: border-color 0.15s;
         display: inline-block;
     }
 
-        .btn-clear:hover {
-            border-color: var(--viator-gray);
-            color: var(--viator-dark);
+        .btn-reset:hover {
+            border-color: var(--gray);
+            color: var(--dark);
         }
 </style>
 
 <div class="container my-4">
-    <h1 class="mb-4">Каталог маршрути</h1>
+    <h1 class="mb-3" style="font-size:1.6rem;font-weight:700">Каталог маршрути</h1>
 
-    <form method="get" class="filter-box">
-        <div class="row g-3">
-            <div class="col-md-4">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">ТЪРСЕНЕ</label>
-                <input type="text" name="search" class="form-control" placeholder="Търси по име или дестинация..."
-                       value="@Context.Request.Query["search"]" />
+    <form method="get" id="filterForm">
+        <!-- pill bar -->
+        <div class="filter-pills">
+            <div class="pill-search">
+                <i class="bi bi-search si"></i>
+                <input type="text" name="search" placeholder="Дестинация или маршрут..." value="@qSearch" />
             </div>
-            <div class="col-md-2">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МИН. ЦЕНА (€)</label>
-                <input type="number" name="minPrice" class="form-control" placeholder="0"
-                       value="@Context.Request.Query["minPrice"]" />
+            <!-- Date pill -->
+            <div style="position:relative">
+                <button type="button" class="pill-btn @(!string.IsNullOrEmpty(qStartDate) ? "active" : "")" id="datePillBtn">
+                    <i class="bi bi-calendar3"></i>
+                    @if (!string.IsNullOrEmpty(qStartDate))
+                    {
+                        <span>@qStartDate@(!string.IsNullOrEmpty(qEndDate) ? " — " + qEndDate : "")</span>
+                        <span onclick="clearDates(event)" style="margin-left:4px;font-size:1rem;line-height:1">×</span>
+                    }
+                    else
+                    {
+                        <span>Кога пътуваш?</span>
+                    }
+                </button>
+                <input type="hidden" name="startDate" id="startDateInput" value="@qStartDate" />
+                <input type="hidden" name="endDate" id="endDateInput" value="@qEndDate" />
+                <input type="text" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:100%;left:0" readonly />
             </div>
-            <div class="col-md-2">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МАКС. ЦЕНА (€)</label>
-                <input type="number" name="maxPrice" class="form-control" placeholder="10000"
-                       value="@Context.Request.Query["maxPrice"]" />
+            <button type="button" class="pill-btn pill-filter" onclick="document.getElementById('filterDrawer').classList.toggle('open')">
+                <i class="bi bi-sliders"></i> Филтри
+            </button>
+            @if (qDuration == "1-3")
+            {
+                <span class="pill-btn active">1–3 дни ×</span>
+            }
+            @if (qDuration == "4-7")
+            {
+                <span class="pill-btn active">4–7 дни ×</span>
+            }
+            @if (qDuration == "8+")
+            {
+                <span class="pill-btn active">8+ дни ×</span>
+            }
+            @if (!string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice))
+            {
+                <span class="pill-btn active">Цена ×</span>
+            }
+            @if (!string.IsNullOrEmpty(qRating))
+            {
+                <span class="pill-btn active">Рейтинг @qRating+ ×</span>
+            }
+            <!-- People pill -->
+            <div style="position:relative">
+                <button type="button" class="pill-btn @(!string.IsNullOrEmpty(qPeople) && qPeopleInt > 0 ? "active" : "")" id="peoplePillBtn">
+                    <i class="bi bi-person"></i>
+                    <span id="peoplePillLabel">@(qPeopleInt > 0 ? qPeopleInt + " " + (qPeopleInt == 1 ? "човек" : "човека") : "Брой хора")</span>
+                </button>
+                <input type="hidden" name="people" id="peopleInput" value="@qPeople" />
+                <!-- People dropdown -->
+                <div id="peopleDropdown" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:999;min-width:260px">
+                    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:1rem">Можете да изберете до 15 човека</p>
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+                        <span style="font-weight:500">Хора</span>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <button type="button" onclick="changePeople(-1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--g);background:#fff;color:var(--g);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">−</button>
+                            <span id="peopleCount" style="font-weight:700;font-size:1.1rem;min-width:20px;text-align:center">@(qPeopleInt > 0 ? qPeopleInt : 1)</span>
+                            <button type="button" onclick="changePeople(1)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--g);background:#fff;color:var(--g);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">+</button>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:8px">
+                        <button type="button" onclick="resetPeople()" style="flex:1;padding:9px;border:1.5px solid var(--border);border-radius:8px;background:#fff;font-weight:600;font-size:0.875rem;cursor:pointer">Нулирай</button>
+                        <button type="button" onclick="applyPeople()" style="flex:1;padding:9px;background:var(--g);color:#fff;border:none;border-radius:8px;font-weight:600;font-size:0.875rem;cursor:pointer">Приложи</button>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-2">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">ПРОДЪЛЖИТЕЛНОСТ</label>
-                <select name="duration" class="form-select">
-                    <option value="">Всички</option>
-                    <option value="1-3" selected="@(Context.Request.Query["duration"] == "1-3")">1-3 дни</option>
-                    <option value="4-7" selected="@(Context.Request.Query["duration"] == "4-7")">4-7 дни</option>
-                    <option value="8+" selected="@(Context.Request.Query["duration"] == "8+")">8+ дни</option>
+
+            @if (!string.IsNullOrEmpty(qSearch) || !string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qRating) || !string.IsNullOrEmpty(qStartDate) || qPeopleInt > 0)
+            {
+                <a asp-action="Index" style="font-size:0.85rem;font-weight:600;color:#DC2626;text-decoration:underline;white-space:nowrap;padding:4px 0">Изчисти всички</a>
+            }
+
+            <div class="ms-auto d-flex align-items-center gap-2">
+                <select name="sortBy" onchange="this.form.submit()" style="border:1.5px solid var(--border);border-radius:50px;padding:7px 14px;font-size:0.85rem;font-family:'Poppins',sans-serif;outline:none;cursor:pointer;">
+                    <option value="">Сортирай по</option>
+                    @if (qSort == "price_asc")
+                    {
+                        <option value="price_asc" selected>Цена ↑</option>
+                    }
+                    else
+                    {
+                        <option value="price_asc">Цена ↑</option>
+                    }
+                    @if (qSort == "price_desc")
+                    {
+                        <option value="price_desc" selected>Цена ↓</option>
+                    }
+                    else
+                    {
+                        <option value="price_desc">Цена ↓</option>
+                    }
+                    @if (qSort == "rating")
+                    {
+                        <option value="rating" selected>Най-висок рейтинг</option>
+                    }
+                    else
+                    {
+                        <option value="rating">Най-висок рейтинг</option>
+                    }
+                    @if (qSort == "duration")
+                    {
+                        <option value="duration" selected>Продължителност</option>
+                    }
+                    else
+                    {
+                        <option value="duration">Продължителност</option>
+                    }
                 </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МИН. РЕЙТИНГ</label>
-                <select name="minRating" class="form-select">
-                    <option value="">Всички</option>
-                    <option value="3" selected="@(Context.Request.Query["minRating"] == "3")">★★★ 3+</option>
-                    <option value="4" selected="@(Context.Request.Query["minRating"] == "4")">★★★★ 4+</option>
-                    <option value="5" selected="@(Context.Request.Query["minRating"] == "5")">★★★★★ 5</option>
-                </select>
+                <button type="submit" class="btn-details" style="padding:8px 20px">Търси</button>
             </div>
         </div>
-        <div class="row g-3 mt-1 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">СОРТИРАЙ ПО</label>
-                <select name="sortBy" class="form-select">
-                    <option value="">По подразбиране</option>
-                    <option value="price_asc" selected="@(Context.Request.Query["sortBy"] == "price_asc")">Цена: ниска → висока</option>
-                    <option value="price_desc" selected="@(Context.Request.Query["sortBy"] == "price_desc")">Цена: висока → ниска</option>
-                    <option value="rating" selected="@(Context.Request.Query["sortBy"] == "rating")">Най-висок рейтинг</option>
-                    <option value="duration" selected="@(Context.Request.Query["sortBy"] == "duration")">Продължителност</option>
-                    <option value="newest" selected="@(Context.Request.Query["sortBy"] == "newest")">Най-нови</option>
-                </select>
-            </div>
-            <div class="col-md-auto d-flex gap-2">
-                <button type="submit" class="btn-search">Търси</button>
-                <a asp-action="Index" class="btn-clear">Изчисти</a>
+
+        <!-- collapsible filter drawer -->
+        <div class="filter-drawer @(!string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) || !string.IsNullOrEmpty(qRating) ? "open" : "")" id="filterDrawer">
+            <div class="filter-row">
+                <div class="fg">
+                    <label>Мин. цена (€)</label>
+                    <input type="number" name="minPrice" placeholder="0" value="@qMinPrice" />
+                </div>
+                <div class="fg">
+                    <label>Макс. цена (€)</label>
+                    <input type="number" name="maxPrice" placeholder="10000" value="@qMaxPrice" />
+                </div>
+                <div class="fg">
+                    <label>Продължителност</label>
+                    <select name="duration">
+                        <option value="">Всички</option>
+                        @if (qDuration == "1-3")
+                        {
+                            <option value="1-3" selected>1–3 дни</option>
+                        }
+                        else
+                        {
+                            <option value="1-3">1–3 дни</option>
+                        }
+                        @if (qDuration == "4-7")
+                        {
+                            <option value="4-7" selected>4–7 дни</option>
+                        }
+                        else
+                        {
+                            <option value="4-7">4–7 дни</option>
+                        }
+                        @if (qDuration == "8+")
+                        {
+                            <option value="8+" selected>8+ дни</option>
+                        }
+                        else
+                        {
+                            <option value="8+">8+ дни</option>
+                        }
+                    </select>
+                </div>
+                <div class="fg">
+                    <label>Мин. рейтинг</label>
+                    <select name="minRating">
+                        <option value="">Всички</option>
+                        @if (qRating == "3")
+                        {
+                            <option value="3" selected>★★★ 3+</option>
+                        }
+                        else
+                        {
+                            <option value="3">★★★ 3+</option>
+                        }
+                        @if (qRating == "4")
+                        {
+                            <option value="4" selected>★★★★ 4+</option>
+                        }
+                        else
+                        {
+                            <option value="4">★★★★ 4+</option>
+                        }
+                        @if (qRating == "5")
+                        {
+                            <option value="5" selected>★★★★★ 5</option>
+                        }
+                        else
+                        {
+                            <option value="5">★★★★★ 5</option>
+                        }
+                    </select>
+                </div>
+                <div class="fg" style="flex:0;min-width:auto;flex-direction:row;gap:8px;align-self:flex-end">
+                    <button type="submit" class="btn-apply">Приложи</button>
+                    <a asp-action="Index" class="btn-reset">Нулирай</a>
+                </div>
             </div>
         </div>
     </form>
 
-    <p class="text-muted mb-3" style="font-size:0.875rem">Намерени: <strong>@Model.Count()</strong> маршрута</p>
+    <p class="results-meta">Намерени: <strong>@Model.Count()</strong> маршрута</p>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">Няма намерени маршрути.</div>
+        <div class="alert alert-info">Няма намерени маршрути. <a asp-action="Index">Покажи всички</a></div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+        <div class="tour-grid">
             @foreach (var tour in Model)
             {
-                <div class="col">
-                    <div class="tour-card">
+                <div class="tcard">
+                    <div class="tcard-img-wrap">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
-                            <img src="@tour.ImageUrl" class="tour-card-img" alt="@tour.Title" />
+                            <img src="@tour.ImageUrl" class="tcard-img" alt="@tour.Title" loading="lazy" />
                         }
                         else
                         {
-                            <div class="tour-card-img-placeholder"><i class="bi bi-map"></i></div>
+                            <div class="tcard-img-placeholder"><i class="bi bi-map"></i></div>
                         }
-                        <div class="tour-card-body">
-                            <div class="tour-card-meta">
-                                <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.DestinationName</span>
-                                <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                        @if (tour.AverageRating >= 4.5 && tour.ReviewCount >= 3)
+                        {
+                            <span class="tcard-badge">⭐ Най-популярен</span>
+                        }
+                        <form asp-controller="Favorites" asp-action="Add" method="post" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@tour.Id" />
+                            <button type="submit" class="tcard-heart" title="Добави в любими">
+                                <i class="bi bi-heart"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="tcard-body">
+                        @if (tour.ReviewCount > 0)
+                        {
+                            <div class="tcard-rating">
+                                <span class="star">★</span>
+                                <span class="rval">@tour.AverageRating.ToString("0.0")</span>
+                                <span class="rcnt">(@tour.ReviewCount)</span>
                             </div>
-                            <h3 class="tour-card-title">@tour.Title</h3>
-                            @if (tour.ReviewCount > 0)
-                            {
-                                <div class="tour-rating">
-                                    <span class="stars">@for (int i = 0; i < (int)Math.Round(tour.AverageRating); i++)
-                                        {
-                                            <text>★</text>
-                                        }</span>
-                                    <strong>@tour.AverageRating.ToString("0.0")</strong>
-                                    <span class="count">(@tour.ReviewCount ревюта)</span>
-                                </div>
-                            }
-                            <p class="tour-card-desc">@(tour.Description.Length > 90 ? tour.Description.Substring(0, 90) + "…" : tour.Description)</p>
+                        }
+                        <div class="tcard-title">@tour.Title</div>
+                        <div class="tcard-meta">
+                            <span><i class="bi bi-geo-alt-fill" style="color:var(--g)"></i> @tour.DestinationName</span>
+                            <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                            <span><i class="bi bi-check-circle" style="color:var(--g)"></i> Безплатно отказване</span>
                         </div>
-                        <div class="tour-card-footer">
-                            <div class="tour-price">@tour.PricePerPerson.ToString("C") <small style="font-weight:400;font-size:0.8rem;color:var(--viator-gray)">/ човек</small></div>
-                            <a asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">Виж детайли</a>
+                    </div>
+                    <div class="tcard-footer">
+                        <div>
+                            <div class="tcard-price-label">от</div>
+                            <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
                         </div>
+                        <a asp-action="Details" asp-route-id="@tour.Id" class="btn-details">Виж</a>
                     </div>
                 </div>
             }
         </div>
     }
 </div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .flatpickr-calendar {
+            font-family: 'Poppins',sans-serif !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,.15) !important;
+            border: none !important;
+        }
+
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: #00AA6C !important;
+            border-color: #00AA6C !important;
+        }
+
+        .flatpickr-day.inRange {
+            background: #E6F7F1 !important;
+            border-color: #E6F7F1 !important;
+            color: #00AA6C !important;
+        }
+
+        .flatpickr-day:hover {
+            background: #E6F7F1 !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: #00AA6C !important;
+        }
+
+        .flatpickr-current-month {
+            font-weight: 700 !important;
+        }
+
+        .flatpickr-weekday {
+            color: #6B7280 !important;
+            font-weight: 600 !important;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: #fff !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        var fp = flatpickr("#datePicker", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            locale: {
+                rangeSeparator: " — ",
+                weekdays: { shorthand:["Нд","Пн","Вт","Ср","Чт","Пт","Сб"], longhand:["Неделя","Понеделник","Вторник","Сряда","Четвъртък","Петък","Събота"] },
+                months: { shorthand:["Яну","Фев","Мар","Апр","Май","Юни","Юли","Авг","Сеп","Окт","Ное","Дек"], longhand:["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"] }
+            },
+            onChange: function(selectedDates) {
+                var start = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
+                var end   = selectedDates[1] ? selectedDates[1].toISOString().split("T")[0] : "";
+                document.getElementById("startDateInput").value = start;
+                document.getElementById("endDateInput").value   = end;
+                var btn = document.getElementById("datePillBtn").querySelector("span");
+                if (start) btn.textContent = start + (end ? " — " + end : "");
+            },
+            onClose: function() {
+                if (document.getElementById("startDateInput").value) {
+                    document.getElementById("filterForm").submit();
+                }
+            }
+        });
+
+        document.getElementById("datePillBtn").addEventListener("click", function(e) {
+            if (e.target.tagName !== "SPAN" || e.target.textContent !== "×") {
+                fp.open();
+            }
+        });
+
+        // People pill
+        var currentPeople = @(qPeopleInt > 0 ? qPeopleInt : 1);
+        document.getElementById("peoplePillBtn").addEventListener("click", function() {
+            var d = document.getElementById("peopleDropdown");
+            d.style.display = d.style.display === "none" ? "block" : "none";
+        });
+        document.addEventListener("click", function(e) {
+            var d = document.getElementById("peopleDropdown");
+            if (!document.getElementById("peoplePillBtn").contains(e.target) && !d.contains(e.target))
+                d.style.display = "none";
+        });
+        function changePeople(delta) {
+            currentPeople = Math.max(1, Math.min(15, currentPeople + delta));
+            document.getElementById("peopleCount").textContent = currentPeople;
+        }
+        function applyPeople() {
+            document.getElementById("peopleInput").value = currentPeople;
+            document.getElementById("peoplePillLabel").textContent = currentPeople + " " + (currentPeople === 1 ? "човек" : "човека");
+            document.getElementById("peopleDropdown").style.display = "none";
+            document.getElementById("filterForm").submit();
+        }
+        function resetPeople() {
+            currentPeople = 1;
+            document.getElementById("peopleCount").textContent = "1";
+            document.getElementById("peopleInput").value = "";
+            document.getElementById("peopleDropdown").style.display = "none";
+            document.getElementById("filterForm").submit();
+        }
+            e.stopPropagation();
+            document.getElementById("startDateInput").value = "";
+            document.getElementById("endDateInput").value   = "";
+            fp.clear();
+            document.getElementById("filterForm").submit();
+        }
+    </script>
+}

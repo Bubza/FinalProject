@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Tourism.Data.Models.Entities;
@@ -13,11 +14,13 @@ namespace Tourism.Web.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly ITourService _tourService;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingsController(IBookingService bookingService, ITourService tourService)
+        public BookingsController(IBookingService bookingService, ITourService tourService, UserManager<ApplicationUser> userManager)
         {
             _bookingService = bookingService;
             _tourService = tourService;
+            _userManager = userManager;
         }
 
         // GET: /Bookings
@@ -129,6 +132,7 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> Profile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+            var user = await _userManager.FindByIdAsync(userId);
             var bookings = await _bookingService.GetByUserIdAsync(userId);
 
             var viewModels = bookings.Select(b => new BookingViewModel
@@ -144,6 +148,8 @@ namespace Tourism.Web.Controllers
                 BookedAt = b.BookedAt
             }).ToList();
 
+            var fullName = user?.FullName;
+            ViewBag.DisplayName = !string.IsNullOrWhiteSpace(fullName) ? fullName : User.FindFirstValue(ClaimTypes.Email);
             ViewBag.UserEmail = User.FindFirstValue(ClaimTypes.Email);
             ViewBag.TotalTrips = viewModels.Count(b => b.Status == BookingStatus.Completed || b.Status == BookingStatus.Confirmed);
             ViewBag.TotalSpent = viewModels.Where(b => b.Status != BookingStatus.Cancelled).Sum(b => b.TotalPrice);

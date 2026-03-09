@@ -18,9 +18,11 @@
                     <i class="bi bi-search"></i>
                     <input type="text" name="search" placeholder="Търси дестинация или маршрут..." class="search-input" />
                 </div>
-                <div class="search-field search-field-price">
-                    <i class="bi bi-currency-dollar"></i>
-                    <input type="number" name="maxPrice" placeholder="Макс. цена" class="search-input" />
+                <div class="search-field search-field-price" style="min-width:200px">
+                    <i class="bi bi-calendar3" style="flex-shrink:0"></i>
+                    <input type="text" id="heroDatePicker" placeholder="Избери дати..." class="search-input" readonly style="cursor:pointer" />
+                    <input type="hidden" name="startDate" id="heroStartDate" />
+                    <input type="hidden" name="endDate" id="heroEndDate" />
                 </div>
                 <button type="submit" class="search-btn">
                     <i class="bi bi-search me-2"></i>Търси
@@ -416,3 +418,70 @@
             background: #f0fdf6 !important;
         }
 </style>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        .flatpickr-calendar {
+            font-family: 'Poppins', sans-serif !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15) !important;
+            border: none !important;
+        }
+
+        .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange {
+            background: #00AA6C !important;
+            border-color: #00AA6C !important;
+        }
+
+        .flatpickr-day.inRange {
+            background: #E6F7F1 !important;
+            border-color: #E6F7F1 !important;
+            color: #00AA6C !important;
+        }
+
+        .flatpickr-day:hover {
+            background: #E6F7F1 !important;
+        }
+
+        .flatpickr-months .flatpickr-month {
+            background: #fff !important;
+            color: #1A1A1A !important;
+        }
+
+        .flatpickr-current-month {
+            font-weight: 700 !important;
+            font-size: 1rem !important;
+        }
+
+        .flatpickr-weekday {
+            color: #6B7280 !important;
+            font-weight: 600 !important;
+        }
+
+        .flatpickr-day.today {
+            border-color: #00AA6C !important;
+        }
+
+        .flatpickr-prev-month svg, .flatpickr-next-month svg {
+            fill: #00AA6C !important;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#heroDatePicker", {
+            mode: "range",
+            minDate: "today",
+            dateFormat: "Y-m-d",
+            locale: {
+                rangeSeparator: " — ",
+                weekdays: { shorthand: ["Нд","Пн","Вт","Ср","Чт","Пт","Сб"], longhand: ["Неделя","Понеделник","Вторник","Сряда","Четвъртък","Петък","Събота"] },
+                months: { shorthand: ["Яну","Фев","Мар","Апр","Май","Юни","Юли","Авг","Сеп","Окт","Ное","Дек"], longhand: ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"] }
+            },
+            onChange: function(selectedDates) {
+                document.getElementById("heroStartDate").value = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
+                document.getElementById("heroEndDate").value   = selectedDates[1] ? selectedDates[1].toISOString().split("T")[0] : "";
+            }
+        });
+    </script>
+}

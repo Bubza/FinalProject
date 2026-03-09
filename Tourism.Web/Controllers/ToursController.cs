@@ -22,14 +22,22 @@ namespace Tourism.Web.Controllers
 
         // GET: /Tours
         public async Task<IActionResult> Index(string? search, decimal? minPrice, decimal? maxPrice,
-            string? duration, int? minRating, string? sortBy)
+            string? duration, int? minRating, string? sortBy, string? startDate, string? endDate, int? people)
         {
             var tours = await _tourService.SearchAsync(search, null, maxPrice);
-
             var filtered = tours.AsEnumerable();
 
             if (minPrice.HasValue)
                 filtered = filtered.Where(t => t.PricePerPerson >= minPrice);
+
+            if (!string.IsNullOrEmpty(startDate) && DateTime.TryParse(startDate, out var parsedStart))
+                filtered = filtered.Where(t => t.StartDate.Date >= parsedStart.Date);
+
+            if (!string.IsNullOrEmpty(endDate) && DateTime.TryParse(endDate, out var parsedEnd))
+                filtered = filtered.Where(t => t.StartDate.Date <= parsedEnd.Date);
+
+            if (people.HasValue && people > 0)
+                filtered = filtered.Where(t => t.MaxParticipants >= people);
 
             if (!string.IsNullOrEmpty(duration))
             {

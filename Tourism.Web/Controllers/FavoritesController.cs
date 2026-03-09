@@ -53,12 +53,16 @@ namespace Tourism.Web.Controllers
         // POST: /Favorites/Remove/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Remove(int id)
+        public async Task<IActionResult> Remove(int id, string? returnUrl = null)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier)!;
             await _favoriteService.RemoveAsync(userId, id);
 
             TempData["Success"] = "Маршрутът е премахнат от любими.";
+
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+
             return RedirectToAction(nameof(Index));
         }
     }

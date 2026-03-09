@@ -7,9 +7,7 @@ namespace Tourism.Data.Seeding
     {
         public static void Seed(ModelBuilder builder)
         {
-            // ══════════════════════════════
             //  DESTINATIONS  (10)
-            // ══════════════════════════════
             builder.Entity<Destination>().HasData(
                 new Destination
                 {
@@ -149,12 +147,10 @@ namespace Tourism.Data.Seeding
                 }
             );
 
-            // ══════════════════════════════
-            //  TOURS  (15)
-            // ══════════════════════════════
+            // TOURS (15)
             builder.Entity<Tour>().HasData(
 
-                // ── Рим ──
+                // Рим 
                 new Tour
                 {
                     Id = 1,
@@ -186,7 +182,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 3)
                 },
 
-                // ── Париж ──
+                //Париж 
                 new Tour
                 {
                     Id = 3,
@@ -218,7 +214,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 6)
                 },
 
-                // ── Барселона ──
+                //Барселона
                 new Tour
                 {
                     Id = 5,
@@ -235,7 +231,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 10)
                 },
 
-                // ── Дубровник ──
+                //Дубровник
                 new Tour
                 {
                     Id = 6,
@@ -252,7 +248,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 15)
                 },
 
-                // ── Атина ──
+                //Атина
                 new Tour
                 {
                     Id = 7,
@@ -269,7 +265,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 20)
                 },
 
-                // ── Прага ──
+                //Прага
                 new Tour
                 {
                     Id = 8,
@@ -301,7 +297,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 25)
                 },
 
-                // ── Истанбул ──
+                //Истанбул
                 new Tour
                 {
                     Id = 10,
@@ -318,7 +314,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 1)
                 },
 
-                // ── Амстердам ──
+                //Амстердам
                 new Tour
                 {
                     Id = 11,
@@ -335,7 +331,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 3)
                 },
 
-                // ── Виена ──
+                //Виена
                 new Tour
                 {
                     Id = 12,
@@ -352,7 +348,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 5)
                 },
 
-                // ── Санторини ──
+                //Санторини
                 new Tour
                 {
                     Id = 13,
@@ -384,7 +380,7 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 10)
                 },
 
-                // ── Бонус: Комбиниран балкански тур ──
+                //балкански тур
                 new Tour
                 {
                     Id = 15,
@@ -395,7 +391,7 @@ namespace Tourism.Data.Seeding
                     PricePerPerson = 1100,
                     DurationDays = 10,
                     MaxParticipants = 28,
-                    ImageUrl = "https://images.unsplash.com/photo-1601599561213-832382fd07ba?w=800&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1590147534648-1ac5cca59621?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                     StartDate = new DateTime(2026, 9, 20),
                     EndDate = new DateTime(2026, 9, 30),
                     CreatedAt = new DateTime(2026, 2, 15)

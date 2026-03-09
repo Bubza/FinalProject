@@ -3,29 +3,207 @@
     ViewData["Title"] = "Каталог маршрути";
 }
 
+<style>
+    :root {
+        --viator-green: #00AA6C;
+        --viator-green-dark: #008A57;
+        --viator-green-light: #E6F7F1;
+        --viator-dark: #1A1A1A;
+        --viator-gray: #6B7280;
+        --viator-border: #E5E7EB;
+        --radius: 12px;
+        --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .btn-viator {
+        background: var(--viator-green);
+        color: #fff !important;
+        border: none;
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-viator:hover {
+            background: var(--viator-green-dark);
+        }
+
+    .tour-card {
+        border-radius: var(--radius);
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        transition: box-shadow 0.2s, transform 0.2s;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .tour-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+        }
+
+    .tour-card-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .tour-card-img-placeholder {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #e0f2eb, #c5e8d8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--viator-green);
+        font-size: 2.5rem;
+    }
+
+    .tour-card-body {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tour-card-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.8rem;
+        color: var(--viator-gray);
+        margin-bottom: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tour-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 6px;
+        line-height: 1.4;
+    }
+
+    .tour-rating {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+
+        .tour-rating .stars {
+            color: #F59E0B;
+        }
+
+        .tour-rating .count {
+            color: var(--viator-gray);
+        }
+
+    .tour-card-desc {
+        font-size: 0.85rem;
+        color: var(--viator-gray);
+        flex: 1;
+        margin-bottom: 12px;
+    }
+
+    .tour-card-footer {
+        padding: 14px 16px;
+        border-top: 1px solid var(--viator-border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tour-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--viator-dark);
+    }
+
+    .filter-box {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        margin-bottom: 1.5rem;
+    }
+
+        .filter-box .form-control, .filter-box .form-select {
+            border-radius: 8px;
+            border-color: var(--viator-border);
+            font-size: 0.875rem;
+        }
+
+            .filter-box .form-control:focus, .filter-box .form-select:focus {
+                border-color: var(--viator-green);
+                box-shadow: 0 0 0 3px rgba(0,170,108,0.15);
+            }
+
+    .btn-search {
+        background: var(--viator-green);
+        color: #fff;
+        border: none;
+        padding: 9px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+
+        .btn-search:hover {
+            background: var(--viator-green-dark);
+            color: #fff;
+        }
+
+    .btn-clear {
+        background: #fff;
+        color: var(--viator-dark);
+        border: 1.5px solid var(--viator-border);
+        padding: 9px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        text-decoration: none;
+        transition: border-color 0.15s;
+        display: inline-block;
+    }
+
+        .btn-clear:hover {
+            border-color: var(--viator-gray);
+            color: var(--viator-dark);
+        }
+</style>
+
 <div class="container my-4">
     <h1 class="mb-4">Каталог маршрути</h1>
 
-    <!-- Филтри -->
-    <form method="get" class="card shadow-sm p-3 mb-4">
+    <form method="get" class="filter-box">
         <div class="row g-3">
             <div class="col-md-4">
-                <label class="form-label">Търсене</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">ТЪРСЕНЕ</label>
                 <input type="text" name="search" class="form-control" placeholder="Търси по име или дестинация..."
                        value="@Context.Request.Query["search"]" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Мин. цена (€)</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МИН. ЦЕНА (€)</label>
                 <input type="number" name="minPrice" class="form-control" placeholder="0"
                        value="@Context.Request.Query["minPrice"]" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Макс. цена (€)</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МАКС. ЦЕНА (€)</label>
                 <input type="number" name="maxPrice" class="form-control" placeholder="10000"
                        value="@Context.Request.Query["maxPrice"]" />
             </div>
             <div class="col-md-2">
-                <label class="form-label">Продължителност</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">ПРОДЪЛЖИТЕЛНОСТ</label>
                 <select name="duration" class="form-select">
                     <option value="">Всички</option>
                     <option value="1-3" selected="@(Context.Request.Query["duration"] == "1-3")">1-3 дни</option>
@@ -34,7 +212,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label class="form-label">Мин. рейтинг</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">МИН. РЕЙТИНГ</label>
                 <select name="minRating" class="form-select">
                     <option value="">Всички</option>
                     <option value="3" selected="@(Context.Request.Query["minRating"] == "3")">★★★ 3+</option>
@@ -43,9 +221,9 @@
                 </select>
             </div>
         </div>
-        <div class="row g-3 mt-1">
+        <div class="row g-3 mt-1 align-items-end">
             <div class="col-md-3">
-                <label class="form-label">Сортирай по</label>
+                <label class="form-label fw-semibold" style="font-size:0.8rem;color:var(--viator-gray)">СОРТИРАЙ ПО</label>
                 <select name="sortBy" class="form-select">
                     <option value="">По подразбиране</option>
                     <option value="price_asc" selected="@(Context.Request.Query["sortBy"] == "price_asc")">Цена: ниска → висока</option>
@@ -55,46 +233,56 @@
                     <option value="newest" selected="@(Context.Request.Query["sortBy"] == "newest")">Най-нови</option>
                 </select>
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">Търси</button>
-                <a asp-action="Index" class="btn btn-outline-secondary">Изчисти</a>
+            <div class="col-md-auto d-flex gap-2">
+                <button type="submit" class="btn-search">Търси</button>
+                <a asp-action="Index" class="btn-clear">Изчисти</a>
             </div>
         </div>
     </form>
 
-    <p class="text-muted mb-3">Намерени: @Model.Count() маршрута</p>
+    <p class="text-muted mb-3" style="font-size:0.875rem">Намерени: <strong>@Model.Count()</strong> маршрута</p>
 
-    <!-- Tour Cards -->
     @if (!Model.Any())
     {
         <div class="alert alert-info">Няма намерени маршрути.</div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
             @foreach (var tour in Model)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
+                    <div class="tour-card">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
-                            <img src="@tour.ImageUrl" class="card-img-top" alt="@tour.Title" style="height:200px;object-fit:cover;">
+                            <img src="@tour.ImageUrl" class="tour-card-img" alt="@tour.Title" />
                         }
-                        <div class="card-body">
-                            <h5 class="card-title">@tour.Title</h5>
-                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> @tour.DestinationName</p>
-                            <p class="text-muted mb-2"><i class="bi bi-calendar"></i> @tour.DurationDays дни</p>
+                        else
+                        {
+                            <div class="tour-card-img-placeholder"><i class="bi bi-map"></i></div>
+                        }
+                        <div class="tour-card-body">
+                            <div class="tour-card-meta">
+                                <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.DestinationName</span>
+                                <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                            </div>
+                            <h3 class="tour-card-title">@tour.Title</h3>
                             @if (tour.ReviewCount > 0)
                             {
-                                <p class="text-warning mb-2">
-                                    ★ @tour.AverageRating.ToString("0.0") <small class="text-muted">(@tour.ReviewCount ревюта)</small>
-                                </p>
+                                <div class="tour-rating">
+                                    <span class="stars">@for (int i = 0; i < (int)Math.Round(tour.AverageRating); i++)
+                                        {
+                                            <text>★</text>
+                                        }</span>
+                                    <strong>@tour.AverageRating.ToString("0.0")</strong>
+                                    <span class="count">(@tour.ReviewCount ревюта)</span>
+                                </div>
                             }
-                            <p class="card-text">@tour.Description.Substring(0, Math.Min(80, tour.Description.Length))...</p>
+                            <p class="tour-card-desc">@(tour.Description.Length > 90 ? tour.Description.Substring(0, 90) + "…" : tour.Description)</p>
                         </div>
-                        <div class="card-footer d-flex justify-content-between align-items-center">
-                            <strong class="text-primary">@tour.PricePerPerson.ToString("C")</strong>
-                            <a asp-action="Details" asp-route-id="@tour.Id" class="btn btn-outline-primary btn-sm">Детайли</a>
+                        <div class="tour-card-footer">
+                            <div class="tour-price">@tour.PricePerPerson.ToString("C") <small style="font-weight:400;font-size:0.8rem;color:var(--viator-gray)">/ човек</small></div>
+                            <a asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">Виж детайли</a>
                         </div>
                     </div>
                 </div>

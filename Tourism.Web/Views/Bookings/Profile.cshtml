@@ -3,48 +3,184 @@
     ViewData["Title"] = "Моят профил";
 }
 
+<style>
+    :root {
+        --viator-green: #00AA6C;
+        --viator-green-dark: #008A57;
+        --viator-green-light: #E6F7F1;
+        --viator-dark: #1A1A1A;
+        --viator-gray: #6B7280;
+        --viator-border: #E5E7EB;
+        --radius: 12px;
+    }
+
+    .profile-box {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: var(--viator-green-light);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--viator-green);
+        font-size: 2.2rem;
+    }
+
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.25rem;
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--viator-gray);
+        margin-top: 4px;
+    }
+
+    .booking-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+    }
+
+        .booking-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+    .booking-card-body {
+        padding: 1.25rem;
+    }
+
+    .booking-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--viator-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .booking-meta {
+        font-size: 0.85rem;
+        color: var(--viator-gray);
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .booking-footer {
+        padding: 0.875rem 1.25rem;
+        border-top: 1px solid var(--viator-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #FAFAFA;
+    }
+
+    .badge-confirmed {
+        background: var(--viator-green-light);
+        color: var(--viator-green);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-pending {
+        background: #FEF3C7;
+        color: #D97706;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-cancelled {
+        background: #FEE2E2;
+        color: #DC2626;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-completed {
+        background: #F3F4F6;
+        color: #6B7280;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .btn-viator-sm {
+        background: var(--viator-green);
+        color: #fff !important;
+        border: none;
+        padding: 7px 16px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-decoration: none;
+        display: inline-block;
+        transition: background 0.15s;
+    }
+
+        .btn-viator-sm:hover {
+            background: var(--viator-green-dark);
+        }
+</style>
+
 <div class="container my-4">
     <h1 class="mb-4">Моят профил</h1>
 
-    <!-- Профил инфо -->
-    <div class="card shadow-sm p-4 mb-4">
-        <div class="row">
-            <div class="col-md-4 text-center">
-                <i class="bi bi-person-circle" style="font-size: 5rem; color: #6c757d;"></i>
-                <h4 class="mt-2">@ViewBag.UserEmail</h4>
+    <div class="profile-box">
+        <div class="d-flex align-items-center gap-4 mb-4">
+            <div class="profile-avatar">
+                <i class="bi bi-person-fill"></i>
             </div>
-            <div class="col-md-8">
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div class="card text-center border-primary">
-                            <div class="card-body">
-                                <h3 class="text-primary">@ViewBag.TotalTrips</h3>
-                                <p class="mb-0">Пътувания</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-center border-success">
-                            <div class="card-body">
-                                <h3 class="text-success">@Model.Count()</h3>
-                                <p class="mb-0">Резервации</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="card text-center border-info">
-                            <div class="card-body">
-                                <h3 class="text-info">@(((decimal)ViewBag.TotalSpent).ToString("C"))</h3>
-                                <p class="mb-0">Общо похарчени</p>
-                            </div>
-                        </div>
-                    </div>
+            <div>
+                <div style="font-size:1.1rem;font-weight:700;color:var(--viator-dark)">@ViewBag.UserEmail</div>
+            </div>
+        </div>
+        <div class="row g-3">
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-value" style="color:var(--viator-green)">@ViewBag.TotalTrips</div>
+                    <div class="stat-label">Пътувания</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-value" style="color:#3B82F6">@Model.Count()</div>
+                    <div class="stat-label">Резервации</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="stat-card">
+                    <div class="stat-value" style="color:#F59E0B;font-size:1.4rem">@(((decimal)ViewBag.TotalSpent).ToString("C"))</div>
+                    <div class="stat-label">Общо похарчени</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- История на резервациите -->
     <h3 class="mb-3">История на пътуванията</h3>
 
     @if (!Model.Any())
@@ -55,34 +191,42 @@
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 g-4">
+        <div class="row row-cols-1 row-cols-md-2 g-3">
             @foreach (var booking in Model)
             {
+                var badgeClass = booking.Status switch
+                {
+                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge-confirmed",
+                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge-cancelled",
+                    Tourism.Data.Models.Enums.BookingStatus.Completed => "badge-completed",
+                    _ => "badge-pending"
+                };
+                var statusText = booking.Status switch
+                {
+                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
+                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
+                    Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
+                    _ => "Изчакваща"
+                };
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="card-title">@booking.TourTitle</h5>
-                                @{
-                                    var badgeClass = booking.Status switch
-                                    {
-                                        Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
-                                        Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
-                                        Tourism.Data.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
-                                        _ => "badge bg-warning text-dark"
-                                    };
-                                }
-                                <span class="@badgeClass">@booking.Status</span>
+                    <div class="booking-card">
+                        <div class="booking-card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="booking-title">@booking.TourTitle</div>
+                                <span class="@badgeClass">@statusText</span>
                             </div>
-                            <p class="text-muted mb-1"><i class="bi bi-geo-alt"></i> @booking.DestinationName</p>
-                            <p class="mb-1"><i class="bi bi-calendar"></i> @booking.TourStartDate.ToString("dd.MM.yyyy")</p>
-                            <p class="mb-1"><i class="bi bi-people"></i> @booking.NumberOfPeople човека</p>
-                            <p class="mb-0"><strong>@booking.TotalPrice.ToString("C")</strong></p>
+                            <div class="booking-meta">
+                                <span><i class="bi bi-geo-alt-fill me-1" style="color:var(--viator-green)"></i>@booking.DestinationName</span>
+                                <span><i class="bi bi-calendar3 me-1"></i>@booking.TourStartDate.ToString("dd.MM.yyyy")</span>
+                                <span><i class="bi bi-people me-1"></i>@booking.NumberOfPeople човека</span>
+                                <span style="font-weight:700;color:var(--viator-dark)">@booking.TotalPrice.ToString("C")</span>
+                            </div>
                         </div>
-                        <div class="card-footer">
-                            <small class="text-muted">Резервирано на @booking.BookedAt.ToString("dd.MM.yyyy HH:mm")</small>
-                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@booking.TourId"
-                               class="btn btn-outline-primary btn-sm float-end">Виж маршрута</a>
+                        <div class="booking-footer">
+                            <small style="color:var(--viator-gray)">Резервирано на @booking.BookedAt.ToString("dd.MM.yyyy")</small>
+                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@booking.TourId" class="btn-viator-sm">
+                                Виж маршрута
+                            </a>
                         </div>
                     </div>
                 </div>

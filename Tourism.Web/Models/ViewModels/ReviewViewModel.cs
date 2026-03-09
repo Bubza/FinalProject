@@ -14,7 +14,7 @@ namespace Tourism.Web.Models.ViewModels
         [Range(1, 5)]
         public int Rating { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Това поле е задължително!")]
         [StringLength(1000, MinimumLength = 10)]
         public string Comment { get; set; } = string.Empty;
 

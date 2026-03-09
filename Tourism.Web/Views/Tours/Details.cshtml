@@ -3,6 +3,14 @@
     ViewData["Title"] = Model.Title;
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <!-- Breadcrumb -->
 <div style="background:var(--viator-light);border-bottom:1px solid var(--viator-border)">
     <div class="container">
@@ -254,7 +262,7 @@
 
             @if (ViewBag.IsFavorite == true)
             {
-                <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" method="post" style="margin-top:10px">
+                <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path" method="post" style="margin-top:10px">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="vt-fav-btn vt-fav-active">
                         <i class="bi bi-heart-fill"></i> Премахни от любими

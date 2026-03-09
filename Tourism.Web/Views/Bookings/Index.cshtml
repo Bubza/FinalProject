@@ -3,16 +3,135 @@
     ViewData["Title"] = "Моите резервации";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<style>
+    :root {
+        --viator-green: #00AA6C;
+        --viator-green-dark: #008A57;
+        --viator-green-light: #E6F7F1;
+        --viator-dark: #1A1A1A;
+        --viator-gray: #6B7280;
+        --viator-border: #E5E7EB;
+        --radius: 12px;
+    }
+
+    .booking-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 1rem;
+        transition: box-shadow 0.2s;
+    }
+
+        .booking-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+    .booking-card-body {
+        padding: 1.25rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .booking-info {
+        flex: 1;
+    }
+
+    .booking-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--viator-dark);
+        margin-bottom: 0.4rem;
+    }
+
+    .booking-meta {
+        font-size: 0.85rem;
+        color: var(--viator-gray);
+        display: flex;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .booking-price {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--viator-dark);
+        white-space: nowrap;
+    }
+
+    .booking-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .badge-confirmed {
+        background: var(--viator-green-light);
+        color: var(--viator-green);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-pending {
+        background: #FEF3C7;
+        color: #D97706;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-cancelled {
+        background: #FEE2E2;
+        color: #DC2626;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-completed {
+        background: #F3F4F6;
+        color: #6B7280;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .btn-cancel {
+        background: #fff;
+        color: #DC2626;
+        border: 1.5px solid #DC2626;
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+
+        .btn-cancel:hover {
+            background: #DC2626;
+            color: #fff;
+        }
+</style>
+
 <div class="container my-4">
     <h1 class="mb-4">Моите резервации</h1>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
 
     @if (!Model.Any())
     {
@@ -22,54 +141,46 @@
     }
     else
     {
-        <div class="table-responsive">
-            <table class="table table-hover">
-                <thead class="table-light">
-                    <tr>
-                        <th>Маршрут</th>
-                        <th>Дестинация</th>
-                        <th>Дата</th>
-                        <th>Хора</th>
-                        <th>Обща цена</th>
-                        <th>Статус</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var booking in Model)
-                    {
-                        <tr>
-                            <td>@booking.TourTitle</td>
-                            <td>@booking.DestinationName</td>
-                            <td>@booking.TourStartDate.ToString("dd.MM.yyyy")</td>
-                            <td>@booking.NumberOfPeople</td>
-                            <td>@booking.TotalPrice.ToString("C")</td>
-                            <td>
-                                @{
-                                    var badgeClass = booking.Status switch
-                                    {
-                                        Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge bg-success",
-                                        Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge bg-danger",
-                                        Tourism.Data.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
-                                        _ => "badge bg-warning text-dark"
-                                    };
-                                }
-                                <span class="@badgeClass">@booking.Status</span>
-                            </td>
-                            <td>
-                                @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)
-                                {
-                                    <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"
-                                          onsubmit="return confirm('Сигурни ли сте?')">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">Откажи</button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+        foreach (var booking in Model)
+        {
+            var badgeClass = booking.Status switch
+            {
+                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge-confirmed",
+                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge-cancelled",
+                Tourism.Data.Models.Enums.BookingStatus.Completed => "badge-completed",
+                _ => "badge-pending"
+            };
+            var statusText = booking.Status switch
+            {
+                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
+                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
+                Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
+                _ => "Изчакваща"
+            };
+            <div class="booking-card">
+                <div class="booking-card-body">
+                    <div class="booking-info">
+                        <div class="booking-title">@booking.TourTitle</div>
+                        <div class="booking-meta">
+                            <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @booking.DestinationName</span>
+                            <span><i class="bi bi-calendar3"></i> @booking.TourStartDate.ToString("dd.MM.yyyy")</span>
+                            <span><i class="bi bi-people"></i> @booking.NumberOfPeople човека</span>
+                        </div>
+                    </div>
+                    <div class="booking-actions">
+                        <span class="@badgeClass">@statusText</span>
+                        <div class="booking-price">@booking.TotalPrice.ToString("C")</div>
+                        @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)
+                        {
+                            <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"
+                                  onsubmit="return confirm('Сигурни ли сте?')" class="m-0">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn-cancel">Откажи</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>

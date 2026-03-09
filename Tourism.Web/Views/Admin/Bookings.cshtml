@@ -3,16 +3,16 @@
     ViewData["Title"] = "Управление на резервации";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <div class="container my-4">
     <h1 class="mb-4">Управление на резервации</h1>
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-            @TempData["Success"]
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    }
 
     <table class="table table-hover">
         <thead class="table-light">
@@ -46,8 +46,15 @@
                                 Tourism.Data.Models.Enums.BookingStatus.Completed => "badge bg-secondary",
                                 _ => "badge bg-warning text-dark"
                             };
+                            var statusText = booking.Status switch
+                            {
+                                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
+                                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
+                                Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
+                                _ => "Изчакваща"
+                            };
                         }
-                        <span class="@badgeClass">@booking.Status</span>
+                        <span class="@badgeClass">@statusText</span>
                     </td>
                     <td>
                         @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)

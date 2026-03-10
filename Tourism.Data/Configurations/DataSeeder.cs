@@ -176,7 +176,7 @@ namespace Tourism.Data.Seeding
                     PricePerPerson = 1250,
                     DurationDays = 3,
                     MaxParticipants = 10,
-                    ImageUrl = "https://images.unsplash.com/photo-1568797629192-789acf8e4df3?w=800&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=800&q=80",
                     StartDate = new DateTime(2026, 5, 22),
                     EndDate = new DateTime(2026, 5, 25),
                     CreatedAt = new DateTime(2026, 1, 3)
@@ -291,7 +291,7 @@ namespace Tourism.Data.Seeding
                     PricePerPerson = 980,
                     DurationDays = 8,
                     MaxParticipants = 25,
-                    ImageUrl = "https://images.unsplash.com/photo-1555576208-f2598fdc0639?w=800&q=80",
+                    ImageUrl = "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80",
                     StartDate = new DateTime(2026, 9, 5),
                     EndDate = new DateTime(2026, 9, 13),
                     CreatedAt = new DateTime(2026, 1, 25)

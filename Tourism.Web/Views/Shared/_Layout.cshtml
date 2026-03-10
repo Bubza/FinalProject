@@ -488,54 +488,54 @@
 
             <ul class="nav-links">
 
-                <li><a asp-controller="Home" asp-action="Index">Начало</a></li>
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
 
-                <!-- ── Разгледай dropdown ── -->
+                <!-- ── Explore dropdown ── -->
                 <li>
                     <button class="nav-drop-btn" onclick="toggleDrop(this)">
-                        Разгледай <span class="nav-drop-chevron">▼</span>
+                        Explore <span class="nav-drop-chevron">▼</span>
                     </button>
                     <div class="nav-dropdown">
                         <a asp-controller="Tours" asp-action="Index">
                             <span class="drop-icon"><i class="bi bi-map"></i></span>
-                            Всички маршрути
+                            All Tours
                         </a>
                         <a asp-controller="Destinations" asp-action="Index">
                             <span class="drop-icon"><i class="bi bi-geo-alt"></i></span>
-                            Дестинации
+                            Destinations
                         </a>
                         <a asp-controller="TourOperators" asp-action="Index">
                             <span class="drop-icon"><i class="bi bi-building"></i></span>
-                            Туроператори
+                            Tour Operators
                         </a>
                     </div>
                 </li>
 
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <!-- ── Моят акаунт dropdown ── -->
+                    <!-- ── My Account dropdown ── -->
                     <li>
                         <button class="nav-drop-btn" onclick="toggleDrop(this)">
                             <i class="bi bi-person-circle" style="font-size:1rem"></i>
-                            Моят акаунт <span class="nav-drop-chevron">▼</span>
+                            My Account <span class="nav-drop-chevron">▼</span>
                         </button>
                         <div class="nav-dropdown">
                             <a asp-controller="Bookings" asp-action="Profile">
                                 <span class="drop-icon"><i class="bi bi-person"></i></span>
-                                Профил
+                                Profile
                             </a>
                             <a asp-controller="Bookings" asp-action="Index">
                                 <span class="drop-icon"><i class="bi bi-calendar-check"></i></span>
-                                Резервации
+                                My Bookings
                             </a>
                             <a asp-controller="Favorites" asp-action="Index">
                                 <span class="drop-icon"><i class="bi bi-heart"></i></span>
-                                Любими маршрути
+                                Saved Tours
                             </a>
                             <hr class="drop-divider" />
                             <a asp-area="Identity" asp-page="/Account/Manage/Index">
                                 <span class="drop-icon"><i class="bi bi-gear"></i></span>
-                                Настройки
+                                Settings
                             </a>
                         </div>
                     </li>
@@ -545,7 +545,7 @@
                 {
                     <li>
                         <a asp-controller="Admin" asp-action="Index" class="admin-pill">
-                            <i class="bi bi-shield-lock"></i> Админ панел
+                            <i class="bi bi-shield-lock"></i> Admin Panel
                         </a>
                     </li>
                 }
@@ -568,34 +568,34 @@
                 <div class="row g-4">
                     <div class="col-md-4">
                         <div class="footer-brand">Navi<span>Go</span></div>
-                        <p class="footer-tagline">Открий България и света с незабравими маршрути и екскурзии.</p>
+                        <p class="footer-tagline">Discover the world with unforgettable tours and excursions.</p>
                     </div>
                     <div class="col-md-2">
-                        <p class="footer-heading">Маршрути</p>
+                        <p class="footer-heading">Tours</p>
                         <ul class="footer-links">
-                            <li><a asp-controller="Tours" asp-action="Index">Всички маршрути</a></li>
-                            <li><a asp-controller="Destinations" asp-action="Index">Дестинации</a></li>
-                            <li><a asp-controller="TourOperators" asp-action="Index">Туроператори</a></li>
+                            <li><a asp-controller="Tours" asp-action="Index">All Tours</a></li>
+                            <li><a asp-controller="Destinations" asp-action="Index">Destinations</a></li>
+                            <li><a asp-controller="TourOperators" asp-action="Index">Tour Operators</a></li>
                         </ul>
                     </div>
                     <div class="col-md-2">
-                        <p class="footer-heading">Акаунт</p>
+                        <p class="footer-heading">Account</p>
                         <ul class="footer-links">
                             @if (User.Identity?.IsAuthenticated == true)
                             {
-                                <li><a asp-controller="Bookings" asp-action="Profile">Моят профил</a></li>
-                                <li><a asp-controller="Bookings" asp-action="Index">Резервации</a></li>
-                                <li><a asp-controller="Favorites" asp-action="Index">Любими</a></li>
+                                <li><a asp-controller="Bookings" asp-action="Profile">My Profile</a></li>
+                                <li><a asp-controller="Bookings" asp-action="Index">My Bookings</a></li>
+                                <li><a asp-controller="Favorites" asp-action="Index">Saved Tours</a></li>
                             }
                             else
                             {
-                                <li><a asp-area="Identity" asp-page="/Account/Login">Вход</a></li>
-                                <li><a asp-area="Identity" asp-page="/Account/Register">Регистрация</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Login">Sign In</a></li>
+                                <li><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
                             }
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        <p class="footer-heading">Контакти</p>
+                        <p class="footer-heading">Contact</p>
                         <ul class="footer-links">
                             <li><i class="bi bi-envelope me-2"></i>info@navigo.com</li>
                             <li><i class="bi bi-telephone me-2"></i>+359 2 000 1234</li>
@@ -606,7 +606,7 @@
         </div>
         <div class="site-footer-bottom">
             <div class="container">
-                &copy; @DateTime.Now.Year - NaviGo &nbsp;·&nbsp; Всички права запазени
+                &copy; @DateTime.Now.Year - NaviGo &nbsp;·&nbsp; All rights reserved
             </div>
         </div>
     </footer>
@@ -653,4 +653,3 @@
     </script>
 </body>
 </html>
-

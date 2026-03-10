@@ -1,7 +1,7 @@
 ﻿@page
 @model RegisterConfirmationModel
 @{
-    ViewData["Title"] = "Потвърждение на регистрация";
+    ViewData["Title"] = "Registration Confirmation";
     Layout = "/Views/Shared/_Layout.cshtml";
 }
 
@@ -10,23 +10,23 @@
 
         <div style="font-size:3.5rem;margin-bottom:16px">📧</div>
 
-        <h1 class="auth-title">Почти готово!</h1>
+        <h1 class="auth-title">Almost there!</h1>
 
         @if (Model.DisplayConfirmAccountLink)
         {
             <p style="color:var(--viator-gray);font-size:0.9rem;margin-bottom:24px">
             </p>
             <a id="confirm-link" href="@Model.EmailConfirmationUrl" class="btn-viator" style="display:inline-block;padding:12px 28px">
-                Потвърди акаунта
+                Confirm account
             </a>
         }
         else
         {
             <p style="color:var(--viator-gray);font-size:0.95rem;margin-bottom:24px">
-                Изпратихме ти имейл за потвърждение. Провери пощата си и кликни линка, за да активираш акаунта.
+                We sent you a confirmation email. Check your inbox and click the link to activate your account.
             </p>
             <a asp-page="./Login" class="btn-viator-outline" style="display:inline-block;padding:11px 28px">
-                Към Вход
+                Go to Sign In
             </a>
         }
 
@@ -59,4 +59,3 @@
         margin-bottom: 12px;
     }
 </style>
-

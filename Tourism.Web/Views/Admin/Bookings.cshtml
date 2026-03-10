@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Booking>
 @{
-    ViewData["Title"] = "Управление на резервации";
+    ViewData["Title"] = "Manage Bookings";
 }
 
 @if (TempData["Success"] != null)
@@ -12,19 +12,19 @@
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Управление на резервации</h1>
+    <h1 class="mb-4">Manage Bookings</h1>
 
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
-                <th>Потребител</th>
-                <th>Маршрут</th>
-                <th>Дестинация</th>
-                <th>Хора</th>
-                <th>Обща цена</th>
-                <th>Дата</th>
-                <th>Статус</th>
-                <th>Действия</th>
+                <th>User</th>
+                <th>Tour</th>
+                <th>Destination</th>
+                <th>People</th>
+                <th>Total Price</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -48,10 +48,10 @@
                             };
                             var statusText = booking.Status switch
                             {
-                                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
-                                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
-                                Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
-                                _ => "Изчакваща"
+                                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Confirmed",
+                                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Cancelled",
+                                Tourism.Data.Models.Enums.BookingStatus.Completed => "Completed",
+                                _ => "Pending"
                             };
                         }
                         <span class="@badgeClass">@statusText</span>
@@ -61,11 +61,11 @@
                         {
                             <form asp-action="ConfirmBooking" asp-route-id="@booking.Id" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-success">Потвърди</button>
+                                <button type="submit" class="btn btn-sm btn-success">Confirm</button>
                             </form>
                             <form asp-action="CancelBooking" asp-route-id="@booking.Id" method="post" class="d-inline">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-danger">Откажи</button>
+                                <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
                             </form>
                         }
                     </td>
@@ -74,4 +74,3 @@
         </tbody>
     </table>
 </div>
-

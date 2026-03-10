@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
 @{
-    ViewData["Title"] = "Начало";
+    ViewData["Title"] = "Home";
 }
 
 <!-- ── HERO ── -->
@@ -9,31 +9,31 @@
         <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content">
-        <h1 class="hero-title">Открий нещо невероятно,<br>близо и далеч</h1>
-        <p class="hero-subtitle">Над 500 маршрута, избрани от истински пътешественици</p>
+        <h1 class="hero-title">Discover something amazing,<br>near and far</h1>
+        <p class="hero-subtitle">Over 500 routes chosen by real travelers</p>
 
         <div class="hero-search">
             <form asp-controller="Tours" asp-action="Index" method="get" class="search-bar">
                 <div class="search-field search-field-main">
                     <i class="bi bi-search"></i>
-                    <input type="text" name="search" placeholder="Търси дестинация или маршрут..." class="search-input" />
+                    <input type="text" name="search" placeholder="Search destination or tour..." class="search-input" />
                 </div>
                 <div class="search-field search-field-price" style="min-width:200px">
                     <i class="bi bi-calendar3" style="flex-shrink:0"></i>
-                    <input type="text" id="heroDatePicker" placeholder="Избери дати..." class="search-input" readonly style="cursor:pointer" />
+                    <input type="text" id="heroDatePicker" placeholder="Select dates..." class="search-input" readonly style="cursor:pointer" />
                     <input type="hidden" name="startDate" id="heroStartDate" />
                     <input type="hidden" name="endDate" id="heroEndDate" />
                 </div>
                 <button type="submit" class="search-btn">
-                    <i class="bi bi-search me-2"></i>Търси
+                    <i class="bi bi-search me-2"></i>Search
                 </button>
             </form>
         </div>
 
         <div class="hero-badges">
-            <span class="hero-badge"><i class="bi bi-shield-check"></i> Сигурно плащане</span>
-            <span class="hero-badge"><i class="bi bi-arrow-counterclockwise"></i> Безплатно отказване</span>
-            <span class="hero-badge"><i class="bi bi-star"></i> Проверени отзиви</span>
+            <span class="hero-badge"><i class="bi bi-shield-check"></i> Secure payment</span>
+            <span class="hero-badge"><i class="bi bi-arrow-counterclockwise"></i> Free Cancellation</span>
+            <span class="hero-badge"><i class="bi bi-star"></i> Verified reviews</span>
         </div>
     </div>
 </section>
@@ -45,29 +45,29 @@
             <div class="why-item">
                 <div class="why-icon"><i class="bi bi-telephone"></i></div>
                 <div>
-                    <strong>Поддръжка 24/7</strong>
-                    <p>Винаги на линия</p>
+                    <strong>24/7 Support</strong>
+                    <p>Always available</p>
                 </div>
             </div>
             <div class="why-item">
                 <div class="why-icon why-icon-teal"><i class="bi bi-lightbulb"></i></div>
                 <div>
-                    <strong>Уникални преживявания</strong>
-                    <p>Открий скрити места</p>
+                    <strong>Unique experiences</strong>
+                    <p>Discover hidden gems</p>
                 </div>
             </div>
             <div class="why-item">
                 <div class="why-icon why-icon-yellow"><i class="bi bi-star"></i></div>
                 <div>
-                    <strong>Проверени ревюта</strong>
-                    <p>Реални оценки</p>
+                    <strong>Verified reviews</strong>
+                    <p>Real ratings</p>
                 </div>
             </div>
             <div class="why-item">
                 <div class="why-icon why-icon-blue"><i class="bi bi-calendar-check"></i></div>
                 <div>
-                    <strong>Гъвкаво резервиране</strong>
-                    <p>Промени по всяко време</p>
+                    <strong>Flexible booking</strong>
+                    <p>Change any time</p>
                 </div>
             </div>
         </div>
@@ -78,11 +78,11 @@
 <section class="container section-gap">
     <div class="section-header">
         <div>
-            <h2 class="section-title">Препоръчани маршрути</h2>
-            <p class="section-subtitle">Най-популярните преживявания тази седмица</p>
+            <h2 class="section-title">Featured Tours</h2>
+            <p class="section-subtitle">The most popular experiences this week</p>
         </div>
         <a asp-controller="Tours" asp-action="Index" class="btn-viator-outline">
-            Виж всички <i class="bi bi-arrow-right"></i>
+            View all <i class="bi bi-arrow-right"></i>
         </a>
     </div>
 
@@ -106,7 +106,7 @@
                         <div class="tour-card-body">
                             <div class="tour-card-meta">
                                 <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.DestinationName</span>
-                                <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                                <span><i class="bi bi-clock"></i> @tour.DurationDays days</span>
                             </div>
                             <h3 class="tour-card-title">@tour.Title</h3>
                             @if (tour.ReviewCount > 0)
@@ -119,7 +119,7 @@
                                         }
                                     </span>
                                     <strong>@tour.AverageRating.ToString("0.0")</strong>
-                                    <span class="count">(@tour.ReviewCount ревюта)</span>
+                                    <span class="count">(@tour.ReviewCount reviews)</span>
                                 </div>
                             }
                             <p class="tour-card-desc">
@@ -130,11 +130,11 @@
                             <div>
                                 <div class="tour-price">
                                     @tour.PricePerPerson.ToString("C")
-                                    <small>/ човек</small>
+                                    <small>/ person</small>
                                 </div>
                             </div>
                             <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">
-                                Виж детайли
+                                View Details
                             </a>
                         </div>
                     </div>
@@ -145,7 +145,7 @@
     else
     {
         <div class="alert-viator">
-            <i class="bi bi-info-circle me-2"></i>Все още няма налични маршрути.
+            <i class="bi bi-info-circle me-2"></i>No tours available yet.
         </div>
     }
 </section>
@@ -153,18 +153,18 @@
 <!-- ── CTA BANNER ── -->
 <section class="cta-section">
     <div class="container cta-content">
-        <h2>Готов за следващото пътешествие?</h2>
-        <p>Регистрирай се безплатно и получи персонализирани препоръки</p>
+        <h2>Ready for your next adventure?</h2>
+        <p>Register for free and get personalized recommendations</p>
         @if (User.Identity?.IsAuthenticated != true)
         {
             <a asp-area="Identity" asp-page="/Account/Register" class="btn-viator btn-viator-white">
-                Регистрирай се безплатно
+                Register for free
             </a>
         }
         else
         {
             <a asp-controller="Tours" asp-action="Index" class="btn-viator btn-viator-white">
-                Разгледай маршрутите
+                Browse Tours
             </a>
         }
     </div>
@@ -213,7 +213,6 @@
         margin-bottom: 36px;
     }
 
-    /* ── SEARCH BAR ── */
     .hero-search {
         margin-bottom: 24px;
     }
@@ -273,7 +272,6 @@
             background: var(--viator-green-dark);
         }
 
-    /* ── HERO BADGES ── */
     .hero-badges {
         display: flex;
         justify-content: center;
@@ -295,7 +293,6 @@
         gap: 6px;
     }
 
-    /* ── WHY SECTION ── */
     .why-section {
         padding: 28px 0;
         border-bottom: 1px solid var(--viator-border);
@@ -359,7 +356,6 @@
         color: var(--viator-gray);
     }
 
-    /* ── SECTION ── */
     .section-gap {
         padding: 56px 0;
     }
@@ -383,7 +379,6 @@
         margin: 0;
     }
 
-    /* ── CTA ── */
     .cta-section {
         background: linear-gradient(135deg, #0a4d35 0%, #00AA6C 100%);
         margin-top: 60px;
@@ -473,11 +468,6 @@
             mode: "range",
             minDate: "today",
             dateFormat: "Y-m-d",
-            locale: {
-                rangeSeparator: " — ",
-                weekdays: { shorthand: ["Нд","Пн","Вт","Ср","Чт","Пт","Сб"], longhand: ["Неделя","Понеделник","Вторник","Сряда","Четвъртък","Петък","Събота"] },
-                months: { shorthand: ["Яну","Фев","Мар","Апр","Май","Юни","Юли","Авг","Сеп","Окт","Ное","Дек"], longhand: ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"] }
-            },
             onChange: function(selectedDates) {
                 document.getElementById("heroStartDate").value = selectedDates[0] ? selectedDates[0].toISOString().split("T")[0] : "";
                 document.getElementById("heroEndDate").value   = selectedDates[1] ? selectedDates[1].toISOString().split("T")[0] : "";

@@ -33,7 +33,7 @@
         overflow: hidden;
         background: #fff;
         border: 1px solid var(--viator-border);
-        transition: box-shadow 0.2s, transform 0.2s;
+        transition: box-shadow 0.2s,transform 0.2s;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -53,7 +53,7 @@
     .tour-card-img-placeholder {
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg, #e0f2eb, #c5e8d8);
+        background: linear-gradient(135deg,#e0f2eb,#c5e8d8);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -85,22 +85,6 @@
         line-height: 1.4;
     }
 
-    .tour-rating {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-    }
-
-        .tour-rating .stars {
-            color: #F59E0B;
-        }
-
-        .tour-rating .count {
-            color: var(--viator-gray);
-        }
-
     .tour-card-desc {
         font-size: 0.85rem;
         color: var(--viator-gray);
@@ -124,16 +108,16 @@
 </style>
 @model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
 @{
-    ViewData["Title"] = "Любими маршрути";
+    ViewData["Title"] = "Saved Tours";
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Любими маршрути</h1>
+    <h1 class="mb-4">Saved Tours</h1>
 
     @if (!Model.Any())
     {
         <div class="alert alert-info">
-            Нямате любими маршрути. <a asp-controller="Tours" asp-action="Index">Разгледайте маршрутите</a> и добавете някои!
+            No saved tours yet. <a asp-controller="Tours" asp-action="Index">Browse tours</a> and add some!
         </div>
     }
     else
@@ -149,14 +133,12 @@
                         }
                         else
                         {
-                            <div class="tour-card-img-placeholder">
-                                <i class="bi bi-map"></i>
-                            </div>
+                            <div class="tour-card-img-placeholder"><i class="bi bi-map"></i></div>
                         }
                         <div class="tour-card-body">
                             <div class="tour-card-meta">
                                 <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.DestinationName</span>
-                                <span><i class="bi bi-clock"></i> @tour.DurationDays дни</span>
+                                <span><i class="bi bi-clock"></i> @tour.DurationDays days</span>
                             </div>
                             <h3 class="tour-card-title">@tour.Title</h3>
                             <p class="tour-card-desc">
@@ -166,11 +148,11 @@
                         <div class="tour-card-footer">
                             <div class="tour-price">
                                 @tour.PricePerPerson.ToString("C")
-                                <small>/ човек</small>
+                                <small>/ person</small>
                             </div>
                             <div class="d-flex gap-2 align-items-center">
                                 <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">
-                                    Виж детайли
+                                    View Details
                                 </a>
                                 <form asp-controller="Favorites" asp-action="Remove"
                                       asp-route-id="@tour.Id"

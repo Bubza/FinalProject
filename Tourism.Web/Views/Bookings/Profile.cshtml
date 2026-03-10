@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.BookingViewModel>
 @{
-    ViewData["Title"] = "Моят профил";
+    ViewData["Title"] = "My Profile";
 }
 
 <style>
@@ -148,7 +148,7 @@
 </style>
 
 <div class="container my-4">
-    <h1 class="mb-4">Моят профил</h1>
+    <h1 class="mb-4">My Profile</h1>
 
     <div class="profile-box">
         <div class="d-flex align-items-center gap-4 mb-4">
@@ -164,30 +164,30 @@
             <div class="col-4">
                 <div class="stat-card">
                     <div class="stat-value" style="color:var(--viator-green)">@ViewBag.TotalTrips</div>
-                    <div class="stat-label">Пътувания</div>
+                    <div class="stat-label">Trips</div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="stat-card">
                     <div class="stat-value" style="color:#3B82F6">@Model.Count()</div>
-                    <div class="stat-label">Резервации</div>
+                    <div class="stat-label">Bookings</div>
                 </div>
             </div>
             <div class="col-4">
                 <div class="stat-card">
                     <div class="stat-value" style="color:#F59E0B;font-size:1.4rem">@(((decimal)ViewBag.TotalSpent).ToString("C"))</div>
-                    <div class="stat-label">Общо похарчени</div>
+                    <div class="stat-label">Total Spent</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <h3 class="mb-3">История на пътуванията</h3>
+    <h3 class="mb-3">Travel History</h3>
 
     @if (!Model.Any())
     {
         <div class="alert alert-info">
-            Все още нямате пътувания. <a asp-controller="Tours" asp-action="Index">Разгледайте маршрутите</a>.
+            No trips yet. <a asp-controller="Tours" asp-action="Index">Browse tours</a>.
         </div>
     }
     else
@@ -204,10 +204,10 @@
                 };
                 var statusText = booking.Status switch
                 {
-                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
-                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
-                    Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
-                    _ => "Изчакваща"
+                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Confirmed",
+                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Cancelled",
+                    Tourism.Data.Models.Enums.BookingStatus.Completed => "Completed",
+                    _ => "Pending"
                 };
                 <div class="col">
                     <div class="booking-card">
@@ -219,14 +219,14 @@
                             <div class="booking-meta">
                                 <span><i class="bi bi-geo-alt-fill me-1" style="color:var(--viator-green)"></i>@booking.DestinationName</span>
                                 <span><i class="bi bi-calendar3 me-1"></i>@booking.TourStartDate.ToString("dd.MM.yyyy")</span>
-                                <span><i class="bi bi-people me-1"></i>@booking.NumberOfPeople човека</span>
+                                <span><i class="bi bi-people me-1"></i>@booking.NumberOfPeople people</span>
                                 <span style="font-weight:700;color:var(--viator-dark)">@booking.TotalPrice.ToString("C")</span>
                             </div>
                         </div>
                         <div class="booking-footer">
-                            <small style="color:var(--viator-gray)">Резервирано на @booking.BookedAt.ToString("dd.MM.yyyy")</small>
+                            <small style="color:var(--viator-gray)">Booked on @booking.BookedAt.ToString("dd.MM.yyyy")</small>
                             <a asp-controller="Tours" asp-action="Details" asp-route-id="@booking.TourId" class="btn-viator-sm">
-                                Виж маршрута
+                                View Tour
                             </a>
                         </div>
                     </div>

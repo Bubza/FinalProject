@@ -10,23 +10,23 @@
         var displayName = !string.IsNullOrEmpty(currentUser?.FullName) ? currentUser.FullName : User.Identity?.Name;
 
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Управление на профила">
-                Здравей, @displayName!
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage profile">
+                Hello, @displayName!
             </a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Изход</button>
+                <button type="submit" class="nav-link btn btn-link text-dark">Sign Out</button>
             </form>
         </li>
     }
     else
     {
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Регистрация</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Вход</a>
+            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Sign In</a>
         </li>
     }
 </ul>

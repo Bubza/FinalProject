@@ -33,7 +33,7 @@
         overflow: hidden;
         background: #fff;
         border: 1px solid var(--viator-border);
-        transition: box-shadow 0.2s, transform 0.2s;
+        transition: box-shadow 0.2s,transform 0.2s;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -53,7 +53,7 @@
     .tour-card-img-placeholder {
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg, #e0f2eb, #c5e8d8);
+        background: linear-gradient(135deg,#e0f2eb,#c5e8d8);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -85,22 +85,6 @@
         line-height: 1.4;
     }
 
-    .tour-rating {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        font-size: 0.85rem;
-        margin-bottom: 8px;
-    }
-
-        .tour-rating .stars {
-            color: #F59E0B;
-        }
-
-        .tour-rating .count {
-            color: var(--viator-gray);
-        }
-
     .tour-card-desc {
         font-size: 0.85rem;
         color: var(--viator-gray);
@@ -124,20 +108,20 @@
 </style>
 @model IEnumerable<Tourism.Web.Models.ViewModels.DestinationViewModel>
 @{
-    ViewData["Title"] = "Дестинации";
+    ViewData["Title"] = "Destinations";
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Дестинации</h1>
+    <h1 class="mb-4">Destinations</h1>
 
     <form method="get" class="row g-3 mb-4">
         <div class="col-md-5">
-            <input type="text" name="search" class="form-control" placeholder="Търси по име или държава..."
+            <input type="text" name="search" class="form-control" placeholder="Search by name or country..."
                    value="@Context.Request.Query["search"]" />
         </div>
         <div class="col-md-3">
             <select name="country" class="form-select">
-                <option value="">Всички държави</option>
+                <option value="">All countries</option>
                 @foreach (var c in (List<string>)ViewBag.Countries)
                 {
                     <option value="@c" selected="@(Context.Request.Query["country"] == c)">@c</option>
@@ -145,16 +129,16 @@
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Търси</button>
+            <button type="submit" class="btn btn-primary w-100">Search</button>
         </div>
         <div class="col-md-2">
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Изчисти</a>
+            <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
         </div>
     </form>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">Няма намерени дестинации.</div>
+        <div class="alert alert-info">No destinations found.</div>
     }
     else
     {
@@ -169,9 +153,7 @@
                         }
                         else
                         {
-                            <div class="tour-card-img-placeholder">
-                                <i class="bi bi-map"></i>
-                            </div>
+                            <div class="tour-card-img-placeholder"><i class="bi bi-map"></i></div>
                         }
                         <div class="tour-card-body">
                             <div class="tour-card-meta">
@@ -185,9 +167,9 @@
                         <div class="tour-card-footer">
                             <div class="tour-price" style="font-size:1rem">
                                 <i class="bi bi-compass" style="color:var(--viator-green)"></i>
-                                <strong style="color:var(--viator-green)">@dest.TourCount маршрута</strong>
+                                <strong style="color:var(--viator-green)">@dest.TourCount tours</strong>
                             </div>
-                            <a asp-action="Details" asp-route-id="@dest.Id" class="btn-viator">Разгледай</a>
+                            <a asp-action="Details" asp-route-id="@dest.Id" class="btn-viator">Explore</a>
                         </div>
                     </div>
                 </div>

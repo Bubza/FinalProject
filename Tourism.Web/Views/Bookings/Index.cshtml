@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.BookingViewModel>
 @{
-    ViewData["Title"] = "Моите резервации";
+    ViewData["Title"] = "My Bookings";
 }
 
 @if (TempData["Success"] != null)
@@ -131,12 +131,12 @@
 </style>
 
 <div class="container my-4">
-    <h1 class="mb-4">Моите резервации</h1>
+    <h1 class="mb-4">My Bookings</h1>
 
     @if (!Model.Any())
     {
         <div class="alert alert-info">
-            Нямате резервации. <a asp-controller="Tours" asp-action="Index">Разгледайте маршрутите</a>.
+            You have no bookings. <a asp-controller="Tours" asp-action="Index">Browse tours</a>.
         </div>
     }
     else
@@ -152,10 +152,10 @@
             };
             var statusText = booking.Status switch
             {
-                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Потвърдена",
-                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Отказана",
-                Tourism.Data.Models.Enums.BookingStatus.Completed => "Завършена",
-                _ => "Изчакваща"
+                Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Confirmed",
+                Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Cancelled",
+                Tourism.Data.Models.Enums.BookingStatus.Completed => "Completed",
+                _ => "Pending"
             };
             <div class="booking-card">
                 <div class="booking-card-body">
@@ -164,7 +164,7 @@
                         <div class="booking-meta">
                             <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @booking.DestinationName</span>
                             <span><i class="bi bi-calendar3"></i> @booking.TourStartDate.ToString("dd.MM.yyyy")</span>
-                            <span><i class="bi bi-people"></i> @booking.NumberOfPeople човека</span>
+                            <span><i class="bi bi-people"></i> @booking.NumberOfPeople people</span>
                         </div>
                     </div>
                     <div class="booking-actions">
@@ -173,9 +173,9 @@
                         @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)
                         {
                             <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"
-                                  onsubmit="return confirm('Сигурни ли сте?')" class="m-0">
+                                  onsubmit="return confirm('Are you sure you want to cancel?')" class="m-0">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn-cancel">Откажи</button>
+                                <button type="submit" class="btn-cancel">Cancel</button>
                             </form>
                         }
                     </div>

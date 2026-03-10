@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Административен панел";
+    ViewData["Title"] = "Admin Panel";
 }
 
 @if (TempData["Success"] != null)
@@ -11,15 +11,14 @@
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Административен панел</h1>
+    <h1 class="mb-4">Admin Panel</h1>
 
-    <!-- Stats -->
     <div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
         <div class="col">
             <div class="card text-center shadow-sm border-primary">
                 <div class="card-body">
                     <h2 class="text-primary">@ViewBag.TotalTours</h2>
-                    <p class="mb-0">Маршрути</p>
+                    <p class="mb-0">Tours</p>
                 </div>
             </div>
         </div>
@@ -27,7 +26,7 @@
             <div class="card text-center shadow-sm border-success">
                 <div class="card-body">
                     <h2 class="text-success">@ViewBag.TotalBookings</h2>
-                    <p class="mb-0">Резервации</p>
+                    <p class="mb-0">Bookings</p>
                 </div>
             </div>
         </div>
@@ -35,7 +34,7 @@
             <div class="card text-center shadow-sm border-warning">
                 <div class="card-body">
                     <h2 class="text-warning">@ViewBag.PendingBookings</h2>
-                    <p class="mb-0">Чакащи</p>
+                    <p class="mb-0">Pending</p>
                 </div>
             </div>
         </div>
@@ -43,7 +42,7 @@
             <div class="card text-center shadow-sm border-info">
                 <div class="card-body">
                     <h2 class="text-info">@ViewBag.TotalReviews</h2>
-                    <p class="mb-0">Ревюта</p>
+                    <p class="mb-0">Reviews</p>
                 </div>
             </div>
         </div>
@@ -51,44 +50,42 @@
             <div class="card text-center shadow-sm border-secondary">
                 <div class="card-body">
                     <h2 class="text-secondary">@ViewBag.TotalOperators</h2>
-                    <p class="mb-0">Оператори</p>
+                    <p class="mb-0">Operators</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Quick Links -->
     <div class="row g-3 mb-4">
         <div class="col-md-3">
             <a asp-action="Tours" class="btn btn-outline-primary w-100 py-3">
-                <i class="bi bi-map"></i> Управление на маршрути
+                <i class="bi bi-map"></i> Manage Tours
             </a>
         </div>
         <div class="col-md-3">
             <a asp-action="Bookings" class="btn btn-outline-success w-100 py-3">
-                <i class="bi bi-calendar-check"></i> Управление на резервации
+                <i class="bi bi-calendar-check"></i> Manage Bookings
             </a>
         </div>
         <div class="col-md-3">
             <a asp-action="Destinations" class="btn btn-outline-info w-100 py-3">
-                <i class="bi bi-geo-alt"></i> Управление на дестинации
+                <i class="bi bi-geo-alt"></i> Manage Destinations
             </a>
         </div>
         <div class="col-md-3">
             <a asp-controller="TourOperators" asp-action="Index" class="btn btn-outline-secondary w-100 py-3">
-                <i class="bi bi-building"></i> Туроператори
+                <i class="bi bi-building"></i> Tour Operators
             </a>
         </div>
     </div>
 
-    <!-- Popular Tours -->
-    <h4>Най-популярни маршрути</h4>
+    <h4>Most Popular Tours</h4>
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
-                <th>Маршрут</th>
-                <th>Дестинация</th>
-                <th>Резервации</th>
+                <th>Tour</th>
+                <th>Destination</th>
+                <th>Bookings</th>
             </tr>
         </thead>
         <tbody>
@@ -103,4 +100,3 @@
         </tbody>
     </table>
 </div>
-

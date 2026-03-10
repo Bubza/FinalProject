@@ -6,8 +6,8 @@
 <div class="container my-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Начало</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Destinations" asp-action="Index">Дестинации</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Destinations" asp-action="Index">Destinations</a></li>
             <li class="breadcrumb-item active">@Model.Name</li>
         </ol>
     </nav>
@@ -24,13 +24,13 @@
         </div>
         <div class="col-md-4">
             <div class="card shadow-sm p-3">
-                <h4 class="text-primary">@Model.TourCount маршрута</h4>
-                <p>Открийте нашите маршрути в @Model.Name</p>
+                <h4 class="text-primary">@Model.TourCount tours</h4>
+                <p>Discover our tours in @Model.Name</p>
             </div>
         </div>
     </div>
 
-    <h3 class="mb-3">Маршрути в @Model.Name</h3>
+    <h3 class="mb-3">Tours in @Model.Name</h3>
 
     @if (ViewBag.Tours != null && ((IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>)ViewBag.Tours).Any())
     {
@@ -45,13 +45,13 @@
                         }
                         <div class="card-body">
                             <h5 class="card-title">@tour.Title</h5>
-                            <p class="text-muted"><i class="bi bi-calendar"></i> @tour.DurationDays дни</p>
+                            <p class="text-muted"><i class="bi bi-calendar"></i> @tour.DurationDays days</p>
                             <p class="card-text">@tour.Description.Substring(0, Math.Min(80, tour.Description.Length))...</p>
                         </div>
                         <div class="card-footer d-flex justify-content-between align-items-center">
                             <strong class="text-primary">@tour.PricePerPerson.ToString("C")</strong>
                             <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id"
-                               class="btn btn-outline-primary btn-sm">Детайли</a>
+                               class="btn btn-outline-primary btn-sm">Details</a>
                         </div>
                     </div>
                 </div>
@@ -60,6 +60,6 @@
     }
     else
     {
-        <div class="alert alert-info">Все още няма маршрути за тази дестинация.</div>
+        <div class="alert alert-info">No tours available for this destination yet.</div>
     }
 </div>

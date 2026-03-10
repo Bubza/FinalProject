@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Destination>
 @{
-    ViewData["Title"] = "Управление на дестинации";
+    ViewData["Title"] = "Manage Destinations";
 }
 
 @if (TempData["Success"] != null)
@@ -13,17 +13,17 @@
 
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Управление на дестинации</h1>
-        <a asp-action="CreateDestination" class="btn btn-primary">+ Нова дестинация</a>
+        <h1>Manage Destinations</h1>
+        <a asp-action="CreateDestination" class="btn btn-primary">+ New Destination</a>
     </div>
 
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
-                <th>Дестинация</th>
-                <th>Държава</th>
-                <th>Маршрути</th>
-                <th>Действия</th>
+                <th>Destination</th>
+                <th>Country</th>
+                <th>Tours</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -35,9 +35,9 @@
                     <td>@dest.Tours.Count</td>
                     <td>
                         <form asp-action="DeleteDestination" asp-route-id="@dest.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('Сигурни ли сте?')">
+                              onsubmit="return confirm('Are you sure?')">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Изтрий</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -45,4 +45,3 @@
         </tbody>
     </table>
 </div>
-

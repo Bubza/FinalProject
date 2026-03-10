@@ -12,81 +12,81 @@ namespace Tourism.Data.Seeding
                 new Destination
                 {
                     Id = 1,
-                    Name = "Рим",
-                    Country = "Италия",
-                    Description = "Вечният град с хиляди години история — Колизеума, Ватикана и прочутата италианска кухня.",
+                    Name = "Rome",
+                    Country = "Italy",
+                    Description = "The Eternal City with thousands of years of history — the Colosseum, the Vatican, and world-renowned Italian cuisine.",
                     ImageUrl = "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 2,
-                    Name = "Париж",
-                    Country = "Франция",
-                    Description = "Градът на любовта с Айфеловата кула, Лувъра и незабравимата романтична атмосфера.",
+                    Name = "Paris",
+                    Country = "France",
+                    Description = "The City of Love — the Eiffel Tower, the Louvre, and an unforgettable romantic atmosphere.",
                     ImageUrl = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 3,
-                    Name = "Барселона",
-                    Country = "Испания",
-                    Description = "Слънчев крайбрежен град с архитектурата на Гауди, оживения Лас Рамблас и прекрасни плажове.",
+                    Name = "Barcelona",
+                    Country = "Spain",
+                    Description = "A sun-drenched coastal city with Gaudí's iconic architecture, vibrant Las Ramblas, and beautiful beaches.",
                     ImageUrl = "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 4,
-                    Name = "Дубровник",
-                    Country = "Хърватия",
-                    Description = "Перлата на Адриатика — средновековни стени, кристално синьо море и живописни улички.",
+                    Name = "Dubrovnik",
+                    Country = "Croatia",
+                    Description = "The Pearl of the Adriatic — medieval walls, crystal-clear sea, and picturesque cobblestone streets.",
                     ImageUrl = "https://images.unsplash.com/photo-1555990793-da11153b2473?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 5,
-                    Name = "Атина",
-                    Country = "Гърция",
-                    Description = "Люлката на цивилизацията — Акрополът, Партенонът и богатата средиземноморска кухня.",
+                    Name = "Athens",
+                    Country = "Greece",
+                    Description = "The cradle of civilization — the Acropolis, the Parthenon, and rich Mediterranean cuisine.",
                     ImageUrl = "https://images.unsplash.com/photo-1555993539-1732b0258235?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 6,
-                    Name = "Прага",
-                    Country = "Чехия",
-                    Description = "Градът на сто кули — приказна средновековна архитектура, Карловият мост и бохемска атмосфера.",
+                    Name = "Prague",
+                    Country = "Czech Republic",
+                    Description = "The City of a Hundred Spires — fairy-tale medieval architecture, Charles Bridge, and a bohemian atmosphere.",
                     ImageUrl = "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 7,
-                    Name = "Истанбул",
-                    Country = "Турция",
-                    Description = "Мостът между Европа и Азия — Света София, Гранд базарът и вкусовете на Ориента.",
+                    Name = "Istanbul",
+                    Country = "Turkey",
+                    Description = "The bridge between Europe and Asia — Hagia Sophia, the Grand Bazaar, and the flavors of the Orient.",
                     ImageUrl = "https://images.unsplash.com/photo-1527838832700-5059252407fa?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 8,
-                    Name = "Амстердам",
-                    Country = "Нидерландия",
-                    Description = "Градът на каналите — велосипеди, лалета, музеи и неповторима холандска архитектура.",
+                    Name = "Amsterdam",
+                    Country = "Netherlands",
+                    Description = "The City of Canals — bicycles, tulips, world-class museums, and unique Dutch architecture.",
                     ImageUrl = "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 9,
-                    Name = "Виена",
-                    Country = "Австрия",
-                    Description = "Имперският град — дворци, опера, прочутите виенски кафенета и класическа музика.",
+                    Name = "Vienna",
+                    Country = "Austria",
+                    Description = "The Imperial City — grand palaces, opera houses, famous Viennese cafés, and classical music.",
                     ImageUrl = "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=800&q=80"
                 },
                 new Destination
                 {
                     Id = 10,
-                    Name = "Санторини",
-                    Country = "Гърция",
-                    Description = "Вулканичен остров с бели сгради, сини куполи и едни от най-красивите залези в света.",
+                    Name = "Santorini",
+                    Country = "Greece",
+                    Description = "A volcanic island with whitewashed buildings, blue domes, and some of the most beautiful sunsets in the world.",
                     ImageUrl = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800&q=80"
                 }
             );
@@ -98,8 +98,8 @@ namespace Tourism.Data.Seeding
                 new TourOperator
                 {
                     Id = 1,
-                    Name = "Балкан Травел",
-                    Description = "Водеща туристическа агенция с над 20 години опит в организирането на групови и индивидуални пътувания.",
+                    Name = "Balkan Travel",
+                    Description = "A leading travel agency with over 20 years of experience organizing group and individual tours.",
                     Email = "info@balkantravel.bg",
                     PhoneNumber = "+359 2 123 4567",
                     LogoUrl = "",
@@ -108,8 +108,8 @@ namespace Tourism.Data.Seeding
                 new TourOperator
                 {
                     Id = 2,
-                    Name = "Сън Туризъм",
-                    Description = "Специалисти в средиземноморския и островен туризъм — море, слънце и незабравими преживявания.",
+                    Name = "Sun Tourism",
+                    Description = "Specialists in Mediterranean and island tourism — sea, sun, and unforgettable experiences.",
                     Email = "contact@suntourism.bg",
                     PhoneNumber = "+359 2 987 6543",
                     LogoUrl = "",
@@ -118,8 +118,8 @@ namespace Tourism.Data.Seeding
                 new TourOperator
                 {
                     Id = 3,
-                    Name = "Европа Експлорър",
-                    Description = "Групови и индивидуални пътувания до всички европейски дестинации с местни водачи.",
+                    Name = "Europa Explorer",
+                    Description = "Group and individual tours to all European destinations with local expert guides.",
                     Email = "hello@europaexplorer.bg",
                     PhoneNumber = "+359 2 555 1234",
                     LogoUrl = "",
@@ -128,8 +128,8 @@ namespace Tourism.Data.Seeding
                 new TourOperator
                 {
                     Id = 4,
-                    Name = "Ориент Турс",
-                    Description = "Екзотични дестинации, кръстопътни маршрути и незабравими приключения в Азия и Близкия изток.",
+                    Name = "Orient Tours",
+                    Description = "Exotic destinations, crossroads routes, and unforgettable adventures across Asia and the Middle East.",
                     Email = "orient@orienttours.bg",
                     PhoneNumber = "+359 2 444 5678",
                     LogoUrl = "",
@@ -138,8 +138,8 @@ namespace Tourism.Data.Seeding
                 new TourOperator
                 {
                     Id = 5,
-                    Name = "Алпийски Преходи",
-                    Description = "Специалисти в планински и приключенски туризъм — трекинг, ски и еко пътувания.",
+                    Name = "Alpine Paths",
+                    Description = "Specialists in mountain and adventure tourism — trekking, skiing, and eco-travel.",
                     Email = "info@alpinepaths.bg",
                     PhoneNumber = "+359 2 777 9900",
                     LogoUrl = "",
@@ -150,14 +150,14 @@ namespace Tourism.Data.Seeding
             // TOURS (15)
             builder.Entity<Tour>().HasData(
 
-                // Рим 
+                // Rome 
                 new Tour
                 {
                     Id = 1,
-                    Title = "Класически Рим",
+                    Title = "Classic Rome",
                     DestinationId = 1,
                     TourOperatorId = 1,
-                    Description = "5-дневно пътуване до Вечния град. Посетете Колизеума, Форума, Ватикана и хвърлете монета в Фонтана ди Треви. Включени са квалифициран водач, хотел 4* и закуски.",
+                    Description = "A 5-day journey to the Eternal City. Visit the Colosseum, the Roman Forum, the Vatican, and toss a coin in the Trevi Fountain. Includes expert guide, 4* hotel, and breakfast.",
                     PricePerPerson = 899,
                     DurationDays = 5,
                     MaxParticipants = 20,
@@ -169,10 +169,10 @@ namespace Tourism.Data.Seeding
                 new Tour
                 {
                     Id = 2,
-                    Title = "Рим и Ватикана — VIP тур",
+                    Title = "Rome & Vatican — VIP Tour",
                     DestinationId = 1,
                     TourOperatorId = 3,
-                    Description = "Ексклузивен 3-дневен уикенд тур с влизане без опашка в Ватиканските музеи, частна вечеря в Трастевере и нощувки в бутиков хотел в центъра.",
+                    Description = "An exclusive 3-day weekend tour with skip-the-line entry to the Vatican Museums, a private dinner in Trastevere, and nights in a boutique hotel in the heart of Rome.",
                     PricePerPerson = 1250,
                     DurationDays = 3,
                     MaxParticipants = 10,
@@ -182,14 +182,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 3)
                 },
 
-                //Париж 
+                // Paris 
                 new Tour
                 {
                     Id = 3,
-                    Title = "Романтичен Париж",
+                    Title = "Romantic Paris",
                     DestinationId = 2,
                     TourOperatorId = 2,
-                    Description = "7 дни в Града на светлините — Айфеловата кула, Лувъра, Монмартър и круиз по Сена. Перфектен за двойки и любители на изкуството.",
+                    Description = "7 days in the City of Light — the Eiffel Tower, the Louvre, Montmartre, and a cruise along the Seine. Perfect for couples and art lovers.",
                     PricePerPerson = 1199,
                     DurationDays = 7,
                     MaxParticipants = 15,
@@ -201,10 +201,10 @@ namespace Tourism.Data.Seeding
                 new Tour
                 {
                     Id = 4,
-                    Title = "Париж Уикенд",
+                    Title = "Paris Weekend",
                     DestinationId = 2,
                     TourOperatorId = 1,
-                    Description = "Кратък 3-дневен уикенд в Париж — идеален за тези с малко отпуска. Самолет, хотел и основните забележителности включени.",
+                    Description = "A short 3-day Paris weekend — ideal for those with limited time off. Flights, hotel, and all major highlights included.",
                     PricePerPerson = 649,
                     DurationDays = 3,
                     MaxParticipants = 20,
@@ -214,14 +214,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 6)
                 },
 
-                //Барселона
+                // Barcelona
                 new Tour
                 {
                     Id = 5,
-                    Title = "Барселона и Гауди",
+                    Title = "Barcelona & Gaudí",
                     DestinationId = 3,
                     TourOperatorId = 3,
-                    Description = "Открийте магията на Барселона с посещения на Саграда Фамилия, парк Гуел, Каса Батло и оживения пазар Бокерия.",
+                    Description = "Discover the magic of Barcelona with visits to the Sagrada Família, Park Güell, Casa Batlló, and the vibrant Boqueria market.",
                     PricePerPerson = 799,
                     DurationDays = 4,
                     MaxParticipants = 25,
@@ -231,14 +231,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 10)
                 },
 
-                //Дубровник
+                // Dubrovnik
                 new Tour
                 {
                     Id = 6,
-                    Title = "Адриатическа перла",
+                    Title = "Adriatic Pearl",
                     DestinationId = 4,
                     TourOperatorId = 1,
-                    Description = "6 дни в Дубровник и по хърватското крайбрежие. Разходка по крепостните стени, екскурзия до остров Локрум и плаж на Будва.",
+                    Description = "6 days in Dubrovnik and along the Croatian coast. Walk the ancient city walls, take a day trip to Lokrum Island, and relax on the beaches of Budva.",
                     PricePerPerson = 699,
                     DurationDays = 6,
                     MaxParticipants = 18,
@@ -248,14 +248,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 15)
                 },
 
-                //Атина
+                // Athens
                 new Tour
                 {
                     Id = 7,
-                    Title = "Атинско приключение",
+                    Title = "Athens Adventure",
                     DestinationId = 5,
                     TourOperatorId = 2,
-                    Description = "Потопете се в историята на Древна Гърция — Акропол, Националният музей, квартал Монастираки и вкусна гръцка вечеря с музика.",
+                    Description = "Immerse yourself in the history of Ancient Greece — the Acropolis, the National Museum, the Monastiraki district, and a traditional Greek dinner with live music.",
                     PricePerPerson = 649,
                     DurationDays = 5,
                     MaxParticipants = 22,
@@ -265,14 +265,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 20)
                 },
 
-                //Прага
+                // Prague
                 new Tour
                 {
                     Id = 8,
-                    Title = "Магията на Прага",
+                    Title = "Magic of Prague",
                     DestinationId = 6,
                     TourOperatorId = 3,
-                    Description = "4 дни в приказната Прага — Карловият мост, Пражкият замък, Старото градско ядро и легендарните чешки бири в исторически пивници.",
+                    Description = "4 days in fairy-tale Prague — Charles Bridge, Prague Castle, the Old Town Square, and legendary Czech beers in historic pubs.",
                     PricePerPerson = 549,
                     DurationDays = 4,
                     MaxParticipants = 30,
@@ -284,10 +284,10 @@ namespace Tourism.Data.Seeding
                 new Tour
                 {
                     Id = 9,
-                    Title = "Прага и Виена — 8 дни",
+                    Title = "Prague & Vienna — 8 Days",
                     DestinationId = 6,
                     TourOperatorId = 1,
-                    Description = "Комбиниран тур до две от най-красивите имперски столици — 4 дни в Прага и 4 дни във Виена с автобусен преход и хотели 3*.",
+                    Description = "A combined tour to two of Europe's most beautiful imperial capitals — 4 days in Prague and 4 days in Vienna, with coach transfer and 3* hotels.",
                     PricePerPerson = 980,
                     DurationDays = 8,
                     MaxParticipants = 25,
@@ -297,14 +297,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 1, 25)
                 },
 
-                //Истанбул
+                // Istanbul
                 new Tour
                 {
                     Id = 10,
-                    Title = "Истанбул — Мостът на световете",
+                    Title = "Istanbul — Bridge of Worlds",
                     DestinationId = 7,
                     TourOperatorId = 4,
-                    Description = "5 незабравими дни в Истанбул — Света София, Синята джамия, Гранд базарът, круиз по Босфора и автентична турска вечеря с танцьори.",
+                    Description = "5 unforgettable days in Istanbul — Hagia Sophia, the Blue Mosque, the Grand Bazaar, a Bosphorus cruise, and an authentic Turkish dinner with folk dancers.",
                     PricePerPerson = 729,
                     DurationDays = 5,
                     MaxParticipants = 20,
@@ -314,14 +314,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 1)
                 },
 
-                //Амстердам
+                // Amsterdam
                 new Tour
                 {
                     Id = 11,
-                    Title = "Амстердам — Градът на каналите",
+                    Title = "Amsterdam — City of Canals",
                     DestinationId = 8,
                     TourOperatorId = 3,
-                    Description = "4-дневен тур с круиз по каналите, посещение на музея на Ван Гог и Рийксмузеум, разходка с велосипеди и пазар за цветя.",
+                    Description = "A 4-day tour with a canal cruise, visits to the Van Gogh Museum and Rijksmuseum, a bicycle ride through the city, and a flower market.",
                     PricePerPerson = 819,
                     DurationDays = 4,
                     MaxParticipants = 18,
@@ -331,14 +331,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 3)
                 },
 
-                //Виена
+                // Vienna
                 new Tour
                 {
                     Id = 12,
-                    Title = "Имперска Виена",
+                    Title = "Imperial Vienna",
                     DestinationId = 9,
                     TourOperatorId = 1,
-                    Description = "5 дни в столицата на Хабсбургите — Дворецът Шьонбрун, Операта, Белведере, виенски кафенета и концерт с класическа музика.",
+                    Description = "5 days in the Habsburg capital — Schönbrunn Palace, the State Opera, Belvedere, Viennese cafés, and a classical music concert.",
                     PricePerPerson = 899,
                     DurationDays = 5,
                     MaxParticipants = 20,
@@ -348,14 +348,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 5)
                 },
 
-                //Санторини
+                // Santorini
                 new Tour
                 {
                     Id = 13,
-                    Title = "Санторини — Остров на мечтите",
+                    Title = "Santorini — Island of Dreams",
                     DestinationId = 10,
                     TourOperatorId = 2,
-                    Description = "7 дни на вулканичния остров Санторини — залезите от Ия, вулканичните плажове, дегустация на местни вина и круиз около острова.",
+                    Description = "7 days on the volcanic island of Santorini — sunsets from Oia, volcanic beaches, local wine tasting, and a cruise around the island.",
                     PricePerPerson = 1399,
                     DurationDays = 7,
                     MaxParticipants = 14,
@@ -367,10 +367,10 @@ namespace Tourism.Data.Seeding
                 new Tour
                 {
                     Id = 14,
-                    Title = "Санторини Уикенд",
+                    Title = "Santorini Weekend",
                     DestinationId = 10,
                     TourOperatorId = 4,
-                    Description = "3-дневен уикенд полет до Санторини — нощувки в традиционна кикладска вила, гледка към калдерата и частна яхтена обиколка.",
+                    Description = "A 3-day weekend flight to Santorini — nights in a traditional Cycladic villa overlooking the caldera, and a private yacht tour.",
                     PricePerPerson = 850,
                     DurationDays = 3,
                     MaxParticipants = 8,
@@ -380,14 +380,14 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 10)
                 },
 
-                //балкански тур
+                // Balkan tour
                 new Tour
                 {
                     Id = 15,
-                    Title = "Балкански Експрес — 10 дни",
+                    Title = "Balkan Express — 10 Days",
                     DestinationId = 5,
                     TourOperatorId = 5,
-                    Description = "Епичен 10-дневен тур из Балканите — Атина, Солун, Охрид и Будва. Смесица от история, природа и автентична балканска кухня.",
+                    Description = "An epic 10-day tour across the Balkans — Athens, Thessaloniki, Ohrid, and Budva. A blend of history, nature, and authentic Balkan cuisine.",
                     PricePerPerson = 1100,
                     DurationDays = 10,
                     MaxParticipants = 28,

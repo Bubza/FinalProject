@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourOperatorViewModel>
 @{
-    ViewData["Title"] = "Туроператори";
+    ViewData["Title"] = "Tour Operators";
 }
 
 <style>
@@ -9,7 +9,7 @@
         border: 1px solid var(--viator-border);
         border-radius: 12px;
         overflow: hidden;
-        transition: box-shadow 0.2s, transform 0.2s;
+        transition: box-shadow 0.2s,transform 0.2s;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -76,7 +76,7 @@
 </style>
 
 <div class="container my-4">
-    <h1 class="mb-4">Нашите туроператори</h1>
+    <h1 class="mb-4">Our Tour Operators</h1>
 
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
         @foreach (var op in Model)
@@ -90,9 +90,7 @@
                         }
                         else
                         {
-                            <div class="operator-logo-placeholder">
-                                <i class="bi bi-building"></i>
-                            </div>
+                            <div class="operator-logo-placeholder"><i class="bi bi-building"></i></div>
                         }
                         <div>
                             <h5 class="mb-0 fw-bold">@op.Name</h5>
@@ -107,9 +105,9 @@
                     </div>
                     <div class="operator-card-footer">
                         <span class="operator-tour-count">
-                            <i class="bi bi-compass me-1"></i>@op.TourCount маршрута
+                            <i class="bi bi-compass me-1"></i>@op.TourCount tours
                         </span>
-                        <a asp-action="Details" asp-route-id="@op.Id" class="btn-viator">Виж маршрути</a>
+                        <a asp-action="Details" asp-route-id="@op.Id" class="btn-viator">View tours</a>
                     </div>
                 </div>
             </div>

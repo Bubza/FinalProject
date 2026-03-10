@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Tour>
 @{
-    ViewData["Title"] = "Управление на маршрути";
+    ViewData["Title"] = "Manage Tours";
 }
 
 @if (TempData["Success"] != null)
@@ -13,19 +13,19 @@
 
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>Управление на маршрути</h1>
-        <a asp-action="CreateTour" class="btn btn-primary">+ Нов маршрут</a>
+        <h1>Manage Tours</h1>
+        <a asp-action="CreateTour" class="btn btn-primary">+ New Tour</a>
     </div>
 
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
-                <th>Заглавие</th>
-                <th>Дестинация</th>
-                <th>Оператор</th>
-                <th>Цена</th>
-                <th>Дата</th>
-                <th>Действия</th>
+                <th>Title</th>
+                <th>Destination</th>
+                <th>Operator</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -38,11 +38,11 @@
                     <td>@tour.PricePerPerson.ToString("C")</td>
                     <td>@tour.StartDate.ToString("dd.MM.yyyy")</td>
                     <td>
-                        <a asp-action="EditTour" asp-route-id="@tour.Id" class="btn btn-sm btn-outline-primary">Редактирай</a>
+                        <a asp-action="EditTour" asp-route-id="@tour.Id" class="btn btn-sm btn-outline-primary">Edit</a>
                         <form asp-action="DeleteTour" asp-route-id="@tour.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('Сигурни ли сте?')">
+                              onsubmit="return confirm('Are you sure?')">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Изтрий</button>
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -50,4 +50,3 @@
         </tbody>
     </table>
 </div>
-

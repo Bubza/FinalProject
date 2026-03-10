@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Профил";
+    ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
 
@@ -16,16 +16,16 @@
                 <label asp-for="Username">Email</label>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.FirstName" class="form-control" placeholder="Име" />
-                <label asp-for="Input.FirstName">Име</label>
+                <input asp-for="Input.FirstName" class="form-control" placeholder="First name" />
+                <label asp-for="Input.FirstName">First name</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
             </div>
             <div class="form-floating mb-3">
-                <input asp-for="Input.LastName" class="form-control" placeholder="Фамилия" />
-                <label asp-for="Input.LastName">Фамилия</label>
+                <input asp-for="Input.LastName" class="form-control" placeholder="Last name" />
+                <label asp-for="Input.LastName">Last name</label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
             </div>
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Запази</button>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div>
 </div>

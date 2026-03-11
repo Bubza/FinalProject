@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
+
 
 namespace Tourism.Web.Controllers
 {
@@ -15,19 +17,25 @@ namespace Tourism.Web.Controllers
         private readonly IReviewService _reviewService;
         private readonly IDestinationService _destinationService;
         private readonly ITourOperatorService _tourOperatorService;
+        private readonly UserManager<ApplicationUser> _userManager; 
 
         public AdminController(
             ITourService tourService,
             IBookingService bookingService,
             IReviewService reviewService,
             IDestinationService destinationService,
-            ITourOperatorService tourOperatorService)
+            ITourOperatorService tourOperatorService,
+            UserManager<ApplicationUser> userManager)
+
+
         {
             _tourService = tourService;
             _bookingService = bookingService;
             _reviewService = reviewService;
             _destinationService = destinationService;
             _tourOperatorService = tourOperatorService;
+            _userManager = userManager;   
+
         }
 
         // GET: /Admin — Dashboard
@@ -199,8 +207,8 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Дестинацията е изтрита.";
             return RedirectToAction(nameof(Destinations));
         }
-    
-    // ===== TOUR OPERATORS =====
+
+        // ===== TOUR OPERATORS =====
         public async Task<IActionResult> Operators()
         {
             var operators = await _tourOperatorService.GetAllAsync();
@@ -246,6 +254,47 @@ namespace Tourism.Web.Controllers
         {
             await _tourOperatorService.DeleteAsync(id);
             TempData["Success"] = "Tour operator deleted.";
+            return RedirectToAction(nameof(Operators));
+        }
+    
+    // ===== ASSIGN OPERATOR =====
+
+        public async Task<IActionResult> AssignOperator()
+        {
+            var operators = await _tourOperatorService.GetAllAsync();
+            var users = _userManager.Users.ToList();
+
+            ViewBag.Operators = new SelectList(operators, "Id", "Name");
+            ViewBag.Users = new SelectList(users, "Id", "Email");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignOperator(int operatorId, string userId)
+        {
+            var op = await _tourOperatorService.GetByIdAsync(operatorId);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (op == null || user == null)
+            {
+                TempData["Error"] = "Invalid operator or user.";
+                return RedirectToAction(nameof(AssignOperator));
+            }
+
+            // Remove Operator role from previous user if any
+            if (!string.IsNullOrEmpty(op.UserId))
+            {
+                var prevUser = await _userManager.FindByIdAsync(op.UserId);
+                if (prevUser != null)
+                    await _userManager.RemoveFromRoleAsync(prevUser, "Operator");
+            }
+
+            op.UserId = userId;
+            await _tourOperatorService.UpdateAsync(op);
+            await _userManager.AddToRoleAsync(user, "Operator");
+
+            TempData["Success"] = $"{user.Email} is now the operator for {op.Name}!";
             return RedirectToAction(nameof(Operators));
         }
     }

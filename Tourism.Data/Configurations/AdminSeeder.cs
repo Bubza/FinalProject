@@ -11,14 +11,14 @@ namespace Tourism.Data.Seeding
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
-            if (!await roleManager.RoleExistsAsync("Admin"))
+            foreach (var role in new[] { "Admin", "Operator" })
             {
-                await roleManager.CreateAsync(new IdentityRole("Admin"));
+                if (!await roleManager.RoleExistsAsync(role))
+                    await roleManager.CreateAsync(new IdentityRole(role));
             }
 
             var adminEmail = "admin@tourism.bg";
             var adminUser = await userManager.FindByEmailAsync(adminEmail);
-
             if (adminUser == null)
             {
                 adminUser = new ApplicationUser
@@ -29,7 +29,6 @@ namespace Tourism.Data.Seeding
                     FirstName = "Admin",
                     LastName = "Tourism"
                 };
-
                 await userManager.CreateAsync(adminUser, "Admin123!");
                 await userManager.AddToRoleAsync(adminUser, "Admin");
             }

@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Assign Operator Account";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">Assign Operator Account</h1>
+    <div class="card shadow-sm p-4" style="max-width:520px">
+        <p class="text-muted mb-3">Link a registered user to a tour operator. They will receive the Operator role and can log in to manage their tours.</p>
+        <form asp-action="AssignOperator" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Tour Operator</label>
+                <select name="operatorId" asp-items="ViewBag.Operators" class="form-select">
+                    <option value="">-- Select operator --</option>
+                </select>
+            </div>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">User Account</label>
+                <select name="userId" asp-items="ViewBag.Users" class="form-select">
+                    <option value="">-- Select user --</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign</button>
+            <a asp-action="Operators" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

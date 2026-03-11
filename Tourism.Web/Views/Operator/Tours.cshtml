@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Tourism.Data.Models.Entities.Tour>
+@{
+    ViewData["Title"] = "My Tours";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>My Tours</h1>
+        <a asp-action="CreateTour" class="btn btn-primary">+ New Tour</a>
+    </div>
+
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Title</th>
+                <th>Destination</th>
+                <th>Price</th>
+                <th>Date</th>
+                <th>Bookings</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tour in Model)
+            {
+                <tr>
+                    <td>@tour.Title</td>
+                    <td>@tour.Destination?.Name</td>
+                    <td>@tour.PricePerPerson.ToString("0.00") €</td>
+                    <td>@tour.StartDate.ToString("dd.MM.yyyy")</td>
+                    <td><span class="badge bg-primary">@tour.Bookings.Count</span></td>
+                    <td>
+                        <a asp-action="EditTour" asp-route-id="@tour.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form asp-action="DeleteTour" asp-route-id="@tour.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure?')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Dashboard" class="btn btn-outline-secondary mt-2">← Dashboard</a>
+</div>

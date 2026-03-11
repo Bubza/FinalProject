@@ -1,0 +1,103 @@
+﻿@{
+    ViewData["Title"] = "Operator Dashboard";
+    var op = ViewBag.Operator as Tourism.Data.Models.Entities.TourOperator;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-0">Welcome, @op?.Name</h1>
+            <p class="text-muted mb-0">Operator Dashboard</p>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row row-cols-1 row-cols-md-4 g-3 mb-4">
+        <div class="col">
+            <div class="card text-center border-primary shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-primary">@ViewBag.TotalTours</h2>
+                    <p class="mb-0 text-muted">My Tours</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center border-success shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-success">@ViewBag.TotalBookings</h2>
+                    <p class="mb-0 text-muted">Total Bookings</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center border-warning shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-warning">@ViewBag.PendingBookings</h2>
+                    <p class="mb-0 text-muted">Pending</p>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="card text-center border-info shadow-sm">
+                <div class="card-body">
+                    <h2 class="text-info">@ViewBag.Revenue.ToString("0") €</h2>
+                    <p class="mb-0 text-muted">Revenue</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick links -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a asp-action="Tours" class="btn btn-outline-primary w-100 py-3">
+                <i class="bi bi-map"></i> Manage Tours
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Bookings" class="btn btn-outline-success w-100 py-3">
+                <i class="bi bi-calendar-check"></i> Manage Bookings
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="CreateTour" class="btn btn-outline-secondary w-100 py-3">
+                <i class="bi bi-plus-circle"></i> Add New Tour
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-action="Profile" class="btn btn-outline-dark w-100 py-3">
+                <i class="bi bi-building"></i> My Profile
+            </a>
+        </div>
+    </div>
+
+    <!-- Popular tours table -->
+    <h4>My Top Tours</h4>
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Tour</th>
+                <th>Price</th>
+                <th>Bookings</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tour in ViewBag.PopularTours)
+            {
+                <tr>
+                    <td>@tour.Title</td>
+                    <td>@tour.PricePerPerson.ToString("0") €</td>
+                    <td><span class="badge bg-primary">@tour.BookingCount</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

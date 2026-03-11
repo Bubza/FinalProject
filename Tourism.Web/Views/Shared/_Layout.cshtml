@@ -550,6 +550,18 @@
                     </li>
                 }
 
+                @if (User.IsInRole("Operator"))
+                {
+                    <li>
+                        <a asp-controller="Operator" asp-action="Dashboard" class="admin-pill" style="background:#E0F2FE;color:#0369A1;">
+                            <i class="bi bi-building"></i> Operator Panel
+                        </a>
+                    </li>
+                }
+                
+                    
+                }
+
             </ul>
 
             <div class="nav-login-area">

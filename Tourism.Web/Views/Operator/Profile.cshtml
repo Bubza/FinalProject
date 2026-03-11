@@ -1,0 +1,51 @@
+﻿@model Tourism.Data.Models.Entities.TourOperator
+@{
+    ViewData["Title"] = "My Profile";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">My Operator Profile</h1>
+    <div class="card shadow-sm p-4" style="max-width:640px">
+        <form asp-action="Profile" method="post">
+            @Html.AntiForgeryToken()
+            <input asp-for="Id" type="hidden" />
+            <input asp-for="UserId" type="hidden" />
+            <input asp-for="CreatedAt" type="hidden" />
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Company Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label">Contact Email</label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Phone</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="LogoUrl" class="form-label">Logo URL</label>
+                <input asp-for="LogoUrl" class="form-control" placeholder="https://..." />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Profile</button>
+            <a asp-action="Dashboard" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

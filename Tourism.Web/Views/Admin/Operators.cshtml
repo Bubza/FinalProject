@@ -5,16 +5,19 @@
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show">
+        <div class="alert alert-success alert-dismissible fade show">
         @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
 }
 
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Manage Tour Operators</h1>
-        <a asp-action="CreateOperator" class="btn btn-primary">+ New Operator</a>
+        <div class="d-flex gap-2">
+            <a asp-action="AssignOperator" class="btn btn-outline-secondary">🔗 Assign Account</a>
+            <a asp-action="CreateOperator" class="btn btn-primary">+ New Operator</a>
+        </div>
     </div>
 
     <table class="table table-hover">
@@ -23,6 +26,7 @@
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Account</th>
                 <th>Tours</th>
                 <th>Actions</th>
             </tr>
@@ -30,20 +34,30 @@
         <tbody>
             @foreach (var op in Model)
             {
-                <tr>
-                    <td><strong>@op.Name</strong></td>
-                    <td>@op.Email</td>
-                    <td>@op.PhoneNumber</td>
-                    <td><span class="badge bg-primary">@op.Tours.Count</span></td>
-                    <td>
-                        <a asp-action="EditOperator" asp-route-id="@op.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <form asp-action="DeleteOperator" asp-route-id="@op.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('Are you sure? This will affect all associated tours.')">
+                    <tr>
+                        <td><strong>@op.Name</strong></td>
+                        <td>@op.Email</td>
+                        <td>@op.PhoneNumber</td>
+                        <td>
+                        @if (!string.IsNullOrEmpty(op.UserId))
+                        {
+                                    <span class="badge bg-success">Linked</span>
+                        }
+                        else
+                        {
+                                    <span class="badge bg-secondary">No account</span>
+                        }
+                        </td>
+                        <td><span class="badge bg-primary">@op.Tours.Count</span></td>
+                        <td>
+                            <a asp-action="EditOperator" asp-route-id="@op.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                            <form asp-action="DeleteOperator" asp-route-id="@op.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Are you sure?')">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
             }
         </tbody>
     </table>

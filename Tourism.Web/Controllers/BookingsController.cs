@@ -56,7 +56,7 @@ namespace Tourism.Web.Controllers
 
             if (availableSpots <= 0)
             {
-                TempData["Error"] = "За съжаление маршрутът е напълно запълнен.";
+                TempData["Error"] = "Sorry, this tour is fully booked.";
                 return RedirectToAction("Details", "Tours", new { id = tourId });
             }
 
@@ -84,14 +84,13 @@ namespace Tourism.Web.Controllers
             var tour = await _tourService.GetByIdAsync(model.TourId);
             if (tour == null) return NotFound();
 
-            // Re-check availability at time of submission
             var bookedSpots = await _bookingService.GetBookedSpotsAsync(model.TourId);
             var availableSpots = tour.MaxParticipants - bookedSpots;
 
             if (model.NumberOfPeople > availableSpots)
             {
                 ModelState.AddModelError("NumberOfPeople",
-                    $"Недостатъчно свободни места. Налични: {availableSpots}.");
+                    $"Not enough spots available. Available: {availableSpots}.");
                 ViewBag.AvailableSpots = availableSpots;
                 return View(model);
             }
@@ -107,7 +106,7 @@ namespace Tourism.Web.Controllers
 
             await _bookingService.CreateAsync(booking);
 
-            TempData["Success"] = "Резервацията е направена успешно!";
+            TempData["Success"] = "Booking placed successfully!";
             return RedirectToAction(nameof(Index));
         }
 
@@ -124,7 +123,7 @@ namespace Tourism.Web.Controllers
             booking.Status = BookingStatus.Cancelled;
             await _bookingService.UpdateAsync(booking);
 
-            TempData["Success"] = "Резервацията е отказана.";
+            TempData["Success"] = "Booking cancelled.";
             return RedirectToAction(nameof(Index));
         }
 

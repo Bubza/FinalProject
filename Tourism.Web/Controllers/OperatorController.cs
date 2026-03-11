@@ -177,6 +177,17 @@ namespace Tourism.Web.Controllers
             var myBookings = allBookings
                 .Where(b => tours.Any(t => t.Id == b.TourId)).ToList();
 
+            // Load real user names
+            var userNames = new Dictionary<string, string>();
+            foreach (var b in myBookings)
+            {
+                if (!userNames.ContainsKey(b.UserId))
+                {
+                    var user = await _userManager.FindByIdAsync(b.UserId);
+                    userNames[b.UserId] = user?.FullName ?? user?.Email ?? b.UserId.Substring(0, 8) + "...";
+                }
+            }
+            ViewBag.UserNames = userNames;
             ViewBag.Operator = op;
             return View(myBookings);
         }

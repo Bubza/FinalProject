@@ -6,7 +6,6 @@ using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
 
-
 namespace Tourism.Web.Controllers
 {
     [Authorize(Roles = "Admin")]
@@ -17,7 +16,7 @@ namespace Tourism.Web.Controllers
         private readonly IReviewService _reviewService;
         private readonly IDestinationService _destinationService;
         private readonly ITourOperatorService _tourOperatorService;
-        private readonly UserManager<ApplicationUser> _userManager; 
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AdminController(
             ITourService tourService,
@@ -26,16 +25,13 @@ namespace Tourism.Web.Controllers
             IDestinationService destinationService,
             ITourOperatorService tourOperatorService,
             UserManager<ApplicationUser> userManager)
-
-
         {
             _tourService = tourService;
             _bookingService = bookingService;
             _reviewService = reviewService;
             _destinationService = destinationService;
             _tourOperatorService = tourOperatorService;
-            _userManager = userManager;   
-
+            _userManager = userManager;
         }
 
         // GET: /Admin — Dashboard
@@ -96,7 +92,7 @@ namespace Tourism.Web.Controllers
             }
 
             await _tourService.CreateAsync(tour);
-            TempData["Success"] = "Маршрутът е добавен успешно!";
+            TempData["Success"] = "Tour added successfully!";
             return RedirectToAction(nameof(Tours));
         }
 
@@ -131,7 +127,7 @@ namespace Tourism.Web.Controllers
             }
 
             await _tourService.UpdateAsync(tour);
-            TempData["Success"] = "Маршрутът е обновен!";
+            TempData["Success"] = "Tour updated!";
             return RedirectToAction(nameof(Tours));
         }
 
@@ -140,7 +136,7 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> DeleteTour(int id)
         {
             await _tourService.DeleteAsync(id);
-            TempData["Success"] = "Маршрутът е изтрит.";
+            TempData["Success"] = "Tour deleted.";
             return RedirectToAction(nameof(Tours));
         }
 
@@ -148,6 +144,14 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> Bookings()
         {
             var bookings = await _bookingService.GetAllAsync();
+            var userIds = bookings.Select(b => b.UserId).Distinct().ToList();
+            var userNames = new Dictionary<string, string>();
+            foreach (var uid in userIds)
+            {
+                var user = await _userManager.FindByIdAsync(uid);
+                userNames[uid] = user?.FullName ?? user?.Email ?? uid.Substring(0, 8) + "...";
+            }
+            ViewBag.UserNames = userNames;
             return View(bookings);
         }
 
@@ -161,7 +165,7 @@ namespace Tourism.Web.Controllers
                 booking.Status = BookingStatus.Confirmed;
                 await _bookingService.UpdateAsync(booking);
             }
-            TempData["Success"] = "Резервацията е потвърдена!";
+            TempData["Success"] = "Booking confirmed!";
             return RedirectToAction(nameof(Bookings));
         }
 
@@ -175,7 +179,7 @@ namespace Tourism.Web.Controllers
                 booking.Status = BookingStatus.Cancelled;
                 await _bookingService.UpdateAsync(booking);
             }
-            TempData["Success"] = "Резервацията е отказана.";
+            TempData["Success"] = "Booking cancelled.";
             return RedirectToAction(nameof(Bookings));
         }
 
@@ -195,7 +199,7 @@ namespace Tourism.Web.Controllers
             ModelState.Clear();
 
             await _destinationService.CreateAsync(destination);
-            TempData["Success"] = "Дестинацията е добавена!";
+            TempData["Success"] = "Destination added!";
             return RedirectToAction(nameof(Destinations));
         }
 
@@ -204,98 +208,8 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> DeleteDestination(int id)
         {
             await _destinationService.DeleteAsync(id);
-            TempData["Success"] = "Дестинацията е изтрита.";
+            TempData["Success"] = "Destination deleted.";
             return RedirectToAction(nameof(Destinations));
-        }
-
-        // ===== TOUR OPERATORS =====
-        public async Task<IActionResult> Operators()
-        {
-            var operators = await _tourOperatorService.GetAllAsync();
-            return View(operators);
-        }
-
-        public IActionResult CreateOperator() => View();
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOperator(TourOperator tourOperator)
-        {
-            ModelState.Remove("Tours");
-            if (!ModelState.IsValid) return View(tourOperator);
-
-            await _tourOperatorService.CreateAsync(tourOperator);
-            TempData["Success"] = "Tour operator added successfully!";
-            return RedirectToAction(nameof(Operators));
-        }
-
-        public async Task<IActionResult> EditOperator(int id)
-        {
-            var op = await _tourOperatorService.GetByIdAsync(id);
-            if (op == null) return NotFound();
-            return View(op);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditOperator(TourOperator tourOperator)
-        {
-            ModelState.Remove("Tours");
-            if (!ModelState.IsValid) return View(tourOperator);
-
-            await _tourOperatorService.UpdateAsync(tourOperator);
-            TempData["Success"] = "Tour operator updated!";
-            return RedirectToAction(nameof(Operators));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteOperator(int id)
-        {
-            await _tourOperatorService.DeleteAsync(id);
-            TempData["Success"] = "Tour operator deleted.";
-            return RedirectToAction(nameof(Operators));
-        }
-    
-    // ===== ASSIGN OPERATOR =====
-
-        public async Task<IActionResult> AssignOperator()
-        {
-            var operators = await _tourOperatorService.GetAllAsync();
-            var users = _userManager.Users.ToList();
-
-            ViewBag.Operators = new SelectList(operators, "Id", "Name");
-            ViewBag.Users = new SelectList(users, "Id", "Email");
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AssignOperator(int operatorId, string userId)
-        {
-            var op = await _tourOperatorService.GetByIdAsync(operatorId);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (op == null || user == null)
-            {
-                TempData["Error"] = "Invalid operator or user.";
-                return RedirectToAction(nameof(AssignOperator));
-            }
-
-            // Remove Operator role from previous user if any
-            if (!string.IsNullOrEmpty(op.UserId))
-            {
-                var prevUser = await _userManager.FindByIdAsync(op.UserId);
-                if (prevUser != null)
-                    await _userManager.RemoveFromRoleAsync(prevUser, "Operator");
-            }
-
-            op.UserId = userId;
-            await _tourOperatorService.UpdateAsync(op);
-            await _userManager.AddToRoleAsync(user, "Operator");
-
-            TempData["Success"] = $"{user.Email} is now the operator for {op.Name}!";
-            return RedirectToAction(nameof(Operators));
         }
     }
 }

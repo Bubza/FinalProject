@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Booking>
 @{
     ViewData["Title"] = "Manage Bookings";
+    var userNames = ViewBag.UserNames as Dictionary<string, string> ?? new Dictionary<string, string>();
 }
 
 @if (TempData["Success"] != null)
@@ -31,7 +32,15 @@
             @foreach (var booking in Model)
             {
                 <tr>
-                    <td>@booking.UserId.Substring(0, 8)...</td>
+                    <td>
+                        @{
+                            var displayName = userNames.TryGetValue(booking.UserId, out var uname) ? uname : booking.UserId.Substring(0, 8) + "...";
+                        }
+                        <a asp-controller="Users" asp-action="Profile" asp-route-id="@booking.UserId"
+                           style="color:#00AA6C;font-weight:600;text-decoration:none;">
+                            @displayName
+                        </a>
+                    </td>
                     <td>@booking.Tour?.Title</td>
                     <td>@booking.Tour?.Destination?.Name</td>
                     <td>@booking.NumberOfPeople</td>

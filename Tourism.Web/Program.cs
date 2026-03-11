@@ -8,7 +8,7 @@ using Tourism.Data.Models.Entities;
 
 var cultureInfo = new CultureInfo("de-DE");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US"); 
 
 var builder = WebApplication.CreateBuilder(args);
 

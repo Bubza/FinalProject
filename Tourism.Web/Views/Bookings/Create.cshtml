@@ -234,7 +234,7 @@
 
 @section Scripts {
     <script>
-        const pricePerPerson = @Model.PricePerPerson;
+        const pricePerPerson = @Model.PricePerPerson.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
         const maxSpots = @availableSpots;
 
         function changeCount(delta) {
@@ -259,4 +259,4 @@
             document.getElementById('totalBig').textContent = `${total} €`;
         }
     </script>
-}   
+}

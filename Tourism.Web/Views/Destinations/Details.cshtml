@@ -3,56 +3,264 @@
     ViewData["Title"] = Model.Name;
 }
 
-<div class="container my-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Destinations" asp-action="Index">Destinations</a></li>
-            <li class="breadcrumb-item active">@Model.Name</li>
-        </ol>
-    </nav>
+<style>
+    :root {
+        --g: #00AA6C;
+        --gd: #008A57;
+        --gl: #E6F7F1;
+        --dark: #1A1A1A;
+        --gray: #6B7280;
+        --border: #E5E7EB;
+        --r: 12px;
+    }
 
-    <div class="row mb-4">
-        <div class="col-md-8">
-            @if (!string.IsNullOrEmpty(Model.ImageUrl))
-            {
-                <img src="@Model.ImageUrl" class="img-fluid rounded mb-3" alt="@Model.Name">
-            }
-            <h1>@Model.Name</h1>
-            <p class="text-muted fs-5"><i class="bi bi-flag"></i> @Model.Country</p>
-            <p>@Model.Description</p>
+    .bc {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        font-size: .85rem;
+        padding: 14px 0;
+        margin: 0;
+        list-style: none;
+    }
+
+        .bc li + li::before {
+            content: '/';
+            color: var(--border);
+            margin-right: 8px;
+        }
+
+        .bc a {
+            color: var(--g);
+            text-decoration: none;
+        }
+
+    .tour-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 20px;
+    }
+
+    @@media(max-width:900px) {
+        .tour-grid {
+            grid-template-columns: repeat(2,1fr)
+        }
+    }
+
+    @@media(max-width:560px) {
+        .tour-grid {
+            grid-template-columns: 1fr
+        }
+    }
+
+    .tcard {
+        border-radius: var(--r);
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid var(--border);
+        transition: box-shadow .2s,transform .2s;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .tcard:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,.11);
+            transform: translateY(-2px);
+        }
+
+    .tcard-img-wrap {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .tcard-img {
+        width: 100%;
+        height: 185px;
+        object-fit: cover;
+        display: block;
+        transition: transform .3s;
+    }
+
+    .tcard:hover .tcard-img {
+        transform: scale(1.04);
+    }
+
+    .tcard-img-ph {
+        width: 100%;
+        height: 185px;
+        background: linear-gradient(135deg,#e0f2eb,#c5e8d8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--g);
+        font-size: 2.5rem;
+    }
+
+    .tcard-body {
+        padding: 12px 14px 8px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tcard-rating {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        font-size: .82rem;
+        margin-bottom: 5px;
+    }
+
+        .tcard-rating .star {
+            color: #F59E0B;
+        }
+
+        .tcard-rating .rval {
+            font-weight: 700;
+        }
+
+        .tcard-rating .rcnt {
+            color: var(--gray);
+        }
+
+    .tcard-title {
+        font-size: .9rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 6px;
+        color: var(--dark);
+        flex: 1;
+    }
+
+    .tcard-meta {
+        font-size: .8rem;
+        color: var(--gray);
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        margin-bottom: 8px;
+    }
+
+        .tcard-meta span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+    .tcard-footer {
+        padding: 10px 14px 12px;
+        border-top: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .tcard-price-label {
+        font-size: .72rem;
+        color: var(--gray);
+    }
+
+    .tcard-price {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--dark);
+    }
+
+    .btn-details {
+        background: var(--g);
+        color: #fff !important;
+        border: none;
+        padding: 7px 14px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .8rem;
+        text-decoration: none;
+        transition: background .15s;
+        white-space: nowrap;
+    }
+
+        .btn-details:hover {
+            background: var(--gd);
+        }
+</style>
+
+<div class="container my-4">
+    <ol class="bc">
+        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+        <li><a asp-controller="Destinations" asp-action="Index">Destinations</a></li>
+        <li style="color:var(--gray)">@Model.Name</li>
+    </ol>
+
+    <!-- Hero -->
+    <div style="position:relative;border-radius:16px;overflow:hidden;margin-bottom:32px;height:340px">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src="@Model.ImageUrl" alt="@Model.Name" style="width:100%;height:100%;object-fit:cover;display:block;" />
+        }
+        else
+        {
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#e0f2eb,#c5e8d8);display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--g)">🗺️</div>
+        }
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)"></div>
+        <div style="position:absolute;bottom:28px;left:28px;color:#fff">
+            <div style="font-size:.85rem;font-weight:500;opacity:.85;margin-bottom:4px"><i class="bi bi-flag-fill"></i> @Model.Country</div>
+            <h1 style="font-size:2.2rem;font-weight:800;margin:0;line-height:1.2">@Model.Name</h1>
         </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm p-3">
-                <h4 class="text-primary">@Model.TourCount tours</h4>
-                <p>Discover our tours in @Model.Name</p>
-            </div>
+        <div style="position:absolute;top:20px;right:20px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:50px;padding:8px 18px;color:#fff;font-size:.85rem;font-weight:600">
+            <i class="bi bi-compass"></i> @Model.TourCount tours
         </div>
     </div>
 
-    <h3 class="mb-3">Tours in @Model.Name</h3>
+    <!-- Description -->
+    @if (!string.IsNullOrEmpty(Model.Description))
+    {
+        <p style="font-size:1rem;color:var(--gray);max-width:720px;line-height:1.8;margin-bottom:32px">@Model.Description</p>
+    }
+
+    <!-- Tours -->
+    <h2 style="font-size:1.4rem;font-weight:700;margin-bottom:20px">Tours in @Model.Name</h2>
 
     @if (ViewBag.Tours != null && ((IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>)ViewBag.Tours).Any())
     {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="tour-grid">
             @foreach (var tour in (IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>)ViewBag.Tours)
             {
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
+                <div class="tcard">
+                    <div class="tcard-img-wrap">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
-                            <img src="@tour.ImageUrl" class="card-img-top" alt="@tour.Title" style="height:200px;object-fit:cover;">
+                            <img src="@tour.ImageUrl" class="tcard-img" alt="@tour.Title" loading="lazy" />
                         }
-                        <div class="card-body">
-                            <h5 class="card-title">@tour.Title</h5>
-                            <p class="text-muted"><i class="bi bi-calendar"></i> @tour.DurationDays days</p>
-                            <p class="card-text">@tour.Description.Substring(0, Math.Min(80, tour.Description.Length))...</p>
+                        else
+                        {
+                            <div class="tcard-img-ph"><i class="bi bi-map"></i></div>
+                        }
+                        @if (tour.AverageRating >= 4.5 && tour.ReviewCount >= 3)
+                        {
+                            <span style="position:absolute;top:10px;left:10px;background:#fff;color:var(--dark);font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:50px;box-shadow:0 2px 6px rgba(0,0,0,.15)">⭐ Best Seller</span>
+                        }
+                    </div>
+                    <div class="tcard-body">
+                        @if (tour.ReviewCount > 0)
+                        {
+                            <div class="tcard-rating">
+                                <span class="star">★</span>
+                                <span class="rval">@tour.AverageRating.ToString("0.0")</span>
+                                <span class="rcnt">(@tour.ReviewCount)</span>
+                            </div>
+                        }
+                        <div class="tcard-title">@tour.Title</div>
+                        <div class="tcard-meta">
+                            <span><i class="bi bi-clock"></i> @tour.DurationDays days</span>
+                            <span><i class="bi bi-check-circle" style="color:var(--g)"></i> Free Cancellation</span>
                         </div>
-                        <div class="card-footer d-flex justify-content-between align-items-center">
-                            <strong class="text-primary">@tour.PricePerPerson.ToString("C")</strong>
-                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id"
-                               class="btn btn-outline-primary btn-sm">Details</a>
+                    </div>
+                    <div class="tcard-footer">
+                        <div>
+                            <div class="tcard-price-label">from</div>
+                            <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
                         </div>
+                        <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-details">View</a>
                     </div>
                 </div>
             }
@@ -60,6 +268,10 @@
     }
     else
     {
-        <div class="alert alert-info">No tours available for this destination yet.</div>
+        <div style="text-align:center;padding:60px 20px;color:var(--gray)">
+            <div style="font-size:3rem;margin-bottom:12px">🗺️</div>
+            <p>No tours available for this destination yet.</p>
+            <a asp-controller="Tours" asp-action="Index" class="btn-details" style="display:inline-block;margin-top:8px">Browse all tours</a>
+        </div>
     }
 </div>

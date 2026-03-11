@@ -9,24 +9,30 @@
         var currentUser = await UserManager.GetUserAsync(User);
         var displayName = !string.IsNullOrEmpty(currentUser?.FullName) ? currentUser.FullName : User.Identity?.Name;
 
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage profile">
-                Hello, @displayName!
+        <li class="nav-item" style="display:flex;align-items:center;gap:8px;">
+            <a asp-area="Identity" asp-page="/Account/Manage/Index"
+               style="padding:7px 14px;border-radius:999px;border:1.5px solid #E5E7EB;color:#1A1A1A;font-size:.875rem;font-weight:500;text-decoration:none;white-space:nowrap;transition:all .15s;">
+                👤 @displayName
             </a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Sign Out</button>
+            <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" style="margin:0;">
+                <button type="submit"
+                        style="padding:7px 18px;border-radius:999px;background:transparent;border:1.5px solid #E5E7EB;color:#1A1A1A;font-size:.875rem;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;transition:all .15s;">
+                    Sign Out
+                </button>
             </form>
         </li>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Sign In</a>
+        <li class="nav-item" style="display:flex;align-items:center;gap:8px;">
+            <a asp-area="Identity" asp-page="/Account/Login"
+               style="padding:7px 18px;border-radius:999px;border:1.5px solid #E5E7EB;color:#1A1A1A;font-size:.875rem;font-weight:500;text-decoration:none;transition:all .15s;white-space:nowrap;">
+                Sign In
+            </a>
+            <a asp-area="Identity" asp-page="/Account/Register"
+               style="padding:7px 18px;border-radius:999px;background:#00AA6C;border:1.5px solid #00AA6C;color:#fff;font-size:.875rem;font-weight:600;text-decoration:none;transition:all .15s;white-space:nowrap;">
+                Register
+            </a>
         </li>
     }
 </ul>

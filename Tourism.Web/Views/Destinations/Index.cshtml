@@ -112,27 +112,52 @@
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Destinations</h1>
+    <h1 class="mb-3" style="font-size:1.6rem;font-weight:700">Destinations</h1>
 
-    <form method="get" class="row g-3 mb-4">
-        <div class="col-md-5">
-            <input type="text" name="search" class="form-control" placeholder="Search by name or country..."
-                   value="@Context.Request.Query["search"]" />
-        </div>
-        <div class="col-md-3">
-            <select name="country" class="form-select">
+    @{
+        var qSearch = Context.Request.Query["search"].ToString();
+        var qCountry = Context.Request.Query["country"].ToString();
+    }
+
+    <form method="get" id="destForm">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:1rem">
+            <!-- Search input pill -->
+            <div style="position:relative;flex:1;min-width:220px;max-width:420px">
+                <i class="bi bi-search" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#6B7280"></i>
+                <input type="text" name="search" value="@qSearch" placeholder="Search by name or country..."
+                       style="width:100%;padding:9px 16px 9px 40px;border:1.5px solid #E5E7EB;border-radius:50px;font-size:0.875rem;outline:none;font-family:'Poppins',sans-serif;transition:border-color .15s"
+                       onfocus="this.style.borderColor='#1A1A1A'" onblur="this.style.borderColor='#E5E7EB'" />
+            </div>
+
+            <!-- Country dropdown pill -->
+            <select name="country" onchange="this.form.submit()"
+                    style="border:1.5px solid #E5E7EB;border-radius:50px;padding:8px 30px 8px 16px;font-size:0.85rem;font-family:'Poppins',sans-serif;outline:none;cursor:pointer;background:#fff url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27%3E%3Cpath fill=%27%236B7280%27 d=%27M7 10l5 5 5-5z%27/%3E%3C/svg%3E') no-repeat right 10px center;appearance:none;">
                 <option value="">All countries</option>
                 @foreach (var c in (List<string>)ViewBag.Countries)
                 {
-                    <option value="@c" selected="@(Context.Request.Query["country"] == c)">@c</option>
+                    if (qCountry == c)
+                    {
+                        <option value="@c" selected="selected">@c</option>
+                    }
+                    else
+                    {
+                        <option value="@c">@c</option>
+                    }
                 }
             </select>
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
-        </div>
-        <div class="col-md-2">
-            <a asp-action="Index" class="btn btn-outline-secondary w-100">Clear</a>
+
+            <!-- Clear pill -->
+            @if (!string.IsNullOrEmpty(qSearch) || !string.IsNullOrEmpty(qCountry))
+            {
+                <a asp-action="Index" style="font-size:0.85rem;font-weight:600;color:#DC2626;text-decoration:none;white-space:nowrap;padding:7px 12px;border:1.5px solid #FECACA;border-radius:50px;background:#FEF2F2">Clear</a>
+            }
+
+            <!-- Search button -->
+            <button type="submit"
+                    style="background:#00AA6C;color:#fff;border:none;padding:9px 22px;border-radius:50px;font-weight:600;font-size:0.875rem;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;transition:background .15s"
+                    onmouseover="this.style.background='#008A57'" onmouseout="this.style.background='#00AA6C'">
+                Search
+            </button>
         </div>
     </form>
 

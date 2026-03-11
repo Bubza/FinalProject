@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Booking>
 @{
     ViewData["Title"] = "My Bookings";
+    var userNames = ViewBag.UserNames as Dictionary<string, string> ?? new Dictionary<string, string>();
 }
-
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show">
@@ -10,10 +10,8 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
-
 <div class="container my-4">
     <h1 class="mb-4">Bookings for My Tours</h1>
-
     <table class="table table-hover">
         <thead class="table-light">
             <tr>
@@ -30,7 +28,17 @@
             {
                 <tr>
                     <td>@b.Tour?.Title</td>
-                    <td>@b.UserId</td>
+                    <td>
+                        @{
+                            var displayName = userNames.TryGetValue(b.UserId, out var uname)
+                            ? uname
+                            : b.UserId.Substring(0, 8) + "...";
+                        }
+                        <a asp-controller="Users" asp-action="Profile" asp-route-id="@b.UserId"
+                           style="color:#00AA6C;font-weight:600;text-decoration:none;">
+                            @displayName
+                        </a>
+                    </td>
                     <td>@b.NumberOfPeople</td>
                     <td>@b.TotalPrice.ToString("0.00") €</td>
                     <td>
@@ -62,6 +70,5 @@
             }
         </tbody>
     </table>
-
     <a asp-action="Dashboard" class="btn btn-outline-secondary mt-2">← Dashboard</a>
 </div>

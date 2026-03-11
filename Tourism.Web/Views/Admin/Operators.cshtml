@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Tourism.Data.Models.Entities.TourOperator>
+@{
+    ViewData["Title"] = "Manage Tour Operators";
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Manage Tour Operators</h1>
+        <a asp-action="CreateOperator" class="btn btn-primary">+ New Operator</a>
+    </div>
+
+    <table class="table table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Tours</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var op in Model)
+            {
+                <tr>
+                    <td><strong>@op.Name</strong></td>
+                    <td>@op.Email</td>
+                    <td>@op.PhoneNumber</td>
+                    <td><span class="badge bg-primary">@op.Tours.Count</span></td>
+                    <td>
+                        <a asp-action="EditOperator" asp-route-id="@op.Id" class="btn btn-sm btn-outline-primary">Edit</a>
+                        <form asp-action="DeleteOperator" asp-route-id="@op.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Are you sure? This will affect all associated tours.')">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <a asp-action="Index" class="btn btn-outline-secondary mt-2">← Back to Admin Panel</a>
+</div>

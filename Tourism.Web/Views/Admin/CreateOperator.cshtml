@@ -1,0 +1,44 @@
+﻿@model Tourism.Data.Models.Entities.TourOperator
+@{
+    ViewData["Title"] = "New Tour Operator";
+}
+
+<div class="container my-4">
+    <h1 class="mb-4">New Tour Operator</h1>
+
+    <div class="card shadow-sm p-4" style="max-width:680px">
+        <form asp-action="CreateOperator" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">Name</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Description" class="form-label">Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Email" class="form-label">Email</label>
+                    <input asp-for="Email" class="form-control" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PhoneNumber" class="form-label">Phone</label>
+                    <input asp-for="PhoneNumber" class="form-control" />
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="LogoUrl" class="form-label">Logo URL</label>
+                <input asp-for="LogoUrl" class="form-control" placeholder="https://..." />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Operator</button>
+            <a asp-action="Operators" class="btn btn-outline-secondary ms-2">Cancel</a>
+        </form>
+    </div>
+</div>

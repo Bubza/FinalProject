@@ -199,5 +199,54 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Дестинацията е изтрита.";
             return RedirectToAction(nameof(Destinations));
         }
+    
+    // ===== TOUR OPERATORS =====
+        public async Task<IActionResult> Operators()
+        {
+            var operators = await _tourOperatorService.GetAllAsync();
+            return View(operators);
+        }
+
+        public IActionResult CreateOperator() => View();
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOperator(TourOperator tourOperator)
+        {
+            ModelState.Remove("Tours");
+            if (!ModelState.IsValid) return View(tourOperator);
+
+            await _tourOperatorService.CreateAsync(tourOperator);
+            TempData["Success"] = "Tour operator added successfully!";
+            return RedirectToAction(nameof(Operators));
+        }
+
+        public async Task<IActionResult> EditOperator(int id)
+        {
+            var op = await _tourOperatorService.GetByIdAsync(id);
+            if (op == null) return NotFound();
+            return View(op);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditOperator(TourOperator tourOperator)
+        {
+            ModelState.Remove("Tours");
+            if (!ModelState.IsValid) return View(tourOperator);
+
+            await _tourOperatorService.UpdateAsync(tourOperator);
+            TempData["Success"] = "Tour operator updated!";
+            return RedirectToAction(nameof(Operators));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteOperator(int id)
+        {
+            await _tourOperatorService.DeleteAsync(id);
+            TempData["Success"] = "Tour operator deleted.";
+            return RedirectToAction(nameof(Operators));
+        }
     }
 }

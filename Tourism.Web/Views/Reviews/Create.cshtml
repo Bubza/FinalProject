@@ -3,49 +3,72 @@
     ViewData["Title"] = "Write a Review";
 }
 
-<div class="container my-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Tours" asp-action="Index">Tours</a></li>
-            <li class="breadcrumb-item"><a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId">@Model.TourTitle</a></li>
-            <li class="breadcrumb-item active">Review</li>
-        </ol>
-    </nav>
+<div style="background:var(--viator-light);border-bottom:1px solid var(--viator-border)">
+    <div class="container">
+        <ul class="breadcrumb-viator">
+            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li><a asp-controller="Tours" asp-action="Index">Tours</a></li>
+            <li><a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId">@Model.TourTitle</a></li>
+            <li class="active">Review</li>
+        </ul>
+    </div>
+</div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-sm p-4">
-                <h2 class="mb-4">Write a review for "@Model.TourTitle"</h2>
+<div class="container" style="max-width:580px;padding:48px 16px 80px">
 
-                <form asp-action="Create" method="post">
-                    @Html.AntiForgeryToken()
-                    <input type="hidden" asp-for="TourId" />
-                    <input type="hidden" asp-for="TourTitle" />
+    <div style="text-align:center;margin-bottom:32px">
+        <div style="width:56px;height:56px;background:var(--viator-green-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:1.6rem">⭐</div>
+        <h1 style="font-size:1.5rem;font-weight:800;margin-bottom:6px">Write a Review</h1>
+        <p style="color:var(--viator-gray);font-size:.9rem">Share your experience for <strong style="color:var(--viator-dark)">@Model.TourTitle</strong></p>
+    </div>
 
-                    <div class="mb-3">
-                        <label asp-for="Rating" class="form-label">Rating (1-5)</label>
-                        <select asp-for="Rating" class="form-select">
-                            <option value="5">★★★★★ — Excellent</option>
-                            <option value="4">★★★★☆ — Very Good</option>
-                            <option value="3">★★★☆☆ — Good</option>
-                            <option value="2">★★☆☆☆ — Fair</option>
-                            <option value="1">★☆☆☆☆ — Poor</option>
-                        </select>
-                        <span asp-validation-for="Rating" class="text-danger"></span>
-                    </div>
+    <div style="background:#fff;border:1px solid var(--viator-border);border-radius:16px;padding:32px">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="TourId" />
+            <input type="hidden" asp-for="TourTitle" />
 
-                    <div class="mb-3">
-                        <label asp-for="Comment" class="form-label">Comment</label>
-                        <textarea asp-for="Comment" class="form-control" rows="5" placeholder="Share your experience..."></textarea>
-                        <span asp-validation-for="Comment" class="text-danger"></span>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary w-100">Publish review</button>
-                    <a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId"
-                       class="btn btn-outline-secondary w-100 mt-2">Back</a>
-                </form>
+            <!-- Star rating selector -->
+            <div style="margin-bottom:24px">
+                <label style="display:block;font-weight:700;font-size:.85rem;margin-bottom:12px">Your Rating</label>
+                <div style="display:flex;gap:8px;flex-direction:column">
+                    @foreach (var option in new[] {
+                    (5, "★★★★★", "Excellent"),
+                    (4, "★★★★☆", "Very Good"),
+                    (3, "★★★☆☆", "Good"),
+                    (2, "★★☆☆☆", "Fair"),
+                    (1, "★☆☆☆☆", "Poor")
+                    })
+                    {
+                        <label style="display:flex;align-items:center;gap:12px;padding:10px 14px;border:1.5px solid var(--viator-border);border-radius:10px;cursor:pointer;transition:border-color .15s"
+                               onmouseover="this.style.borderColor='#00AA6C'" onmouseout="this.style.borderColor='#E5E7EB'">
+                            <input type="radio" name="Rating" value="@option.Item1"
+                                   style="accent-color:var(--viator-green);width:18px;height:18px"
+                            @(option.Item1 == 5 ? "checked" : "") />
+                            <span style="color:#F59E0B;font-size:1.1rem;letter-spacing:2px">@option.Item2</span>
+                            <span style="font-size:.88rem;font-weight:600;color:var(--viator-dark)">@option.Item3</span>
+                        </label>
+                    }
+                </div>
+                <span asp-validation-for="Rating" style="color:#ef4444;font-size:.78rem"></span>
             </div>
-        </div>
+
+            <!-- Comment -->
+            <div style="margin-bottom:24px">
+                <label style="display:block;font-weight:700;font-size:.85rem;margin-bottom:8px">Your Experience</label>
+                <textarea asp-for="Comment" rows="5" placeholder="Tell others what you loved, what could be improved, tips for future travellers..."
+                          style="width:100%;border:1.5px solid var(--viator-border);border-radius:10px;padding:12px 14px;font-size:.9rem;font-family:'Poppins',sans-serif;outline:none;resize:vertical;transition:border-color .15s"
+                          onfocus="this.style.borderColor='#00AA6C'" onblur="this.style.borderColor='#E5E7EB'"></textarea>
+                <span asp-validation-for="Comment" style="color:#ef4444;font-size:.78rem"></span>
+            </div>
+
+            <button type="submit" class="btn-viator" style="width:100%;padding:14px;font-size:1rem;border-radius:10px">
+                <i class="bi bi-send-fill me-2"></i> Publish Review
+            </button>
+            <a asp-controller="Tours" asp-action="Details" asp-route-id="@Model.TourId"
+               class="btn-viator-outline" style="display:block;width:100%;text-align:center;padding:12px;border-radius:10px;margin-top:10px">
+                Cancel
+            </a>
+        </form>
     </div>
 </div>

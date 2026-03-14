@@ -32,7 +32,7 @@
         </div>
         <div class="bk-summary-row">
             <span class="bk-label"><i class="bi bi-calendar-check"></i> Date</span>
-            <span class="bk-value">@Model.TourStartDate.ToString("dd MMMM yyyy")</span>
+            <span class="bk-value">@Model.TourStartDate.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</span>
         </div>
         <div class="bk-summary-row">
             <span class="bk-label"><i class="bi bi-currency-euro"></i> Price / person</span>

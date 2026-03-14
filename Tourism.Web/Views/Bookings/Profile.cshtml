@@ -1,234 +1,281 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.BookingViewModel>
 @{
-    ViewData["Title"] = "My Profile";
+    ViewData["Title"] = ViewBag.PageTitle ?? "My Profile";
+    var isOwnProfile = ViewBag.PageTitle == null;
 }
 
 <style>
-    :root {
-        --viator-green: #00AA6C;
-        --viator-green-dark: #008A57;
-        --viator-green-light: #E6F7F1;
-        --viator-dark: #1A1A1A;
-        --viator-gray: #6B7280;
-        --viator-border: #E5E7EB;
-        --radius: 12px;
+    .prof-hero {
+        background: linear-gradient(135deg,#00AA6C 0%,#008A57 100%);
+        padding: 48px 0 80px;
+        margin-bottom: -60px;
     }
 
-    .profile-box {
-        background: #fff;
-        border: 1px solid var(--viator-border);
-        border-radius: var(--radius);
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-
-    .profile-avatar {
-        width: 80px;
-        height: 80px;
+    .prof-avatar {
+        width: 88px;
+        height: 88px;
         border-radius: 50%;
-        background: var(--viator-green-light);
+        background: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         color: var(--viator-green);
-        font-size: 2.2rem;
+        font-size: 2.4rem;
+        border: 4px solid #fff;
+        box-shadow: 0 4px 16px rgba(0,0,0,.15);
+        flex-shrink: 0;
     }
 
-    .stat-card {
+    .prof-name {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 2px;
+    }
+
+    .prof-email {
+        font-size: .85rem;
+        color: rgba(255,255,255,.75);
+    }
+
+    .prof-card {
         background: #fff;
         border: 1px solid var(--viator-border);
-        border-radius: var(--radius);
-        padding: 1.25rem;
+        border-radius: 16px;
+        padding: 28px;
+        margin-bottom: 28px;
+        box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+
+    .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 16px;
+        margin-top: 24px;
+    }
+
+    .stat-item {
         text-align: center;
+        padding: 16px 8px;
+        border: 1px solid var(--viator-border);
+        border-radius: 12px;
+        background: #FAFAFA;
     }
 
-    .stat-value {
-        font-size: 1.8rem;
-        font-weight: 700;
+    .stat-val {
+        font-size: 1.7rem;
+        font-weight: 800;
+        line-height: 1;
     }
 
-    .stat-label {
-        font-size: 0.85rem;
+    .stat-lbl {
+        font-size: .78rem;
         color: var(--viator-gray);
         margin-top: 4px;
+        font-weight: 500;
     }
 
-    .booking-card {
-        background: #fff;
-        border: 1px solid var(--viator-border);
-        border-radius: var(--radius);
-        overflow: hidden;
-        transition: box-shadow 0.2s;
-    }
-
-        .booking-card:hover {
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        }
-
-    .booking-card-body {
-        padding: 1.25rem;
-    }
-
-    .booking-title {
-        font-size: 1rem;
-        font-weight: 700;
-        color: var(--viator-dark);
-        margin-bottom: 0.5rem;
-    }
-
-    .booking-meta {
-        font-size: 0.85rem;
-        color: var(--viator-gray);
+    .bk-list {
         display: flex;
         flex-direction: column;
-        gap: 0.3rem;
+        gap: 14px;
     }
 
-    .booking-footer {
-        padding: 0.875rem 1.25rem;
+    .bk-item {
+        border: 1px solid var(--viator-border);
+        border-radius: 14px;
+        overflow: hidden;
+        transition: box-shadow .2s,transform .2s;
+        background: #fff;
+    }
+
+        .bk-item:hover {
+            box-shadow: 0 4px 18px rgba(0,0,0,.09);
+            transform: translateY(-1px);
+        }
+
+    .bk-item-body {
+        padding: 16px 20px;
+    }
+
+    .bk-item-footer {
+        padding: 10px 20px;
+        background: #FAFAFA;
         border-top: 1px solid var(--viator-border);
         display: flex;
         justify-content: space-between;
         align-items: center;
-        background: #FAFAFA;
     }
 
-    .badge-confirmed {
+    .bk-title {
+        font-weight: 700;
+        font-size: .97rem;
+        color: var(--viator-dark);
+        margin-bottom: 8px;
+    }
+
+    .bk-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        font-size: .82rem;
+        color: var(--viator-gray);
+    }
+
+        .bk-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+    .bk-price {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--viator-dark);
+    }
+
+    .badge-pill {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: .75rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .s-confirmed {
         background: var(--viator-green-light);
         color: var(--viator-green);
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
     }
 
-    .badge-pending {
+    .s-pending {
         background: #FEF3C7;
         color: #D97706;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
     }
 
-    .badge-cancelled {
+    .s-cancelled {
         background: #FEE2E2;
         color: #DC2626;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
     }
 
-    .badge-completed {
+    .s-completed {
         background: #F3F4F6;
         color: #6B7280;
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
     }
 
-    .btn-viator-sm {
+    .btn-view {
         background: var(--viator-green);
         color: #fff !important;
-        border: none;
-        padding: 7px 16px;
+        padding: 6px 14px;
         border-radius: 8px;
         font-weight: 600;
-        font-size: 0.8rem;
+        font-size: .78rem;
         text-decoration: none;
-        display: inline-block;
-        transition: background 0.15s;
+        transition: background .15s;
     }
 
-        .btn-viator-sm:hover {
+        .btn-view:hover {
             background: var(--viator-green-dark);
         }
+
+    @@media(max-width:600px) {
+        .stat-grid {
+            grid-template-columns: repeat(3,1fr)
+        }
+    }
 </style>
 
-<div class="container my-4">
-    <h1 class="mb-4">@(ViewBag.PageTitle ?? "My Profile")</h1>
-
-    <div class="profile-box">
-        <div class="d-flex align-items-center gap-4 mb-4">
-            <div class="profile-avatar">
-                <i class="bi bi-person-fill"></i>
-            </div>
+<!-- Hero banner -->
+<div class="prof-hero">
+    <div class="container">
+        <div style="display:flex;align-items:center;gap:20px">
+            <div class="prof-avatar"><i class="bi bi-person-fill"></i></div>
             <div>
-                <div style="font-size:1.1rem;font-weight:700;color:var(--viator-dark)">@ViewBag.DisplayName</div>
-                <div style="font-size:0.85rem;color:var(--viator-gray)">@ViewBag.UserEmail</div>
+                <div class="prof-name">@ViewBag.DisplayName</div>
+                <div class="prof-email">@ViewBag.UserEmail</div>
             </div>
         </div>
-        <div class="row g-3">
-            <div class="col-4">
-                <div class="stat-card">
-                    <div class="stat-value" style="color:var(--viator-green)">@ViewBag.TotalTrips</div>
-                    <div class="stat-label">Trips</div>
-                </div>
+    </div>
+</div>
+
+<div class="container" style="padding-bottom:60px">
+
+    <!-- Stats card -->
+    <div class="prof-card">
+        <div style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--viator-gray);margin-bottom:4px">Overview</div>
+        <div class="stat-grid">
+            <div class="stat-item">
+                <div class="stat-val" style="color:var(--viator-green)">@ViewBag.TotalTrips</div>
+                <div class="stat-lbl">Confirmed Trips</div>
             </div>
-            <div class="col-4">
-                <div class="stat-card">
-                    <div class="stat-value" style="color:#3B82F6">@Model.Count()</div>
-                    <div class="stat-label">Bookings</div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-val" style="color:#3B82F6">@Model.Count()</div>
+                <div class="stat-lbl">Total Bookings</div>
             </div>
-            <div class="col-4">
-                <div class="stat-card">
-                    <div class="stat-value" style="color:#F59E0B;font-size:1.4rem">@(((decimal)ViewBag.TotalSpent).ToString("C"))</div>
-                    <div class="stat-label">Total Spent</div>
-                </div>
+            <div class="stat-item">
+                <div class="stat-val" style="color:#F59E0B;font-size:1.3rem">@(((decimal)ViewBag.TotalSpent).ToString("C"))</div>
+                <div class="stat-lbl">Total Spent</div>
             </div>
         </div>
     </div>
 
-    <h3 class="mb-3">Travel History</h3>
+    <!-- Bookings list -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:1.25rem;font-weight:800;margin:0">My Bookings</h2>
+        @if (isOwnProfile)
+        {
+            <a asp-controller="Tours" asp-action="Index" class="btn-view" style="padding:8px 16px;font-size:.82rem">
+                <i class="bi bi-compass me-1"></i> Browse Tours
+            </a>
+        }
+    </div>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">
-            No trips yet. <a asp-controller="Tours" asp-action="Index">Browse tours</a>.
+        <div style="text-align:center;padding:60px 20px;background:#fff;border:1px solid var(--viator-border);border-radius:16px;color:var(--viator-gray)">
+            <div style="font-size:3rem;margin-bottom:12px">🗺️</div>
+            <p style="margin-bottom:16px">No bookings yet.</p>
+            <a asp-controller="Tours" asp-action="Index" class="btn-view" style="padding:10px 24px;font-size:.88rem">Browse Tours</a>
         </div>
     }
     else
     {
-        <div class="row row-cols-1 row-cols-md-2 g-3">
-            @foreach (var booking in Model)
+        <div class="bk-list">
+            @foreach (var b in Model)
             {
-                var badgeClass = booking.Status switch
+                var sc = b.Status switch
                 {
-                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "badge-confirmed",
-                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "badge-cancelled",
-                    Tourism.Data.Models.Enums.BookingStatus.Completed => "badge-completed",
-                    _ => "badge-pending"
+                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "s-confirmed",
+                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "s-cancelled",
+                    Tourism.Data.Models.Enums.BookingStatus.Completed => "s-completed",
+                    _ => "s-pending"
                 };
-                var statusText = booking.Status switch
+                var st = b.Status switch
                 {
-                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "Confirmed",
-                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "Cancelled",
-                    Tourism.Data.Models.Enums.BookingStatus.Completed => "Completed",
-                    _ => "Pending"
+                    Tourism.Data.Models.Enums.BookingStatus.Confirmed => "✅ Confirmed",
+                    Tourism.Data.Models.Enums.BookingStatus.Cancelled => "❌ Cancelled",
+                    Tourism.Data.Models.Enums.BookingStatus.Completed => "🏁 Completed",
+                    _ => "⏳ Pending"
                 };
-                <div class="col">
-                    <div class="booking-card">
-                        <div class="booking-card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div class="booking-title">@booking.TourTitle</div>
-                                <span class="@badgeClass">@statusText</span>
-                            </div>
-                            <div class="booking-meta">
-                                <span><i class="bi bi-geo-alt-fill me-1" style="color:var(--viator-green)"></i>@booking.DestinationName</span>
-                                <span><i class="bi bi-calendar3 me-1"></i>@booking.TourStartDate.ToString("dd.MM.yyyy")</span>
-                                <span><i class="bi bi-people me-1"></i>@booking.NumberOfPeople people</span>
-                                <span style="font-weight:700;color:var(--viator-dark)">@booking.TotalPrice.ToString("C")</span>
-                            </div>
+                <div class="bk-item">
+                    <div class="bk-item-body">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:10px">
+                            <div class="bk-title">@b.TourTitle</div>
+                            <span class="badge-pill @sc">@st</span>
                         </div>
-                        <div class="booking-footer">
-                            <small style="color:var(--viator-gray)">Booked on @booking.BookedAt.ToString("dd.MM.yyyy")</small>
-                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@booking.TourId" class="btn-viator-sm">
-                                View Tour
-                            </a>
+                        <div class="bk-meta">
+                            <span><i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @b.DestinationName</span>
+                            <span><i class="bi bi-calendar3"></i> @b.TourStartDate.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</span>
+                            <span><i class="bi bi-people"></i> @b.NumberOfPeople @(b.NumberOfPeople == 1 ? "person" : "people")</span>
                         </div>
+                    </div>
+                    <div class="bk-item-footer">
+                        <div>
+                            <div class="bk-price">@b.TotalPrice.ToString("C")</div>
+                            <div style="font-size:.75rem;color:var(--viator-gray)">Booked @b.BookedAt.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
+                        </div>
+                        <a asp-controller="Tours" asp-action="Details" asp-route-id="@b.TourId" class="btn-view">
+                            View Tour
+                        </a>
                     </div>
                 </div>
             }

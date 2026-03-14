@@ -72,14 +72,14 @@
                 <i class="bi bi-calendar-check"></i>
                 <div>
                     <div class="vt-info-label">START DATE</div>
-                    <div class="vt-info-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
+                    <div class="vt-info-value">@Model.StartDate.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
                 </div>
             </div>
             <div class="vt-info-item">
                 <i class="bi bi-calendar-x"></i>
                 <div>
                     <div class="vt-info-label">END DATE</div>
-                    <div class="vt-info-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
+                    <div class="vt-info-value">@Model.EndDate.ToString("dd MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
                 </div>
             </div>
             <div class="vt-info-item">
@@ -118,7 +118,7 @@
                             <div class="vt-reviewer-avatar">@review.UserName.Substring(0, 1).ToUpper()</div>
                             <div>
                                 <div class="vt-reviewer-name">@review.UserName</div>
-                                <div class="vt-review-date">@review.CreatedAt.ToString("dd MMM yyyy")</div>
+                                <div class="vt-review-date">@review.CreatedAt.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</div>
                             </div>
                             <div class="vt-review-stars ms-auto">
                                 @for (int i = 1; i <= 5; i++)

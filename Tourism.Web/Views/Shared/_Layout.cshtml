@@ -524,10 +524,6 @@
                                 <span class="drop-icon"><i class="bi bi-person"></i></span>
                                 Profile
                             </a>
-                            <a asp-controller="Bookings" asp-action="Index">
-                                <span class="drop-icon"><i class="bi bi-calendar-check"></i></span>
-                                My Bookings
-                            </a>
                             <a asp-controller="Favorites" asp-action="Index">
                                 <span class="drop-icon"><i class="bi bi-heart"></i></span>
                                 Saved Tours
@@ -593,7 +589,6 @@
                             @if (User.Identity?.IsAuthenticated == true)
                             {
                                 <li><a asp-controller="Bookings" asp-action="Profile">My Profile</a></li>
-                                <li><a asp-controller="Bookings" asp-action="Index">My Bookings</a></li>
                                 <li><a asp-controller="Favorites" asp-action="Index">Saved Tours</a></li>
                             }
                             else

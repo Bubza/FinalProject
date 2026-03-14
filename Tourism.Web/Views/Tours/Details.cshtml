@@ -276,38 +276,40 @@
             {
                 <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
                    class="btn-viator vt-book-btn">Book Now</a>
-            }
 
-            @if (ViewBag.IsFavorite == true)
-            {
-                <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path" method="post" style="margin-top:10px">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="vt-fav-btn vt-fav-active">
-                        <i class="bi bi-heart-fill"></i> Remove from saved
-                    </button>
-                </form>
-            }
-            else
-            {
-                <form asp-controller="Favorites" asp-action="Add" asp-route-id="@Model.Id" method="post" style="margin-top:10px">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="vt-fav-btn">
-                        <i class="bi bi-heart"></i> Save tour
-                    </button>
-                </form>
-            }
+                @if (ViewBag.IsFavorite == true)
+                {
+                    <form asp-controller="Favorites" asp-action="Remove" asp-route-id="@Model.Id" asp-route-returnUrl="@Context.Request.Path" method="post" style="margin-top:10px">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="vt-fav-btn vt-fav-active">
+                            <i class="bi bi-heart-fill"></i> Remove from saved
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-controller="Favorites" asp-action="Add" asp-route-id="@Model.Id" method="post" style="margin-top:10px">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="vt-fav-btn">
+                            <i class="bi bi-heart"></i> Save tour
+                        </button>
+                    </form>
+                }
 
-            <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"
-               class="vt-review-btn">
-                <i class="bi bi-pencil-square"></i> Write a review
-            </a>
-        }
-        else
-        {
-            <a asp-area="Identity" asp-page="/Account/Login" class="btn-viator vt-book-btn">
-                Sign in to book
-            </a>
-            <p class="vt-booking-hint">No account? <a asp-area="Identity" asp-page="/Account/Register">Register for free</a></p>
+                @if (ViewBag.HasBooking == true)
+                {
+                    <a asp-controller="Reviews" asp-action="Create" asp-route-tourId="@Model.Id"
+                       class="vt-review-btn">
+                        <i class="bi bi-pencil-square"></i> Write a review
+                    </a>
+                }
+                else
+                {
+                    <div style="text-align:center;font-size:0.78rem;color:var(--viator-gray);margin-top:10px;padding:8px;background:var(--viator-light);border-radius:8px">
+                        <i class="bi bi-lock"></i> Book this tour to write a review
+                    </div>
+                }
+            }
         }
 
         <div class="vt-booking-guarantee">

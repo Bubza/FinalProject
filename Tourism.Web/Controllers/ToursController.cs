@@ -12,12 +12,15 @@ namespace Tourism.Web.Controllers
         private readonly ITourService _tourService;
         private readonly IFavoriteTourService _favoriteService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IBookingService _bookingService;
 
-        public ToursController(ITourService tourService, IFavoriteTourService favoriteService, UserManager<ApplicationUser> userManager)
+        public ToursController(ITourService tourService, IFavoriteTourService favoriteService,
+            UserManager<ApplicationUser> userManager, IBookingService bookingService)
         {
             _tourService = tourService;
             _favoriteService = favoriteService;
             _userManager = userManager;
+            _bookingService = bookingService;
         }
 
         // GET: /Tours
@@ -114,6 +117,12 @@ namespace Tourism.Web.Controllers
             if (User.Identity?.IsAuthenticated == true)
             {
                 ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId!, id);
+
+                // Check if user has a confirmed or completed booking for this tour
+                var userBookings = await _bookingService.GetByUserIdAsync(userId!);
+                ViewBag.HasBooking = userBookings.Any(b => b.TourId == id &&
+                    (b.Status == Tourism.Data.Models.Enums.BookingStatus.Confirmed ||
+                     b.Status == Tourism.Data.Models.Enums.BookingStatus.Completed));
             }
 
             // Reviews with user names

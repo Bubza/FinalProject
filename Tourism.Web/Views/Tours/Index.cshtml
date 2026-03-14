@@ -629,7 +629,18 @@
                     <div class="tcard-footer">
                         <div>
                             <div class="tcard-price-label">from</div>
-                            <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
+                            @if (tour.HasDiscount)
+                            {
+                                <div>
+                                    <span style="text-decoration:line-through;color:#9CA3AF;font-size:.8rem">@tour.PricePerPerson.ToString("C")</span>
+                                    <span class="tcard-price" style="color:#DC2626">@tour.DiscountedPrice.ToString("C")</span>
+                                    <span style="background:#FEE2E2;color:#DC2626;border-radius:4px;padding:2px 6px;font-size:.72rem;font-weight:700">-@tour.DiscountPercent.ToString("0")%</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
+                            }
                         </div>
                         <a asp-action="Details" asp-route-id="@tour.Id" class="btn-details">View</a>
                     </div>

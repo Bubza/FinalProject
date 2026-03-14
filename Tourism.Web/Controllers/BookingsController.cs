@@ -48,6 +48,12 @@ namespace Tourism.Web.Controllers
         // GET: /Bookings/Create?tourId=5
         public async Task<IActionResult> Create(int tourId)
         {
+            if (User.IsInRole("Operator") || User.IsInRole("Admin"))
+            {
+                TempData["Error"] = "Operators and admins cannot book tours.";
+                return RedirectToAction("Details", "Tours", new { id = tourId });
+            }
+
             var tour = await _tourService.GetByIdAsync(tourId);
             if (tour == null) return NotFound();
 
@@ -60,13 +66,17 @@ namespace Tourism.Web.Controllers
                 return RedirectToAction("Details", "Tours", new { id = tourId });
             }
 
+            var effectivePrice = tour.DiscountPercent > 0
+                ? Math.Round(tour.PricePerPerson * (1 - tour.DiscountPercent / 100), 2)
+                : tour.PricePerPerson;
+
             var viewModel = new BookingViewModel
             {
                 TourId = tour.Id,
                 TourTitle = tour.Title,
                 DestinationName = tour.Destination.Name,
                 TourStartDate = tour.StartDate,
-                PricePerPerson = tour.PricePerPerson,
+                PricePerPerson = effectivePrice,
                 NumberOfPeople = 1
             };
 
@@ -79,6 +89,9 @@ namespace Tourism.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookingViewModel model)
         {
+            if (User.IsInRole("Operator") || User.IsInRole("Admin"))
+                return Forbid();
+
             if (!ModelState.IsValid) return View(model);
 
             var tour = await _tourService.GetByIdAsync(model.TourId);
@@ -95,12 +108,16 @@ namespace Tourism.Web.Controllers
                 return View(model);
             }
 
+            var effectivePrice = tour.DiscountPercent > 0
+                ? Math.Round(tour.PricePerPerson * (1 - tour.DiscountPercent / 100), 2)
+                : tour.PricePerPerson;
+
             var booking = new Booking
             {
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
                 TourId = model.TourId,
                 NumberOfPeople = model.NumberOfPeople,
-                TotalPrice = tour.PricePerPerson * model.NumberOfPeople,
+                TotalPrice = effectivePrice * model.NumberOfPeople,
                 Status = BookingStatus.Pending
             };
 

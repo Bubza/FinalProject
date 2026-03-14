@@ -9,6 +9,7 @@
         public string Description { get; set; } = string.Empty;
 
         public decimal PricePerPerson { get; set; }
+        public decimal DiscountPercent { get; set; } = 0;
 
         public int DurationDays { get; set; }
 

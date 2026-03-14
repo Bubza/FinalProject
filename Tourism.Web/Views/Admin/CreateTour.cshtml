@@ -25,45 +25,51 @@
                     <input asp-for="PricePerPerson" class="form-control" type="number" step="0.01" />
                 </div>
                 <div class="col-md-4 mb-3">
+                    <label asp-for="DiscountPercent" class="form-label">Discount (%)</label>
+                    <input asp-for="DiscountPercent" class="form-control" type="number" step="1" min="0" max="100" placeholder="0" />
+                    <div class="form-text">Leave 0 for no discount</div>
+                </div>
+                <div class="col-md-4 mb-3">
                     <label asp-for="DurationDays" class="form-label">Duration (days)</label>
                     <input asp-for="DurationDays" class="form-control" type="number" />
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label asp-for="MaxParticipants" class="form-label">Max participants</label>
-                    <input asp-for="MaxParticipants" class="form-control" type="number" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaxParticipants" class="form-label">Max participants</label>
+                        <input asp-for="MaxParticipants" class="form-control" type="number" />
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="StartDate" class="form-label">Start date</label>
-                    <input asp-for="StartDate" class="form-control" type="date" />
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="StartDate" class="form-label">Start date</label>
+                        <input asp-for="StartDate" class="form-control" type="date" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="EndDate" class="form-label">End date</label>
+                        <input asp-for="EndDate" class="form-control" type="date" />
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="EndDate" class="form-label">End date</label>
-                    <input asp-for="EndDate" class="form-control" type="date" />
+                <div class="mb-3">
+                    <label asp-for="ImageUrl" class="form-label">Image URL</label>
+                    <input asp-for="ImageUrl" class="form-control" />
                 </div>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label">Image URL</label>
-                <input asp-for="ImageUrl" class="form-control" />
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="DestinationId" class="form-label">Destination</label>
-                    <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="form-select">
-                        <option value="">-- Select --</option>
-                    </select>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="DestinationId" class="form-label">Destination</label>
+                        <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="form-select">
+                            <option value="">-- Select --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TourOperatorId" class="form-label">Tour Operator</label>
+                        <select asp-for="TourOperatorId" asp-items="ViewBag.TourOperators" class="form-select">
+                            <option value="">-- Select --</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="TourOperatorId" class="form-label">Tour Operator</label>
-                    <select asp-for="TourOperatorId" asp-items="ViewBag.TourOperators" class="form-select">
-                        <option value="">-- Select --</option>
-                    </select>
-                </div>
-            </div>
 
-            <button type="submit" class="btn btn-primary">Add Tour</button>
-            <a asp-action="Tours" class="btn btn-outline-secondary ms-2">Back</a>
+                <button type="submit" class="btn btn-primary">Add Tour</button>
+                <a asp-action="Tours" class="btn btn-outline-secondary ms-2">Back</a>
         </form>
     </div>
 </div>

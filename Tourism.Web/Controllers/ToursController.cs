@@ -59,6 +59,7 @@ namespace Tourism.Web.Controllers
                 Title = t.Title,
                 Description = t.Description,
                 PricePerPerson = t.PricePerPerson,
+                DiscountPercent = t.DiscountPercent,
                 DurationDays = t.DurationDays,
                 ImageUrl = t.ImageUrl,
                 StartDate = t.StartDate,
@@ -96,6 +97,7 @@ namespace Tourism.Web.Controllers
                 Title = tour.Title,
                 Description = tour.Description,
                 PricePerPerson = tour.PricePerPerson,
+                DiscountPercent = tour.DiscountPercent,
                 DurationDays = tour.DurationDays,
                 MaxParticipants = tour.MaxParticipants,
                 ImageUrl = tour.ImageUrl,
@@ -146,9 +148,10 @@ namespace Tourism.Web.Controllers
                 ReviewCount = t.Reviews.Count
             }).ToList();
 
-            // Booked spots for availability display
+            // Booked spots for availability display (exclude cancelled, sum people)
             ViewBag.BookedSpots = tour.Bookings
-                .Count(b => b.Status != Tourism.Data.Models.Enums.BookingStatus.Cancelled);
+                .Where(b => b.Status != Tourism.Data.Models.Enums.BookingStatus.Cancelled)
+                .Sum(b => b.NumberOfPeople);
 
             return View(viewModel);
         }

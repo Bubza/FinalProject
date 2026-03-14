@@ -41,7 +41,15 @@ namespace Tourism.Services
 
         public async Task UpdateAsync(Tour tour)
         {
-            _context.Tours.Update(tour);
+            var existing = await _context.Tours.FindAsync(tour.Id);
+            if (existing != null)
+            {
+                _context.Entry(existing).CurrentValues.SetValues(tour);
+            }
+            else
+            {
+                _context.Tours.Update(tour);
+            }
             await _context.SaveChangesAsync();
         }
 

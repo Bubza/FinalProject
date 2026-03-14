@@ -39,6 +39,12 @@
             <span class="vt-meta-pill"><i class="bi bi-building"></i> @Model.TourOperatorName</span>
             <span class="vt-meta-pill"><i class="bi bi-clock"></i> @Model.DurationDays days</span>
             <span class="vt-meta-pill"><i class="bi bi-people"></i> up to @Model.MaxParticipants participants</span>
+            @if (Model.HasDiscount)
+            {
+                <span class="vt-meta-pill" style="background:#FEE2E2;border-color:#FECACA;color:#DC2626">
+                    <i class="bi bi-tag-fill"></i> @Model.DiscountPercent.ToString("0")% OFF
+                </span>
+            }
         </div>
 
         @if (Model.ReviewCount > 0)
@@ -65,28 +71,28 @@
             <div class="vt-info-item">
                 <i class="bi bi-calendar-check"></i>
                 <div>
-                    <div class="vt-info-label">Start date</div>
+                    <div class="vt-info-label">START DATE</div>
                     <div class="vt-info-value">@Model.StartDate.ToString("dd MMMM yyyy")</div>
                 </div>
             </div>
             <div class="vt-info-item">
                 <i class="bi bi-calendar-x"></i>
                 <div>
-                    <div class="vt-info-label">End date</div>
+                    <div class="vt-info-label">END DATE</div>
                     <div class="vt-info-value">@Model.EndDate.ToString("dd MMMM yyyy")</div>
                 </div>
             </div>
             <div class="vt-info-item">
                 <i class="bi bi-clock-history"></i>
                 <div>
-                    <div class="vt-info-label">Duration</div>
+                    <div class="vt-info-label">DURATION</div>
                     <div class="vt-info-value">@Model.DurationDays days</div>
                 </div>
             </div>
             <div class="vt-info-item">
                 <i class="bi bi-people-fill"></i>
                 <div>
-                    <div class="vt-info-label">Max participants</div>
+                    <div class="vt-info-label">MAX PARTICIPANTS</div>
                     <div class="vt-info-value">@Model.MaxParticipants people</div>
                 </div>
             </div>
@@ -177,7 +183,19 @@
                                     <div style="font-size:0.78rem;color:#F59E0B">★ @rec.AverageRating.ToString("0.0") <span style="color:var(--viator-gray)">(@rec.ReviewCount)</span></div>
                                 }
                             </div>
-                            <div class="vt-rec-price">@rec.PricePerPerson.ToString("0") €</div>
+                            <div class="vt-rec-price">
+                                @if (rec.HasDiscount)
+                                {
+                                    <span style="text-decoration:line-through;color:#9CA3AF;font-size:.75rem;display:block">@rec.PricePerPerson.ToString("0") €</span>
+                                    <span style="color:#DC2626">@rec.DiscountedPrice.ToString("0") €</span>
+                                }
+                                else
+                                {
+                                    @rec.PricePerPerson.ToString("0")
+
+                                    <text> €</text>
+                                }
+                            </div>
                         </a>
                     </div>
                 }
@@ -188,8 +206,20 @@
     <!-- BOOKING SIDEBAR -->
     <aside class="vt-booking-card">
         <div class="vt-booking-price">
-            <span class="vt-price-big">@Model.PricePerPerson.ToString("0.00") €</span>
-            <span class="vt-price-per">per person</span>
+            @if (Model.HasDiscount)
+            {
+                <div style="margin-bottom:4px">
+                    <span style="text-decoration:line-through;color:#9CA3AF;font-size:1rem">@Model.PricePerPerson.ToString("0.00") €</span>
+                    <span style="background:#FEE2E2;color:#DC2626;border-radius:6px;padding:2px 8px;font-size:.8rem;font-weight:700;margin-left:6px">-@Model.DiscountPercent.ToString("0")%</span>
+                </div>
+                <span class="vt-price-big" style="color:#DC2626">@Model.DiscountedPrice.ToString("0.00") €</span>
+                <span class="vt-price-per">per person</span>
+            }
+            else
+            {
+                <span class="vt-price-big">@Model.PricePerPerson.ToString("0.00") €</span>
+                <span class="vt-price-per">per person</span>
+            }
         </div>
 
         @if (Model.ReviewCount > 0)
@@ -242,8 +272,11 @@
 
         @if (User.Identity?.IsAuthenticated == true)
         {
-            <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
-               class="btn-viator vt-book-btn">Book Now</a>
+            @if (!User.IsInRole("Operator") && !User.IsInRole("Admin"))
+            {
+                <a asp-controller="Bookings" asp-action="Create" asp-route-tourId="@Model.Id"
+                   class="btn-viator vt-book-btn">Book Now</a>
+            }
 
             @if (ViewBag.IsFavorite == true)
             {

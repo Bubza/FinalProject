@@ -387,7 +387,7 @@
         <div class="filter-pills">
             <div class="pill-search">
                 <i class="bi bi-search si"></i>
-                <input type="text" name="search" placeholder="Destination or tour..." value="@qSearch" />
+                <input type="text" id="searchInput" name="search" placeholder="Destination or tour..." value="@qSearch" autocomplete="off" />
             </div>
             <!-- Date pill -->
             <div style="position:relative">
@@ -691,6 +691,33 @@
         .flatpickr-months .flatpickr-month {
             background: #fff !important;
         }
+        /* Autocomplete dropdown styling */
+        .pac-container {
+            border-radius: 12px;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            font-family: 'Poppins',sans-serif;
+            margin-top: 4px;
+        }
+
+        .pac-item {
+            padding: 8px 14px;
+            font-size: .88rem;
+            cursor: pointer;
+        }
+
+            .pac-item:hover {
+                background: #E6F7F1;
+            }
+
+        .pac-item-query {
+            color: #1A1A1A;
+            font-weight: 600;
+        }
+
+        .pac-matched {
+            color: #00AA6C;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
@@ -750,5 +777,24 @@
             fp.clear();
             document.getElementById("filterForm").submit();
         }
+
+        // Google Places Autocomplete
+        function initAutocomplete() {
+            var input = document.getElementById("searchInput");
+            var autocomplete = new google.maps.places.Autocomplete(input, {
+                types: ["(cities)"],
+                fields: ["name"]
+            });
+            autocomplete.addListener("place_changed", function() {
+                var place = autocomplete.getPlace();
+                if (place.name) {
+                    input.value = place.name;
+                    document.getElementById("filterForm").submit();
+                }
+            });
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initAutocomplete">
     </script>
 }

@@ -183,6 +183,69 @@ namespace Tourism.Web.Controllers
             return RedirectToAction(nameof(Bookings));
         }
 
+        // ===== OPERATORS =====
+        public async Task<IActionResult> Operators()
+        {
+            var operators = await _tourOperatorService.GetAllAsync();
+            var allUsers = _userManager.Users.ToList();
+            ViewBag.AllUsers = allUsers;
+            return View(operators);
+        }
+
+        public async Task<IActionResult> AssignOperator()
+        {
+            var operators = await _tourOperatorService.GetAllAsync();
+            var allUsers = _userManager.Users.ToList();
+            ViewBag.Operators = new SelectList(operators, "Id", "Name");
+            ViewBag.Users = new SelectList(allUsers, "Id", "Email");
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignOperator(int operatorId, string userId)
+        {
+            var op = await _tourOperatorService.GetByIdAsync(operatorId);
+            if (op == null) return NotFound();
+
+            // Remove Operator role from previous linked user
+            if (!string.IsNullOrEmpty(op.UserId) && op.UserId != userId)
+            {
+                var prevUser = await _userManager.FindByIdAsync(op.UserId);
+                if (prevUser != null)
+                    await _userManager.RemoveFromRoleAsync(prevUser, "Operator");
+            }
+
+            op.UserId = userId;
+            await _tourOperatorService.UpdateAsync(op);
+
+            var newUser = await _userManager.FindByIdAsync(userId);
+            if (newUser != null && !await _userManager.IsInRoleAsync(newUser, "Operator"))
+                await _userManager.AddToRoleAsync(newUser, "Operator");
+
+            TempData["Success"] = "Operator account assigned successfully!";
+            return RedirectToAction(nameof(Operators));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteOperator(int id)
+        {
+            var op = await _tourOperatorService.GetByIdAsync(id);
+            if (op != null)
+            {
+                if (!string.IsNullOrEmpty(op.UserId))
+                {
+                    var user = await _userManager.FindByIdAsync(op.UserId);
+                    if (user != null)
+                        await _userManager.RemoveFromRoleAsync(user, "Operator");
+                }
+                await _tourOperatorService.DeleteAsync(id);
+            }
+            TempData["Success"] = "Operator deleted.";
+            return RedirectToAction(nameof(Operators));
+        }
+
         // ===== DESTINATIONS =====
         public async Task<IActionResult> Destinations()
         {

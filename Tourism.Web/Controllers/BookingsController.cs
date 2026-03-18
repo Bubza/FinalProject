@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
@@ -112,19 +113,16 @@ namespace Tourism.Web.Controllers
                 ? Math.Round(tour.PricePerPerson * (1 - tour.DiscountPercent / 100), 2)
                 : tour.PricePerPerson;
 
-            var booking = new Booking
+            var pendingBooking = new
             {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
                 TourId = model.TourId,
+                TourTitle = tour.Title,
                 NumberOfPeople = model.NumberOfPeople,
-                TotalPrice = effectivePrice * model.NumberOfPeople,
-                Status = BookingStatus.Pending
+                TotalPrice = effectivePrice * model.NumberOfPeople
             };
 
-            await _bookingService.CreateAsync(booking);
-
-            TempData["Success"] = "Booking placed successfully!";
-            return RedirectToAction(nameof(Index));
+            TempData["PendingBooking"] = JsonSerializer.Serialize(pendingBooking);
+            return RedirectToAction("Checkout", "Payment");
         }
 
         // POST: /Bookings/Cancel/5

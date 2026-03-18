@@ -1,0 +1,578 @@
+﻿@using System.Globalization
+@{
+    ViewData["Title"] = "Secure Payment";
+    Layout = null; // Full-page — no NaviGo navbar, looks like a real bank redirect
+    decimal totalPrice = (decimal)ViewBag.TotalPrice;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Secure Payment — BORICA</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" />
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #F0F2F5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ── Bank header bar ─────────────────────────── */
+        .bank-header {
+            background: #003B7A;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bank-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bank-logo-icon {
+            width: 42px;
+            height: 42px;
+            background: #fff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: #003B7A;
+            font-weight: 700;
+        }
+
+        .bank-logo-name {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+        }
+
+        .bank-logo-sub {
+            color: #93C5FD;
+            font-size: .7rem;
+            display: block;
+            letter-spacing: .05em;
+        }
+
+        .bank-secure-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 999px;
+            padding: 5px 14px;
+            color: #fff;
+            font-size: .75rem;
+        }
+
+        /* ── Main layout ─────────────────────────────── */
+        .main {
+            flex: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 36px 16px 60px;
+            gap: 24px;
+        }
+
+        /* ── Order summary sidebar ───────────────────── */
+        .order-summary {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 24px;
+            width: 280px;
+            flex-shrink: 0;
+        }
+
+            .order-summary h3 {
+                font-size: .8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: .06em;
+                color: #64748B;
+                margin-bottom: 16px;
+            }
+
+        .order-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: .875rem;
+            padding: 8px 0;
+            border-bottom: 1px solid #F1F5F9;
+            color: #374151;
+        }
+
+            .order-row:last-child {
+                border-bottom: none;
+            }
+
+            .order-row .label {
+                color: #64748B;
+            }
+
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #003B7A;
+            padding-top: 14px;
+            margin-top: 6px;
+            border-top: 2px solid #E2E8F0;
+        }
+
+        .merchant-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #F0F9FF;
+            border: 1px solid #BAE6FD;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 16px;
+            font-size: .78rem;
+            color: #0369A1;
+        }
+
+        /* ── Payment card ────────────────────────────── */
+        .payment-card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            padding: 32px 36px;
+            width: 460px;
+        }
+
+            .payment-card h2 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #1E293B;
+                margin-bottom: 6px;
+            }
+
+            .payment-card .subtitle {
+                font-size: .82rem;
+                color: #64748B;
+                margin-bottom: 28px;
+            }
+
+        /* ── Card preview ────────────────────────────── */
+        .card-preview {
+            background: linear-gradient(135deg, #003B7A 0%, #0F62B9 100%);
+            border-radius: 14px;
+            padding: 22px 24px;
+            margin-bottom: 28px;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+        }
+
+            .card-preview::before {
+                content: '';
+                position: absolute;
+                top: -40px;
+                right: -40px;
+                width: 160px;
+                height: 160px;
+                background: rgba(255,255,255,0.06);
+                border-radius: 50%;
+            }
+
+            .card-preview::after {
+                content: '';
+                position: absolute;
+                bottom: -60px;
+                right: 40px;
+                width: 200px;
+                height: 200px;
+                background: rgba(255,255,255,0.04);
+                border-radius: 50%;
+            }
+
+        .card-chip {
+            width: 36px;
+            height: 28px;
+            background: #F5C842;
+            border-radius: 5px;
+            margin-bottom: 16px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr;
+            gap: 2px;
+            padding: 4px;
+        }
+
+            .card-chip span {
+                background: #D4A017;
+                border-radius: 1px;
+            }
+
+        .card-number-preview {
+            font-size: 1.15rem;
+            letter-spacing: .18em;
+            font-weight: 500;
+            margin-bottom: 18px;
+            font-family: monospace;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+            .card-bottom .clabel {
+                font-size: .62rem;
+                opacity: .7;
+                text-transform: uppercase;
+                letter-spacing: .06em;
+                margin-bottom: 2px;
+            }
+
+            .card-bottom .cvalue {
+                font-size: .88rem;
+                font-weight: 500;
+            }
+
+        .card-brand {
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-style: italic;
+            opacity: .9;
+        }
+
+        /* ── Form fields ─────────────────────────────── */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+            .form-group label {
+                display: block;
+                font-size: .8rem;
+                font-weight: 600;
+                color: #374151;
+                margin-bottom: 7px;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 12px 14px;
+                border: 1.5px solid #E2E8F0;
+                border-radius: 8px;
+                font-size: .95rem;
+                font-family: 'Poppins', sans-serif;
+                color: #1E293B;
+                transition: border-color .2s;
+                outline: none;
+                background: #fff;
+            }
+
+                .form-group input:focus {
+                    border-color: #003B7A;
+                }
+
+                .form-group input::placeholder {
+                    color: #CBD5E1;
+                }
+
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .pay-btn {
+            width: 100%;
+            padding: 15px;
+            background: #003B7A;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background .2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+            .pay-btn:hover {
+                background: #002A5C;
+            }
+
+            .pay-btn:disabled {
+                background: #94A3B8;
+                cursor: not-allowed;
+            }
+
+        .cancel-link {
+            display: block;
+            text-align: center;
+            margin-top: 14px;
+            font-size: .82rem;
+            color: #64748B;
+            text-decoration: none;
+        }
+
+            .cancel-link:hover {
+                color: #003B7A;
+            }
+
+        .security-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #F1F5F9;
+            font-size: .72rem;
+            color: #94A3B8;
+        }
+
+            .security-row span {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+            }
+
+        .error-box {
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #DC2626;
+            font-size: .83rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* ── Footer ──────────────────────────────────── */
+        .bank-footer {
+            background: #1E293B;
+            padding: 14px 24px;
+            text-align: center;
+            font-size: .72rem;
+            color: #64748B;
+        }
+
+            .bank-footer a {
+                color: #94A3B8;
+                text-decoration: none;
+                margin: 0 8px;
+            }
+
+        @@media (max-width: 800px) {
+            .main {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .order-summary {
+                width: 100%;
+                max-width: 460px;
+            }
+
+            .payment-card {
+                width: 100%;
+                max-width: 460px;
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Bank header -->
+    <div class="bank-header">
+        <div class="bank-logo">
+            <div class="bank-logo-icon">B</div>
+            <div>
+                <span class="bank-logo-name">BORICA</span>
+                <span class="bank-logo-sub">SECURE 3D PAYMENT GATEWAY</span>
+            </div>
+        </div>
+        <div class="bank-secure-badge">
+            <i class="bi bi-shield-lock-fill"></i>
+            SSL Encrypted
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- Order summary -->
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <div class="order-row">
+                <span class="label">Tour</span>
+                <span style="text-align:right;max-width:160px;">@ViewBag.TourTitle</span>
+            </div>
+            <div class="order-row">
+                <span class="label">Travelers</span>
+                <span>@ViewBag.NumberOfPeople</span>
+            </div>
+            <div class="order-row">
+                <span class="label">Currency</span>
+                <span>EUR</span>
+            </div>
+            <div class="order-total">
+                <span>Total</span>
+                <span>@totalPrice.ToString("N2", CultureInfo.InvariantCulture) €</span>
+            </div>
+
+            <div class="merchant-badge">
+                <i class="bi bi-shop"></i>
+                <div>
+                    <div style="font-weight:600;">NaviGo Platform</div>
+                    <div style="font-size:.7rem;opacity:.8;">navigo.bg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment form -->
+        <div class="payment-card">
+            <h2>Card payment</h2>
+            <p class="subtitle">Enter your card details to complete the payment</p>
+
+            @if (TempData["PaymentError"] != null)
+            {
+                <div class="error-box">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    @TempData["PaymentError"]
+                </div>
+            }
+
+            <!-- Live card preview -->
+            <div class="card-preview">
+                <div class="card-chip">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                </div>
+                <div class="card-number-preview" id="cardPreview">•••• •••• •••• ••••</div>
+                <div class="card-bottom">
+                    <div>
+                        <div class="clabel">Card Holder</div>
+                        <div class="cvalue" id="holderPreview">FULL NAME</div>
+                    </div>
+                    <div>
+                        <div class="clabel">Expires</div>
+                        <div class="cvalue" id="expiryPreview">MM/YY</div>
+                    </div>
+                    <div class="card-brand">VISA</div>
+                </div>
+            </div>
+
+            <form method="post" asp-action="Checkout" asp-controller="Payment" id="payForm">
+                @Html.AntiForgeryToken()
+
+                <div class="form-group">
+                    <label>Card Number</label>
+                    <input type="text" name="cardNumber" id="cardNumber"
+                           placeholder="1234 5678 9012 3456"
+                           maxlength="19" autocomplete="cc-number" required />
+                </div>
+
+                <div class="form-group">
+                    <label>Card Holder Name</label>
+                    <input type="text" name="cardHolder" id="cardHolder"
+                           placeholder="IVAN PETROV"
+                           maxlength="26" autocomplete="cc-name" required />
+                </div>
+
+                <div class="row-2">
+                    <div class="form-group">
+                        <label>Expiry Date</label>
+                        <input type="text" name="expiry" id="expiry"
+                               placeholder="MM/YY" maxlength="5"
+                               autocomplete="cc-exp" required />
+                    </div>
+                    <div class="form-group">
+                        <label>CVV / CVC</label>
+                        <input type="password" name="cvv" id="cvv"
+                               placeholder="•••" maxlength="3"
+                               autocomplete="cc-csc" required />
+                    </div>
+                </div>
+
+                <button type="submit" class="pay-btn" id="payBtn">
+                    <i class="bi bi-lock-fill"></i>
+                    Pay @totalPrice.ToString("N2", CultureInfo.InvariantCulture) €
+                </button>
+            </form>
+
+            <a href="@Url.Action("Details", "Tours", new { id = ViewBag.TourId })" class="cancel-link">
+                ← Cancel and return to tour
+            </a>
+
+            <div class="security-row">
+                <span><i class="bi bi-shield-check"></i> 3D Secure</span>
+                <span><i class="bi bi-lock"></i> SSL/TLS</span>
+                <span><i class="bi bi-credit-card"></i> PCI DSS</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bank-footer">
+        &copy; 2026 BORICA AD — Payment Processing Services &nbsp;|&nbsp;
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+        <a href="#">Support</a>
+    </div>
+
+    <script>
+        // Card number formatting + preview
+        document.getElementById('cardNumber').addEventListener('input', function () {
+            let v = this.value.replace(/\D/g, '').substring(0, 16);
+            this.value = v.replace(/(.{4})/g, '$1 ').trim();
+            let display = v.padEnd(16, '•');
+            document.getElementById('cardPreview').textContent =
+                display.substring(0,4) + ' ' + display.substring(4,8) + ' ' +
+                display.substring(8,12) + ' ' + display.substring(12,16);
+        });
+
+        document.getElementById('cardHolder').addEventListener('input', function () {
+            document.getElementById('holderPreview').textContent =
+                this.value.toUpperCase() || 'FULL NAME';
+        });
+
+        document.getElementById('expiry').addEventListener('input', function () {
+            let v = this.value.replace(/\D/g, '').substring(0, 4);
+            if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+            this.value = v;
+            document.getElementById('expiryPreview').textContent = v || 'MM/YY';
+        });
+
+        // Show loading state on submit
+        document.getElementById('payForm').addEventListener('submit', function () {
+            const btn = document.getElementById('payBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">&#8987;</span> Processing...';
+        });
+    </script>
+</body>
+</html>

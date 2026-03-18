@@ -1,0 +1,158 @@
+﻿@using System.Globalization
+@{
+    ViewData["Title"] = "Payment Successful";
+    decimal totalPrice = decimal.Parse((string)ViewBag.TotalPrice, CultureInfo.InvariantCulture);
+    string refNumber = "BRC" + DateTime.Now.ToString("yyyyMMdd") + ViewBag.BookingId.ToString().PadLeft(4, '0');
+}
+
+<div style="background:var(--viator-light);border-bottom:1px solid var(--viator-border)">
+    <div class="container">
+        <ul class="breadcrumb-viator">
+            <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li><a asp-controller="Tours" asp-action="Index">Tours</a></li>
+            <li class="active">Booking Confirmed</li>
+        </ul>
+    </div>
+</div>
+
+<div class="container" style="padding:60px 16px 100px;max-width:560px;text-align:center;">
+
+    <!-- Success icon -->
+    <div class="success-circle">
+        <i class="bi bi-check-lg"></i>
+    </div>
+
+    <h1 style="font-family:'DM Serif Display',serif;font-size:2rem;margin-bottom:8px;color:#14532D;">
+        Payment Successful!
+    </h1>
+    <p style="color:var(--viator-gray);font-size:.95rem;margin-bottom:36px;">
+        Your booking has been confirmed. Check your email for details.
+    </p>
+
+    <!-- Confirmation card -->
+    <div class="confirm-card">
+        <div class="confirm-header">
+            <i class="bi bi-receipt"></i> Booking Confirmation
+        </div>
+
+        <div class="confirm-row">
+            <span class="confirm-label">Reference</span>
+            <span class="confirm-value" style="font-family:monospace;color:var(--viator-green);font-weight:700;">@refNumber</span>
+        </div>
+        <div class="confirm-row">
+            <span class="confirm-label">Tour</span>
+            <span class="confirm-value">@ViewBag.TourTitle</span>
+        </div>
+        <div class="confirm-row">
+            <span class="confirm-label">Travelers</span>
+            <span class="confirm-value">@ViewBag.NumberOfPeople person(s)</span>
+        </div>
+        <div class="confirm-row">
+            <span class="confirm-label">Payment method</span>
+            <span class="confirm-value"><i class="bi bi-credit-card me-1"></i>@ViewBag.CardMask</span>
+        </div>
+        <div class="confirm-row">
+            <span class="confirm-label">Status</span>
+            <span class="confirm-value">
+                <span style="background:#DCFCE7;color:#14532D;padding:3px 10px;border-radius:999px;font-size:.8rem;font-weight:600;">
+                    ✓ Confirmed
+                </span>
+            </span>
+        </div>
+        <div class="confirm-total">
+            <span>Amount charged</span>
+            <span style="color:var(--viator-green);">@totalPrice.ToString("N2", CultureInfo.InvariantCulture) €</span>
+        </div>
+    </div>
+
+    <!-- BORICA stamp -->
+    <div class="borica-stamp">
+        <div style="font-weight:700;font-size:.9rem;color:#003B7A;letter-spacing:.05em;">BORICA</div>
+        <div style="font-size:.7rem;color:#64748B;">Processed by BORICA AD Secure Payment Gateway</div>
+        <div style="font-size:.7rem;color:#94A3B8;margin-top:2px;">@DateTime.Now.ToString("dd MMM yyyy HH:mm", CultureInfo.InvariantCulture) UTC</div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;flex-direction:column;gap:12px;margin-top:32px;">
+        <a asp-controller="Bookings" asp-action="Profile"
+           class="btn-viator" style="display:block;padding:14px;font-size:.95rem;">
+            <i class="bi bi-person-lines-fill me-2"></i>View my bookings
+        </a>
+        <a asp-controller="Tours" asp-action="Index"
+           class="btn-viator-outline" style="display:block;padding:13px;text-align:center;font-size:.95rem;">
+            Explore more tours
+        </a>
+    </div>
+
+</div>
+
+<style>
+    .success-circle {
+        width: 80px;
+        height: 80px;
+        background: #DCFCE7;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.4rem;
+        color: #16A34A;
+        margin: 0 auto 24px;
+        border: 3px solid #A7F3D0;
+    }
+
+    .confirm-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        text-align: left;
+        margin-bottom: 16px;
+    }
+
+    .confirm-header {
+        background: #003B7A;
+        color: #fff;
+        padding: 14px 20px;
+        font-size: .85rem;
+        font-weight: 600;
+        letter-spacing: .03em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .confirm-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 13px 20px;
+        border-bottom: 1px solid var(--viator-border);
+        font-size: .875rem;
+    }
+
+    .confirm-label {
+        color: var(--viator-gray);
+    }
+
+    .confirm-value {
+        font-weight: 500;
+        text-align: right;
+    }
+
+    .confirm-total {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.05rem;
+        font-weight: 700;
+        padding: 16px 20px;
+    }
+
+    .borica-stamp {
+        border: 1px dashed #CBD5E1;
+        border-radius: 10px;
+        padding: 14px 20px;
+        text-align: center;
+        background: #F8FAFC;
+    }
+</style>

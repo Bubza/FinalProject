@@ -41,18 +41,84 @@ namespace Tourism.Web.Controllers
             var bookings = await _bookingService.GetAllAsync();
             var reviews = await _reviewService.GetAllAsync();
             var operators = await _tourOperatorService.GetAllAsync();
+            var users = _userManager.Users.ToList();
 
-            ViewBag.TotalTours = tours.Count();
-            ViewBag.TotalBookings = bookings.Count();
+            var bookingList = bookings.ToList();
+            var tourList = tours.ToList();
+
+            // ── Summary counters ──────────────────────────────────────────
+            ViewBag.TotalTours = tourList.Count;
+            ViewBag.TotalBookings = bookingList.Count;
             ViewBag.TotalReviews = reviews.Count();
             ViewBag.TotalOperators = operators.Count();
-            ViewBag.PendingBookings = bookings.Count(b => b.Status == BookingStatus.Pending);
+            ViewBag.TotalUsers = users.Count;
 
-            ViewBag.PopularTours = tours
+            // ── Booking status breakdown ──────────────────────────────────
+            ViewBag.PendingBookings = bookingList.Count(b => b.Status == BookingStatus.Pending);
+            ViewBag.ConfirmedBookings = bookingList.Count(b => b.Status == BookingStatus.Confirmed);
+            ViewBag.CancelledBookings = bookingList.Count(b => b.Status == BookingStatus.Cancelled);
+            ViewBag.CompletedBookings = bookingList.Count(b => b.Status == BookingStatus.Completed);
+
+            // ── Revenue (confirmed + completed bookings only) ─────────────
+            ViewBag.TotalRevenue = bookingList
+                .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                .Sum(b => b.TotalPrice);
+
+            // ── Most popular tours (by booking count) ────────────────────
+            ViewBag.PopularTours = tourList
                 .OrderByDescending(t => t.Bookings.Count)
                 .Take(5)
-                .Select(t => new { t.Title, DestinationName = t.Destination.Name, BookingCount = t.Bookings.Count })
+                .Select(t => new
+                {
+                    t.Id,
+                    t.Title,
+                    DestinationName = t.Destination?.Name ?? "-",
+                    BookingCount = t.Bookings.Count,
+                    Revenue = t.Bookings
+                        .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                        .Sum(b => b.TotalPrice)
+                })
                 .ToList();
+
+            // ── Top rated tours (by average review score) ─────────────────
+            ViewBag.TopRatedTours = tourList
+                .Where(t => t.Reviews.Any())
+                .OrderByDescending(t => t.Reviews.Average(r => r.Rating))
+                .Take(5)
+                .Select(t => new
+                {
+                    t.Id,
+                    t.Title,
+                    DestinationName = t.Destination?.Name ?? "-",
+                    AvgRating = Math.Round(t.Reviews.Average(r => r.Rating), 1),
+                    ReviewCount = t.Reviews.Count
+                })
+                .ToList();
+
+            // ── Upcoming tours with available spots ───────────────────────
+            var upcomingTours = tourList
+                .Where(t => t.StartDate > DateTime.UtcNow)
+                .OrderBy(t => t.StartDate)
+                .Take(5)
+                .ToList();
+
+            var upcomingWithSpots = new List<object>();
+            foreach (var t in upcomingTours)
+            {
+                var booked = t.Bookings
+                    .Where(b => b.Status != BookingStatus.Cancelled)
+                    .Sum(b => b.NumberOfPeople);
+                upcomingWithSpots.Add(new
+                {
+                    t.Id,
+                    t.Title,
+                    t.StartDate,
+                    t.MaxParticipants,
+                    BookedSpots = booked,
+                    AvailableSpots = t.MaxParticipants - booked
+                });
+            }
+            ViewBag.UpcomingTours = upcomingWithSpots;
 
             return View();
         }

@@ -32,6 +32,7 @@ namespace Tourism.Web.Models.ViewModels
         [Required]
         public int DestinationId { get; set; }
         public string DestinationName { get; set; } = string.Empty;
+        public string DestinationCountry { get; set; } = string.Empty;
         [Required]
         public int TourOperatorId { get; set; }
         public string TourOperatorName { get; set; } = string.Empty;

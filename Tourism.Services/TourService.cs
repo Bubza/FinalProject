@@ -72,7 +72,9 @@ namespace Tourism.Services
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(t => t.Title.Contains(search) || t.Destination.Name.Contains(search));
+                query = query.Where(t => t.Title.Contains(search)
+                    || t.Destination.Name.Contains(search)
+                    || t.Destination.Country.Contains(search));
 
             if (destinationId.HasValue)
                 query = query.Where(t => t.DestinationId == destinationId);

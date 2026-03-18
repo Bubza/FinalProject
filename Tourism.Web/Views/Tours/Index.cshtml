@@ -778,23 +778,89 @@
             document.getElementById("filterForm").submit();
         }
 
-        // Google Places Autocomplete
-        function initAutocomplete() {
-            var input = document.getElementById("searchInput");
-            var autocomplete = new google.maps.places.Autocomplete(input, {
-                types: ["(cities)"],
-                fields: ["name"]
+        // Google Places Autocomplete (new API)
+        async function initAutocomplete() {
+            const { PlaceAutocompleteElement } = await google.maps.importLibrary("places");
+
+            const input = document.getElementById("searchInput");
+            const parent = input.parentElement;
+
+            // Create the new autocomplete element
+            const placeAuto = new PlaceAutocompleteElement({
+                types: ["(cities)"]
             });
-            autocomplete.addListener("place_changed", function() {
-                var place = autocomplete.getPlace();
-                if (place.name) {
-                    input.value = place.name;
-                    document.getElementById("filterForm").submit();
-                }
+
+            // Style it to match our input
+            placeAuto.style.cssText = `
+                position: absolute;
+                top: 0; left: 0; right: 0; bottom: 0;
+                opacity: 0;
+                pointer-events: auto;
+                z-index: 10;
+            `;
+
+            // Use a simpler approach - just enhance the existing input
+            // by listening to place_changed on a hidden autocomplete service
+            const autocompleteService = new google.maps.places.AutocompleteService();
+            const sessionToken = new google.maps.places.AutocompleteSessionToken();
+
+            // Create suggestions dropdown
+            const dropdown = document.createElement("div");
+            dropdown.style.cssText = "position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:1000;display:none;margin-top:4px;overflow:hidden;font-family:'Poppins',sans-serif";
+            parent.style.position = "relative";
+            parent.appendChild(dropdown);
+
+            input.addEventListener("input", function() {
+                const val = this.value.trim();
+                if (val.length < 2) { dropdown.style.display = "none"; return; }
+
+                autocompleteService.getPlacePredictions(
+                    {
+                        input: val,
+                        types: ["(cities)"],
+                        sessionToken,
+                        locationBias: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(35.0, -10.0),  // SW Europe
+                            new google.maps.LatLng(70.0, 40.0)    // NE Europe
+                        )
+                    },
+                    function(predictions, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+                            dropdown.style.display = "none"; return;
+                        }
+                        dropdown.innerHTML = "";
+                        predictions.slice(0, 5).forEach(function(p) {
+                            const item = document.createElement("div");
+                            item.style.cssText = "padding:10px 16px;cursor:pointer;font-size:.88rem;color:#1A1A1A;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:10px";
+                            item.innerHTML = `<i class="bi bi-geo-alt" style="color:#00AA6C"></i> ${p.description}`;
+                            item.addEventListener("mousedown", function(e) {
+                                e.preventDefault();
+                                // Use only the city name (first part before comma)
+                                const cityName = p.description.split(",")[0].trim();
+                                input.value = cityName;
+                                dropdown.style.display = "none";
+                                document.getElementById("filterForm").submit();
+                            });
+                            item.addEventListener("mouseover", function() { this.style.background = "#E6F7F1"; });
+                            item.addEventListener("mouseout", function() { this.style.background = ""; });
+                            dropdown.appendChild(item);
+                        });
+                        dropdown.style.display = "block";
+                    }
+                );
+            });
+
+            input.addEventListener("blur", function() {
+                setTimeout(function() { dropdown.style.display = "none"; }, 150);
+            });
+
+            input.addEventListener("keydown", function(e) {
+                if (e.key === "Escape") dropdown.style.display = "none";
             });
         }
+        window.initMaps = initAutocomplete;
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initAutocomplete">
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initMaps">
     </script>
 }

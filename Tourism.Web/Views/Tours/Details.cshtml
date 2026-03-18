@@ -311,6 +311,22 @@
                 }
             }
         }
+        else
+        {
+            <a href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)"
+               class="btn-viator vt-book-btn">
+                Book Now
+            </a>
+            <a href="/Identity/Account/Login?returnUrl=@Uri.EscapeDataString(Context.Request.Path + Context.Request.QueryString)"
+               class="vt-fav-btn" style="margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;">
+                <i class="bi bi-heart"></i> Save tour
+            </a>
+            <div style="text-align:center;font-size:0.78rem;color:var(--viator-gray);margin-top:10px;padding:8px;background:var(--viator-light);border-radius:8px">
+                <i class="bi bi-person"></i>
+                <a href="/Identity/Account/Login" style="color:var(--viator-green);text-decoration:none;">Sign in</a>
+                to book or save this tour
+            </div>
+        }
 
         <div class="vt-booking-guarantee">
             <i class="bi bi-shield-check"></i>
@@ -776,7 +792,7 @@
         function initMap() {
             const geocoder = new google.maps.Geocoder();
             const mapDiv = document.getElementById('tour-map');
-            geocoder.geocode({ address: "@Model.DestinationName" }, function(results, status) {
+            geocoder.geocode({ address: "@Model.DestinationName, @Model.DestinationCountry" }, function(results, status) {
                 if (status === 'OK') {
                     const map = new google.maps.Map(mapDiv, {
                         center: results[0].geometry.location,

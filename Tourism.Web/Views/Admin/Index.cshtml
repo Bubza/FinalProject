@@ -1,102 +1,464 @@
-﻿@{
-    ViewData["Title"] = "Admin Panel";
+﻿@using System.Globalization
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var revenue = (decimal)ViewBag.TotalRevenue;
+    var total = (int)ViewBag.TotalBookings;
+    var confirmed = (int)ViewBag.ConfirmedBookings;
+    var pending = (int)ViewBag.PendingBookings;
+    var cancelled = (int)ViewBag.CancelledBookings;
+    var completed = (int)ViewBag.CompletedBookings;
+
+    int Pct(int val) => total > 0 ? (int)Math.Round(val * 100.0 / total) : 0;
 }
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success alert-dismissible fade show mx-4 mt-3">
         @TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
 <div class="container my-4">
-    <h1 class="mb-4">Admin Panel</h1>
 
-    <div class="row row-cols-1 row-cols-md-5 g-3 mb-4">
-        <div class="col">
-            <div class="card text-center shadow-sm border-primary">
-                <div class="card-body">
-                    <h2 class="text-primary">@ViewBag.TotalTours</h2>
-                    <p class="mb-0">Tours</p>
-                </div>
-            </div>
+    <!-- Page header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">Admin Dashboard</h1>
+            <p class="text-muted mb-0" style="font-size:.9rem;">Overview of NaviGo platform activity</p>
         </div>
-        <div class="col">
-            <div class="card text-center shadow-sm border-success">
-                <div class="card-body">
-                    <h2 class="text-success">@ViewBag.TotalBookings</h2>
-                    <p class="mb-0">Bookings</p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card text-center shadow-sm border-warning">
-                <div class="card-body">
-                    <h2 class="text-warning">@ViewBag.PendingBookings</h2>
-                    <p class="mb-0">Pending</p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card text-center shadow-sm border-info">
-                <div class="card-body">
-                    <h2 class="text-info">@ViewBag.TotalReviews</h2>
-                    <p class="mb-0">Reviews</p>
-                </div>
-            </div>
-        </div>
-        <div class="col">
-            <div class="card text-center shadow-sm border-secondary">
-                <div class="card-body">
-                    <h2 class="text-secondary">@ViewBag.TotalOperators</h2>
-                    <p class="mb-0">Operators</p>
-                </div>
-            </div>
-        </div>
+        <span class="badge rounded-pill px-3 py-2" style="background:var(--viator-green-light);color:var(--viator-green);font-size:.85rem;">
+            <i class="bi bi-calendar3 me-1"></i>@DateTime.Now.ToString("d MMMM yyyy", CultureInfo.InvariantCulture)
+        </span>
     </div>
 
+    <!-- KPI cards -->
     <div class="row g-3 mb-4">
-        <div class="col-md-3">
-            <a asp-action="Tours" class="btn btn-outline-primary w-100 py-3">
-                <i class="bi bi-map"></i> Manage Tours
-            </a>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100">
+                <div class="stat-icon" style="background:#E6F7F1;color:var(--viator-green);"><i class="bi bi-map"></i></div>
+                <div class="stat-num">@ViewBag.TotalTours</div>
+                <div class="stat-label">Tours</div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a asp-action="Bookings" class="btn btn-outline-success w-100 py-3">
-                <i class="bi bi-calendar-check"></i> Manage Bookings
-            </a>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100">
+                <div class="stat-icon" style="background:#EFF6FF;color:#3B82F6;"><i class="bi bi-calendar-check"></i></div>
+                <div class="stat-num">@ViewBag.TotalBookings</div>
+                <div class="stat-label">Bookings</div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a asp-action="Destinations" class="btn btn-outline-info w-100 py-3">
-                <i class="bi bi-geo-alt"></i> Manage Destinations
-            </a>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100">
+                <div class="stat-icon" style="background:#FEF9C3;color:#CA8A04;"><i class="bi bi-clock-history"></i></div>
+                <div class="stat-num">@ViewBag.PendingBookings</div>
+                <div class="stat-label">Pending</div>
+            </div>
         </div>
-        <div class="col-md-3">
-            <a asp-action="Operators" class="btn btn-outline-secondary w-100 py-3">
-                <i class="bi bi-building"></i> Tour Operators
-            </a>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100">
+                <div class="stat-icon" style="background:#FEF2F2;color:#EF4444;"><i class="bi bi-star-half"></i></div>
+                <div class="stat-num">@ViewBag.TotalReviews</div>
+                <div class="stat-label">Reviews</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100">
+                <div class="stat-icon" style="background:#F3E8FF;color:#9333EA;"><i class="bi bi-people"></i></div>
+                <div class="stat-num">@ViewBag.TotalUsers</div>
+                <div class="stat-label">Users</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-2">
+            <div class="stat-card h-100" style="border-color:var(--viator-green);">
+                <div class="stat-icon" style="background:var(--viator-green-light);color:var(--viator-green);"><i class="bi bi-currency-euro"></i></div>
+                <div class="stat-num" style="color:var(--viator-green);font-size:1.1rem;">@revenue.ToString("N2", CultureInfo.InvariantCulture) €</div>
+                <div class="stat-label">Revenue</div>
+            </div>
         </div>
     </div>
 
-    <h4>Most Popular Tours</h4>
-    <table class="table table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>Tour</th>
-                <th>Destination</th>
-                <th>Bookings</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tour in ViewBag.PopularTours)
-            {
-                <tr>
-                    <td>@tour.Title</td>
-                    <td>@tour.DestinationName</td>
-                    <td><span class="badge bg-primary">@tour.BookingCount</span></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <!-- Quick nav -->
+    <div class="row g-2 mb-4">
+        <div class="col-6 col-md-3">
+            <a asp-action="Tours" class="btn btn-outline-primary w-100 py-2"><i class="bi bi-map me-1"></i> Tours</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-action="Bookings" class="btn btn-outline-success w-100 py-2"><i class="bi bi-calendar-check me-1"></i> Bookings</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-action="Destinations" class="btn btn-outline-info w-100 py-2"><i class="bi bi-geo-alt me-1"></i> Destinations</a>
+        </div>
+        <div class="col-6 col-md-3">
+            <a asp-action="Operators" class="btn btn-outline-secondary w-100 py-2"><i class="bi bi-building me-1"></i> Operators</a>
+        </div>
+    </div>
+
+    <!-- Booking status breakdown -->
+    <div class="dashboard-card mb-4">
+        <h5 class="dashboard-card-title"><i class="bi bi-pie-chart me-2"></i>Booking Status Breakdown</h5>
+        <div class="row g-3 mb-3">
+            <div class="col-6 col-md-3">
+                <div class="status-pill status-pending">
+                    <span class="status-pill-count">@pending</span>
+                    <span class="status-pill-label">Pending</span>
+                    <span class="status-pill-pct">@Pct(pending)%</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="status-pill status-confirmed">
+                    <span class="status-pill-count">@confirmed</span>
+                    <span class="status-pill-label">Confirmed</span>
+                    <span class="status-pill-pct">@Pct(confirmed)%</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="status-pill status-completed">
+                    <span class="status-pill-count">@completed</span>
+                    <span class="status-pill-label">Completed</span>
+                    <span class="status-pill-pct">@Pct(completed)%</span>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="status-pill status-cancelled">
+                    <span class="status-pill-count">@cancelled</span>
+                    <span class="status-pill-label">Cancelled</span>
+                    <span class="status-pill-pct">@Pct(cancelled)%</span>
+                </div>
+            </div>
+        </div>
+        @if (total > 0)
+        {
+            <div class="stacked-bar">
+                @if (confirmed > 0)
+                {
+                    <div class="stacked-bar-seg seg-confirmed" style="width:@Pct(confirmed)%"></div>
+                }
+                @if (completed > 0)
+                {
+                    <div class="stacked-bar-seg seg-completed" style="width:@Pct(completed)%"></div>
+                }
+                @if (pending > 0)
+                {
+                    <div class="stacked-bar-seg seg-pending" style="width:@Pct(pending)%"></div>
+                }
+                @if (cancelled > 0)
+                {
+                    <div class="stacked-bar-seg seg-cancelled" style="width:@Pct(cancelled)%"></div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="row g-4 mb-4">
+        <!-- Most popular tours -->
+        <div class="col-lg-6">
+            <div class="dashboard-card h-100">
+                <h5 class="dashboard-card-title"><i class="bi bi-fire me-2" style="color:#F97316;"></i>Most Popular Tours</h5>
+                @if (((IEnumerable<dynamic>)ViewBag.PopularTours).Any())
+                {
+                    <table class="table table-hover dash-table">
+                        <thead>
+                            <tr><th>Tour</th><th>Destination</th><th class="text-center">Bookings</th><th class="text-end">Revenue</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in ViewBag.PopularTours)
+                            {
+                                <tr>
+                                    <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
+                                    <td class="text-muted small">@t.DestinationName</td>
+                                    <td class="text-center"><span class="badge rounded-pill" style="background:var(--viator-green-light);color:var(--viator-green);">@t.BookingCount</span></td>
+                                    @{
+                                        decimal tRev = (decimal)t.Revenue;
+                                    }
+                                    <td class="text-end small text-muted">@tRev.ToString("N2", CultureInfo.InvariantCulture) €</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted small">No bookings yet.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Top rated tours -->
+        <div class="col-lg-6">
+            <div class="dashboard-card h-100">
+                <h5 class="dashboard-card-title"><i class="bi bi-star-fill me-2" style="color:#FBBF24;"></i>Top Rated Tours</h5>
+                @if (((IEnumerable<dynamic>)ViewBag.TopRatedTours).Any())
+                {
+                    <table class="table table-hover dash-table">
+                        <thead>
+                            <tr><th>Tour</th><th>Destination</th><th class="text-center">Rating</th><th class="text-center">Reviews</th></tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var t in ViewBag.TopRatedTours)
+                            {
+                                double avg = (double)t.AvgRating;
+                                <tr>
+                                    <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
+                                    <td class="text-muted small">@t.DestinationName</td>
+                                    <td class="text-center">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= Math.Floor(avg))
+                                            {
+                                                <i class="bi bi-star-fill" style="color:#FBBF24;font-size:.7rem;"></i>
+                                            }
+                                            else if (i - avg > 0 && i - avg < 1)
+                                            {
+                                                <i class="bi bi-star-half" style="color:#FBBF24;font-size:.7rem;"></i>
+                                            }
+                                            else
+                                            {
+                                                <i class="bi bi-star" style="color:#D1D5DB;font-size:.7rem;"></i>
+                                            }
+                                        }
+                                        <span class="ms-1 small fw-600">@t.AvgRating</span>
+                                    </td>
+                                    <td class="text-center"><span class="badge bg-light text-muted">@t.ReviewCount</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <p class="text-muted small">No reviews yet.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming tours availability -->
+    <div class="dashboard-card mb-4">
+        <h5 class="dashboard-card-title"><i class="bi bi-calendar-event me-2" style="color:#3B82F6;"></i>Upcoming Tours — Availability</h5>
+        @if (((IEnumerable<dynamic>)ViewBag.UpcomingTours).Any())
+        {
+            <div class="table-responsive">
+                <table class="table table-hover dash-table">
+                    <thead>
+                        <tr><th>Tour</th><th>Start Date</th><th class="text-center">Capacity</th><th class="text-center">Booked</th><th class="text-center">Available</th><th style="min-width:140px;">Fill Rate</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in ViewBag.UpcomingTours)
+                        {
+                            int max = (int)t.MaxParticipants;
+                            int booked = (int)t.BookedSpots;
+                            int avail = (int)t.AvailableSpots;
+                            int fillPct = max > 0 ? (int)Math.Round(booked * 100.0 / max) : 0;
+                            string barColor = fillPct >= 90 ? "#EF4444" : fillPct >= 60 ? "#F97316" : "#00AA6C";
+                            <tr>
+                                <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
+                                @{
+                                    DateTime tDate = (DateTime)t.StartDate;
+                                }
+                                <td class="text-muted small">@tDate.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</td>
+                                <td class="text-center">@max</td>
+                                <td class="text-center">@booked</td>
+                                <td class="text-center">
+                                    @if (avail == 0)
+                                    {
+                                        <span class="badge bg-danger">FULL</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge rounded-pill" style="background:#E6F7F1;color:#00AA6C;">@avail left</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="fill-bar-track flex-grow-1">
+                                            <div class="fill-bar-fill" style="width:@fillPct%;background:@barColor;"></div>
+                                        </div>
+                                        <span class="small text-muted" style="min-width:32px;">@fillPct%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small">No upcoming tours found.</p>
+        }
+    </div>
+
 </div>
+
+<style>
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.1rem 1rem;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+        transition: box-shadow .2s,transform .2s;
+    }
+
+        .stat-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+    .stat-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        margin: 0 auto .6rem;
+    }
+
+    .stat-num {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .stat-label {
+        font-size: .75rem;
+        color: var(--viator-gray);
+        margin-top: .15rem;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.4rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .dashboard-card-title {
+        font-size: .95rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .status-pill {
+        border-radius: 10px;
+        padding: .75rem 1rem;
+        text-align: center;
+    }
+
+    .status-pill-count {
+        display: block;
+        font-size: 1.6rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .status-pill-label {
+        display: block;
+        font-size: .75rem;
+        margin: .1rem 0;
+    }
+
+    .status-pill-pct {
+        display: block;
+        font-size: .7rem;
+        opacity: .7;
+    }
+
+    .status-pending {
+        background: #FEF9C3;
+        color: #92400E;
+    }
+
+    .status-confirmed {
+        background: #DCFCE7;
+        color: #14532D;
+    }
+
+    .status-completed {
+        background: #E0F2FE;
+        color: #0C4A6E;
+    }
+
+    .status-cancelled {
+        background: #FEE2E2;
+        color: #7F1D1D;
+    }
+
+    .stacked-bar {
+        display: flex;
+        height: 10px;
+        border-radius: 999px;
+        overflow: hidden;
+        background: var(--viator-border);
+    }
+
+    .stacked-bar-seg {
+        height: 100%;
+    }
+
+    .seg-confirmed {
+        background: #22C55E;
+    }
+
+    .seg-completed {
+        background: #3B82F6;
+    }
+
+    .seg-pending {
+        background: #EAB308;
+    }
+
+    .seg-cancelled {
+        background: #EF4444;
+    }
+
+    .fill-bar-track {
+        height: 8px;
+        border-radius: 999px;
+        background: var(--viator-border);
+        overflow: hidden;
+    }
+
+    .fill-bar-fill {
+        height: 100%;
+        border-radius: 999px;
+    }
+
+    .dash-table {
+        font-size: .875rem;
+        margin-bottom: 0;
+    }
+
+        .dash-table thead th {
+            font-size: .75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--viator-gray);
+            border-bottom-width: 1px;
+            padding-top: .4rem;
+            padding-bottom: .6rem;
+        }
+
+        .dash-table tbody td {
+            vertical-align: middle;
+            padding: .55rem .5rem;
+        }
+
+    .hover-green:hover {
+        color: var(--viator-green) !important;
+    }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+
+    .fw-600 {
+        font-weight: 600;
+    }
+</style>

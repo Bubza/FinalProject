@@ -108,6 +108,7 @@ namespace Tourism.Web.Controllers
                 EndDate = tour.EndDate,
                 DestinationId = tour.DestinationId,
                 DestinationName = tour.Destination.Name,
+                DestinationCountry = tour.Destination.Country,
                 TourOperatorId = tour.TourOperatorId,
                 TourOperatorName = tour.TourOperator.Name,
                 AverageRating = tour.Reviews.Any() ? tour.Reviews.Average(r => r.Rating) : 0,

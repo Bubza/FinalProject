@@ -68,5 +68,6 @@ namespace Tourism.Services
                 .Where(b => b.TourId == tourId && b.Status != BookingStatus.Cancelled)
                 .SumAsync(b => b.NumberOfPeople);
         }
+        
     }
 }

@@ -34,6 +34,24 @@
     <article class="vt-detail-main">
         <h1 class="vt-detail-title">@Model.Title</h1>
 
+        <!-- Share button -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.innerHTML='<i class=\'bi bi-check-lg\'></i> Copied!';setTimeout(()=>{this.innerHTML='<i class=\'bi bi-link-45deg\'></i> Copy link'},2000)})"
+                    style="background:var(--viator-light);border:1px solid var(--viator-border);padding:6px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--viator-dark);display:flex;align-items:center;gap:5px;">
+                <i class="bi bi-link-45deg"></i> Copy link
+            </button>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
+               target="_blank" rel="noopener"
+               style="background:#1877F2;color:#fff;padding:6px 12px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;">
+                <i class="bi bi-facebook"></i>
+            </a>
+            <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(Model.Title)&url=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
+               target="_blank" rel="noopener"
+               style="background:#1DA1F2;color:#fff;padding:6px 12px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;">
+                <i class="bi bi-twitter-x"></i>
+            </a>
+        </div>
+
         <div class="vt-detail-meta">
             <span class="vt-meta-pill"><i class="bi bi-geo-alt-fill"></i> @Model.DestinationName</span>
             <span class="vt-meta-pill"><i class="bi bi-building"></i> @Model.TourOperatorName</span>
@@ -100,6 +118,22 @@
 
         <div class="vt-detail-divider"></div>
 
+        <!-- Cancellation Policy -->
+        <h2 class="vt-detail-section-title"><i class="bi bi-shield-check" style="color:var(--viator-green)"></i> Cancellation Policy</h2>
+        <div style="background:var(--viator-green-light);border:1px solid #B2E5D4;border-radius:var(--radius);padding:16px 20px;margin-bottom:8px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+                <i class="bi bi-check-circle-fill" style="color:var(--viator-green);font-size:1.3rem;flex-shrink:0;margin-top:2px;"></i>
+                <div>
+                    <div style="font-weight:700;font-size:.92rem;color:var(--viator-dark);margin-bottom:4px;">Free cancellation</div>
+                    <p style="font-size:.84rem;color:var(--viator-gray);margin:0;">
+                        Cancel up to <strong>24 hours before</strong> the tour start date for a full refund. Cancellations made less than 24 hours in advance are non-refundable.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="vt-detail-divider"></div>
+
         <h2 class="vt-detail-section-title">
             Reviews
             @if (Model.ReviewCount > 0)
@@ -110,6 +144,33 @@
 
         @if (ViewBag.Reviews != null && ((IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews).Any())
         {
+            <!-- Rating breakdown bars -->
+            <div style="background:#fff;border:1px solid var(--viator-border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
+                <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
+                    <div style="text-align:center;min-width:70px;">
+                        <div style="font-size:2.2rem;font-weight:800;color:var(--viator-dark);line-height:1;">@Model.AverageRating.ToString("0.0")</div>
+                        <div style="color:#F59E0B;font-size:.9rem;margin:2px 0;">@(new string('★', (int)Math.Round(Model.AverageRating)))</div>
+                        <div style="font-size:.75rem;color:var(--viator-gray);">@Model.ReviewCount reviews</div>
+                    </div>
+                    <div style="flex:1;">
+                        @foreach (var item in (IEnumerable<dynamic>)ViewBag.RatingBreakdown)
+                        {
+                            int star = (int)item.Star;
+                            int count = (int)item.Count;
+                            int pct = Model.ReviewCount > 0 ? (int)Math.Round(count * 100.0 / Model.ReviewCount) : 0;
+                            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                <span style="font-size:.78rem;font-weight:600;color:var(--viator-dark);min-width:14px;text-align:right;">@star</span>
+                                <i class="bi bi-star-fill" style="color:#F59E0B;font-size:.7rem;"></i>
+                                <div style="flex:1;height:8px;background:var(--viator-border);border-radius:99px;overflow:hidden;">
+                                    <div style="height:100%;width:@(pct)%;background:#F59E0B;border-radius:99px;"></div>
+                                </div>
+                                <span style="font-size:.75rem;color:var(--viator-gray);min-width:22px;">@count</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
             <div class="vt-reviews-list">
                 @foreach (var review in (IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews)
                 {

@@ -2,62 +2,128 @@
 @{
     ViewData["Title"] = "Edit Tour";
 }
-<div class="container my-4">
-    <h1 class="mb-4">Edit Tour</h1>
-    <div class="card shadow-sm p-4">
+
+<div class="container my-4" style="max-width:800px">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">
+                <i class="bi bi-pencil-square me-2" style="color:var(--viator-green)"></i>Edit Tour
+            </h1>
+            <p class="text-muted mb-0" style="font-size:.9rem;">@Model.Title</p>
+        </div>
+        <a asp-action="Tours" class="btn btn-outline-secondary btn-sm">← My Tours</a>
+    </div>
+
+    <div class="dashboard-card">
         <form asp-action="EditTour" method="post">
             @Html.AntiForgeryToken()
             <input asp-for="Id" type="hidden" />
-            <div class="mb-3">
-                <label asp-for="Title" class="form-label">Title</label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+
+            <div class="op-field">
+                <label class="op-label">Title</label>
+                <input asp-for="Title" class="op-input" />
+                <span asp-validation-for="Title" class="text-danger" style="font-size:.78rem"></span>
             </div>
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label">Description</label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+
+            <div class="op-field">
+                <label class="op-label">Description</label>
+                <textarea asp-for="Description" class="op-input" rows="4" style="resize:vertical"></textarea>
             </div>
-            <div class="row">
-                <div class="col-md-3 mb-3">
-                    <label asp-for="PricePerPerson" class="form-label">Price per person (€)</label>
-                    <input asp-for="PricePerPerson" class="form-control" type="number" step="0.01" />
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-3">
+                    <label class="op-label">Price per person (€)</label>
+                    <input asp-for="PricePerPerson" class="op-input" type="number" step="0.01" min="0" />
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label asp-for="DiscountPercent" class="form-label">Discount (%)</label>
-                    <input asp-for="DiscountPercent" class="form-control" type="number" step="1" min="0" max="100" placeholder="0" />
-                    <div class="form-text">Leave 0 for no discount</div>
+                <div class="col-md-3">
+                    <label class="op-label">Discount (%)</label>
+                    <input asp-for="DiscountPercent" class="op-input" type="number" step="1" min="0" max="90" />
+                    <div class="op-hint">0 = no discount</div>
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label asp-for="DurationDays" class="form-label">Duration (days)</label>
-                    <input asp-for="DurationDays" class="form-control" type="number" />
+                <div class="col-md-3">
+                    <label class="op-label">Duration (days)</label>
+                    <input asp-for="DurationDays" class="op-input" type="number" min="1" />
                 </div>
-                <div class="col-md-3 mb-3">
-                    <label asp-for="MaxParticipants" class="form-label">Max participants</label>
-                    <input asp-for="MaxParticipants" class="form-control" type="number" />
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="StartDate" class="form-label">Start date</label>
-                    <input asp-for="StartDate" class="form-control" type="date" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="EndDate" class="form-label">End date</label>
-                    <input asp-for="EndDate" class="form-control" type="date" />
+                <div class="col-md-3">
+                    <label class="op-label">Max participants</label>
+                    <input asp-for="MaxParticipants" class="op-input" type="number" min="1" />
                 </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="ImageUrl" class="form-label">Image URL</label>
-                <input asp-for="ImageUrl" class="form-control" />
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="op-label">Start date</label>
+                    <input asp-for="StartDate" class="op-input" type="date" />
+                </div>
+                <div class="col-md-6">
+                    <label class="op-label">End date</label>
+                    <input asp-for="EndDate" class="op-input" type="date" />
+                </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="DestinationId" class="form-label">Destination</label>
-                <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="form-select">
-                    <option value="">-- Select --</option>
+
+            <div class="op-field">
+                <label class="op-label">Image URL</label>
+                <input asp-for="ImageUrl" class="op-input" />
+            </div>
+
+            <div class="op-field">
+                <label class="op-label">Destination</label>
+                <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="op-input">
+                    <option value="">— Select destination —</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <a asp-action="Tours" class="btn btn-outline-secondary ms-2">Cancel</a>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn-viator" style="padding:10px 24px;border:none;cursor:pointer;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;">
+                    <i class="bi bi-check-lg me-1"></i>Save Changes
+                </button>
+                <a asp-action="Tours" class="btn btn-outline-secondary">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
+
+<style>
+    .op-field {
+        margin-bottom: 1.1rem;
+    }
+
+    .op-label {
+        display: block;
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--viator-dark);
+        margin-bottom: 6px;
+    }
+
+    .op-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 8px;
+        font-size: .9rem;
+        font-family: 'Poppins',sans-serif;
+        color: var(--viator-dark);
+        transition: border-color .15s;
+        outline: none;
+        background: #fff;
+    }
+
+        .op-input:focus {
+            border-color: var(--viator-green);
+        }
+
+    .op-hint {
+        font-size: .75rem;
+        color: var(--viator-gray);
+        margin-top: 4px;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.75rem 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+</style>

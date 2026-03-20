@@ -312,6 +312,50 @@ namespace Tourism.Web.Controllers
             return RedirectToAction(nameof(Operators));
         }
 
+        // ===== DISCOUNTS =====
+        public async Task<IActionResult> Discounts()
+        {
+            var tours = (await _tourService.GetAllAsync()).ToList();
+            return View(tours);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetDiscount(int tourId, decimal discountPercent)
+        {
+            var tour = await _tourService.GetByIdAsync(tourId);
+            if (tour == null) return NotFound();
+
+            tour.DiscountPercent = Math.Clamp(discountPercent, 0, 90);
+            await _tourService.UpdateAsync(tour);
+
+            TempData["Success"] = discountPercent > 0
+                ? $"Discount of {discountPercent:0}% set on \"{tour.Title}\"."
+                : $"Discount removed from \"{tour.Title}\".";
+
+            return RedirectToAction(nameof(Discounts));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkDiscount(decimal bulkPercent)
+        {
+            var tours = (await _tourService.GetAllAsync()).ToList();
+            var percent = Math.Clamp(bulkPercent, 0, 90);
+
+            foreach (var tour in tours)
+            {
+                tour.DiscountPercent = percent;
+                await _tourService.UpdateAsync(tour);
+            }
+
+            TempData["Success"] = percent > 0
+                ? $"Bulk discount of {percent:0}% applied to all {tours.Count} tours."
+                : $"All discounts removed from {tours.Count} tours.";
+
+            return RedirectToAction(nameof(Discounts));
+        }
+
         // ===== DESTINATIONS =====
         public async Task<IActionResult> Destinations()
         {

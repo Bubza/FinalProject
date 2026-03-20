@@ -247,5 +247,61 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Profile updated!";
             return RedirectToAction(nameof(Profile));
         }
+
+        // ── DISCOUNTS ──
+        public async Task<IActionResult> Discounts()
+        {
+            var op = await GetMyOperatorAsync();
+            if (op == null) return RedirectToAction("NoOperator");
+
+            var tours = (await _tourService.GetAllAsync())
+                .Where(t => t.TourOperatorId == op.Id).ToList();
+
+            return View(tours);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetDiscount(int tourId, decimal discountPercent)
+        {
+            var op = await GetMyOperatorAsync();
+            if (op == null) return RedirectToAction("NoOperator");
+
+            var tour = await _tourService.GetByIdAsync(tourId);
+            if (tour == null || tour.TourOperatorId != op.Id) return NotFound();
+
+            tour.DiscountPercent = Math.Clamp(discountPercent, 0, 90);
+            await _tourService.UpdateAsync(tour);
+
+            TempData["Success"] = discountPercent > 0
+                ? $"Discount of {discountPercent:0}% set on \"{tour.Title}\"."
+                : $"Discount removed from \"{tour.Title}\".";
+
+            return RedirectToAction(nameof(Discounts));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> BulkDiscount(decimal bulkPercent)
+        {
+            var op = await GetMyOperatorAsync();
+            if (op == null) return RedirectToAction("NoOperator");
+
+            var tours = (await _tourService.GetAllAsync())
+                .Where(t => t.TourOperatorId == op.Id).ToList();
+
+            var percent = Math.Clamp(bulkPercent, 0, 90);
+            foreach (var tour in tours)
+            {
+                tour.DiscountPercent = percent;
+                await _tourService.UpdateAsync(tour);
+            }
+
+            TempData["Success"] = percent > 0
+                ? $"Bulk discount of {percent:0}% applied to all {tours.Count} tours."
+                : $"All discounts removed from {tours.Count} tours.";
+
+            return RedirectToAction(nameof(Discounts));
+        }
     }
 }

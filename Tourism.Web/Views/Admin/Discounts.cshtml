@@ -1,0 +1,360 @@
+﻿@model IEnumerable<Tourism.Data.Models.Entities.Tour>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Manage Discounts";
+    var tours = Model.OrderByDescending(t => t.DiscountPercent).ThenBy(t => t.Title).ToList();
+    var activeDiscounts = tours.Count(t => t.DiscountPercent > 0);
+    var avgDiscount = tours.Where(t => t.DiscountPercent > 0).Select(t => t.DiscountPercent).DefaultIfEmpty(0).Average();
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mx-4 mt-3">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<style>
+    .disc-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 24px;
+    }
+
+    .disc-stats {
+        display: flex;
+        gap: 12px;
+    }
+
+    .disc-stat {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 14px 20px;
+        text-align: center;
+        min-width: 130px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .disc-stat-num {
+        font-size: 1.4rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .disc-stat-label {
+        font-size: .75rem;
+        color: var(--viator-gray);
+        margin-top: 2px;
+    }
+
+    .disc-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .disc-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .88rem;
+    }
+
+        .disc-table thead th {
+            background: var(--viator-light);
+            padding: 12px 16px;
+            font-weight: 600;
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+            color: var(--viator-gray);
+            border-bottom: 1px solid var(--viator-border);
+        }
+
+        .disc-table tbody td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--viator-border);
+            vertical-align: middle;
+        }
+
+        .disc-table tbody tr:hover {
+            background: var(--viator-light);
+        }
+
+    .disc-tour-title {
+        font-weight: 600;
+        color: var(--viator-dark);
+    }
+
+    .disc-tour-dest {
+        font-size: .78rem;
+        color: var(--viator-gray);
+    }
+
+    .disc-original {
+        color: var(--viator-gray);
+    }
+
+    .disc-final {
+        font-weight: 700;
+        color: var(--viator-dark);
+    }
+
+    .disc-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: .78rem;
+        font-weight: 700;
+    }
+
+    .disc-badge-on {
+        background: #FEE2E2;
+        color: #DC2626;
+    }
+
+    .disc-badge-off {
+        background: #F3F4F6;
+        color: #9CA3AF;
+    }
+
+    .disc-input {
+        width: 70px;
+        padding: 6px 8px;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 8px;
+        font-size: .85rem;
+        font-weight: 600;
+        text-align: center;
+        transition: border-color .15s;
+    }
+
+        .disc-input:focus {
+            outline: none;
+            border-color: var(--viator-green);
+        }
+
+    .disc-btn {
+        background: var(--viator-green);
+        color: #fff;
+        border: none;
+        padding: 6px 14px;
+        border-radius: 8px;
+        font-size: .8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+        .disc-btn:hover {
+            background: var(--viator-green-dark);
+        }
+
+    .disc-btn-clear {
+        background: #fff;
+        color: #DC2626;
+        border: 1.5px solid #DC2626;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-size: .78rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .15s;
+    }
+
+        .disc-btn-clear:hover {
+            background: #DC2626;
+            color: #fff;
+        }
+
+    .bulk-bar {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 16px 20px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .bulk-label {
+        font-weight: 600;
+        font-size: .88rem;
+        white-space: nowrap;
+    }
+
+    .saved-price {
+        text-decoration: line-through;
+        color: #9CA3AF;
+        font-size: .82rem;
+    }
+
+    @@media (max-width: 768px) {
+        .disc-stats {
+            flex-direction: column;
+        }
+
+        .disc-table thead {
+            display: none;
+        }
+
+        .disc-table tbody td {
+            display: block;
+            text-align: right;
+            padding: 8px 16px;
+        }
+
+            .disc-table tbody td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: 600;
+                color: var(--viator-gray);
+                font-size: .78rem;
+            }
+    }
+</style>
+
+<div class="container my-4">
+
+    <div class="disc-header">
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">
+                <i class="bi bi-percent" style="color:var(--viator-green)"></i> Manage Discounts
+            </h1>
+            <p class="text-muted mb-0" style="font-size:.88rem;">Set promotional discounts on tours to attract more bookings</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-left me-1"></i> Dashboard</a>
+    </div>
+
+    <!-- Stats -->
+    <div class="disc-stats mb-4">
+        <div class="disc-stat">
+            <div class="disc-stat-num" style="color:var(--viator-green)">@tours.Count</div>
+            <div class="disc-stat-label">Total Tours</div>
+        </div>
+        <div class="disc-stat">
+            <div class="disc-stat-num" style="color:#DC2626">@activeDiscounts</div>
+            <div class="disc-stat-label">Active Discounts</div>
+        </div>
+        <div class="disc-stat">
+            <div class="disc-stat-num" style="color:#F59E0B">@avgDiscount.ToString("0.0")%</div>
+            <div class="disc-stat-label">Avg Discount</div>
+        </div>
+    </div>
+
+    <!-- Bulk actions -->
+    <div class="bulk-bar">
+        <span class="bulk-label"><i class="bi bi-lightning-fill" style="color:#F59E0B"></i> Bulk action:</span>
+        <form asp-action="BulkDiscount" method="post" class="d-flex align-items-center gap-2 m-0">
+            @Html.AntiForgeryToken()
+            <input type="number" name="bulkPercent" min="0" max="90" step="1" value="10" class="disc-input" />
+            <span style="font-size:.85rem;color:var(--viator-gray)">%</span>
+            <button type="submit" class="disc-btn" onclick="return confirm('Apply this discount to ALL tours?')">Apply to all</button>
+        </form>
+        <form asp-action="BulkDiscount" method="post" class="m-0">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="bulkPercent" value="0" />
+            <button type="submit" class="disc-btn-clear" onclick="return confirm('Remove discounts from ALL tours?')">
+                <i class="bi bi-x-circle me-1"></i> Clear all discounts
+            </button>
+        </form>
+    </div>
+
+    <!-- Tours table -->
+    <div class="disc-card">
+        <table class="disc-table">
+            <thead>
+                <tr>
+                    <th>Tour</th>
+                    <th>Original Price</th>
+                    <th>Discount</th>
+                    <th>Final Price</th>
+                    <th>Status</th>
+                    <th style="text-align:center">Set Discount</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var tour in tours)
+                {
+                    var final_price = tour.DiscountPercent > 0
+                    ? tour.PricePerPerson * (1 - tour.DiscountPercent / 100m)
+                    : tour.PricePerPerson;
+
+                    <tr>
+                        <td data-label="Tour">
+                            <div class="disc-tour-title">
+                                <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id"
+                                   style="color:inherit;text-decoration:none;">
+                                    @tour.Title
+                                </a>
+                            </div>
+                            <div class="disc-tour-dest">
+                                <i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.Destination?.Name
+                            </div>
+                        </td>
+                        <td data-label="Original Price" class="disc-original">
+                            @tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €
+                        </td>
+                        <td data-label="Discount">
+                            @if (tour.DiscountPercent > 0)
+                            {
+                                <span class="disc-badge disc-badge-on">-@tour.DiscountPercent.ToString("0")%</span>
+                            }
+                            else
+                            {
+                                <span class="disc-badge disc-badge-off">None</span>
+                            }
+                        </td>
+                        <td data-label="Final Price">
+                            @if (tour.DiscountPercent > 0)
+                            {
+                                <span class="saved-price">@tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                                <br />
+                                <span class="disc-final" style="color:#DC2626">@final_price.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                            }
+                            else
+                            {
+                                <span class="disc-final">@tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                            }
+                        </td>
+                        <td data-label="Status">
+                            @if (tour.DiscountPercent > 0)
+                            {
+                                <span style="color:#DC2626;font-weight:600;font-size:.82rem">
+                                    <i class="bi bi-tag-fill"></i> Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span style="color:#9CA3AF;font-size:.82rem">Inactive</span>
+                            }
+                        </td>
+                        <td data-label="Set Discount" style="text-align:center">
+                            <form asp-action="SetDiscount" method="post" class="d-flex align-items-center justify-content-center gap-2 m-0">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="tourId" value="@tour.Id" />
+                                <input type="number" name="discountPercent" min="0" max="90" step="1"
+                                       value="@tour.DiscountPercent.ToString("0")"
+                                       class="disc-input" />
+                                <span style="font-size:.82rem;color:var(--viator-gray)">%</span>
+                                <button type="submit" class="disc-btn" style="padding:5px 10px;font-size:.78rem">
+                                    <i class="bi bi-check-lg"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>

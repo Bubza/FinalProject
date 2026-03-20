@@ -163,6 +163,11 @@ namespace Tourism.Web.Controllers
                 .Where(b => b.Status != Tourism.Data.Models.Enums.BookingStatus.Cancelled)
                 .Sum(b => b.NumberOfPeople);
 
+            // Rating breakdown for bar chart (5★ down to 1★)
+            ViewBag.RatingBreakdown = Enumerable.Range(1, 5).Reverse()
+                .Select(star => new { Star = star, Count = tour.Reviews.Count(r => r.Rating == star) })
+                .ToList();
+
             return View(viewModel);
         }
     }

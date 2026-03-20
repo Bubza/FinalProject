@@ -1,0 +1,220 @@
+﻿@model IEnumerable<Tourism.Data.Models.Entities.Tour>
+@using System.Globalization
+@{
+    ViewData["Title"] = "My Discounts";
+    var tours = Model.OrderByDescending(t => t.DiscountPercent).ThenBy(t => t.Title).ToList();
+    var activeDiscounts = tours.Count(t => t.DiscountPercent > 0);
+    var avgDiscount = activeDiscounts > 0 ? tours.Where(t => t.DiscountPercent > 0).Average(t => t.DiscountPercent) : 0;
+}
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show mx-4 mt-3">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="container my-4">
+
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">
+                <i class="bi bi-percent" style="color:var(--viator-green)"></i> My Discounts
+            </h1>
+            <p class="text-muted mb-0" style="font-size:.9rem;">Set promotional discounts on your tours</p>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i> Dashboard
+        </a>
+    </div>
+
+    <!-- Stats row -->
+    <div class="row g-3 mb-4">
+        <div class="col-4">
+            <div class="stat-card text-center">
+                <div class="stat-num" style="color:var(--viator-green)">@tours.Count</div>
+                <div class="stat-label">Total Tours</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card text-center">
+                <div class="stat-num" style="color:#DC2626">@activeDiscounts</div>
+                <div class="stat-label">Active Discounts</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card text-center">
+                <div class="stat-num" style="color:#F59E0B;font-size:1.2rem">@avgDiscount.ToString("N1", CultureInfo.InvariantCulture)%</div>
+                <div class="stat-label">Avg Discount</div>
+            </div>
+        </div>
+    </div>
+
+    @if (!tours.Any())
+    {
+        <div class="alert alert-info">You have no tours yet. <a asp-action="CreateTour">Add one first</a>.</div>
+    }
+    else
+    {
+        <!-- Bulk action bar -->
+        <div class="dashboard-card mb-3">
+            <div class="d-flex align-items-center gap-3 flex-wrap">
+                <span style="font-size:.88rem;font-weight:600;"><i class="bi bi-lightning-fill me-1" style="color:#F59E0B;"></i> Bulk action:</span>
+                <form asp-action="BulkDiscount" method="post" class="d-flex align-items-center gap-2 m-0">
+                    @Html.AntiForgeryToken()
+                    <input type="number" name="bulkPercent" min="0" max="90" step="1" value="10"
+                           style="width:70px;padding:6px 8px;border:1.5px solid var(--viator-border);border-radius:8px;font-size:.85rem;font-weight:600;text-align:center;font-family:'Poppins',sans-serif;" />
+                    <span class="text-muted" style="font-size:.82rem;">%</span>
+                    <button type="submit" style="background:var(--viator-green);color:#fff;border:none;padding:7px 18px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">
+                        Apply to all
+                    </button>
+                </form>
+                <form asp-action="BulkDiscount" method="post" class="m-0">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="bulkPercent" value="0" />
+                    <button type="submit" style="background:#fff;color:#DC2626;border:1.5px solid #DC2626;padding:7px 18px;border-radius:8px;font-size:.82rem;font-weight:600;cursor:pointer;">
+                        <i class="bi bi-x-circle me-1"></i>Clear all discounts
+                    </button>
+                </form>
+            </div>
+        </div>
+        <div class="dashboard-card">
+            <div class="table-responsive">
+                <table class="table table-hover dash-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tour</th>
+                            <th>Original Price</th>
+                            <th class="text-center">Discount</th>
+                            <th>Final Price</th>
+                            <th>Status</th>
+                            <th class="text-center">Set Discount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tour in tours)
+                        {
+                            var finalPrice = tour.DiscountPercent > 0
+                            ? tour.PricePerPerson * (1 - tour.DiscountPercent / 100m)
+                            : tour.PricePerPerson;
+                            var hasDiscount = tour.DiscountPercent > 0;
+
+                            <tr>
+                                <td>
+                                    <div class="fw-500">@tour.Title</div>
+                                    <div style="font-size:.75rem;color:var(--viator-gray);">
+                                        <i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.Destination?.Name
+                                    </div>
+                                </td>
+                                <td class="text-muted">@tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €</td>
+                                <td class="text-center">
+                                    @if (hasDiscount)
+                                    {
+                                        <span style="background:#FEE2E2;color:#DC2626;padding:3px 10px;border-radius:6px;font-size:.78rem;font-weight:700;">
+                                            -@tour.DiscountPercent.ToString("0")%
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="background:#F3F4F6;color:#9CA3AF;padding:3px 10px;border-radius:6px;font-size:.78rem;font-weight:600;">None</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (hasDiscount)
+                                    {
+                                        <span style="text-decoration:line-through;color:#9CA3AF;font-size:.8rem;display:block;">@tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                                        <span style="font-weight:700;color:#DC2626;">@finalPrice.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fw-500">@tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (hasDiscount)
+                                    {
+                                        <span style="color:#DC2626;font-size:.82rem;font-weight:600;">
+                                            <i class="bi bi-tag-fill me-1"></i>Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span style="color:#9CA3AF;font-size:.82rem;">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <form asp-action="SetDiscount" method="post" class="d-flex align-items-center justify-content-center gap-2 m-0">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="tourId" value="@tour.Id" />
+                                        <input type="number" name="discountPercent" min="0" max="90" step="1"
+                                               value="@tour.DiscountPercent.ToString("0")"
+                                               style="width:70px;padding:6px 8px;border:1.5px solid var(--viator-border);border-radius:8px;font-size:.85rem;font-weight:600;text-align:center;font-family:'Poppins',sans-serif;" />
+                                        <span class="text-muted" style="font-size:.82rem;">%</span>
+                                        <button type="submit" style="background:var(--viator-green);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;transition:background .15s;">
+                                            <i class="bi bi-check-lg"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<style>
+    .stat-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .stat-num {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1.1;
+    }
+
+    .stat-label {
+        font-size: .72rem;
+        color: var(--viator-gray);
+        margin-top: 3px;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.4rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .dash-table {
+        font-size: .875rem;
+    }
+
+        .dash-table thead th {
+            font-size: .72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--viator-gray);
+            border-bottom-width: 1px;
+            padding: .5rem;
+        }
+
+        .dash-table tbody td {
+            vertical-align: middle;
+            padding: .6rem .5rem;
+        }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+</style>

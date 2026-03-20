@@ -5,47 +5,101 @@
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success alert-dismissible fade show mx-4 mt-3">
         @TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
 }
 
-<div class="container my-4">
-    <h1 class="mb-4">My Operator Profile</h1>
-    <div class="card shadow-sm p-4" style="max-width:640px">
+<div class="container my-4" style="max-width:700px">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">
+                <i class="bi bi-building me-2" style="color:var(--viator-green)"></i>My Operator Profile
+            </h1>
+            <p class="text-muted mb-0" style="font-size:.9rem;">Update your company information</p>
+        </div>
+        <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm">← Dashboard</a>
+    </div>
+
+    <div class="dashboard-card">
         <form asp-action="Profile" method="post">
             @Html.AntiForgeryToken()
             <input asp-for="Id" type="hidden" />
             <input asp-for="UserId" type="hidden" />
             <input asp-for="CreatedAt" type="hidden" />
 
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label">Company Name</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Description" class="form-label">Description</label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-            </div>
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label asp-for="Email" class="form-label">Contact Email</label>
-                    <input asp-for="Email" class="form-control" type="email" />
-                </div>
-                <div class="col-md-6 mb-3">
-                    <label asp-for="PhoneNumber" class="form-label">Phone</label>
-                    <input asp-for="PhoneNumber" class="form-control" />
-                </div>
-            </div>
-            <div class="mb-3">
-                <label asp-for="LogoUrl" class="form-label">Logo URL</label>
-                <input asp-for="LogoUrl" class="form-control" placeholder="https://..." />
+            <div class="op-field">
+                <label class="op-label">Company Name</label>
+                <input asp-for="Name" class="op-input" />
+                <span asp-validation-for="Name" class="text-danger" style="font-size:.78rem"></span>
             </div>
 
-            <button type="submit" class="btn btn-primary">Save Profile</button>
-            <a asp-action="Dashboard" class="btn btn-outline-secondary ms-2">Cancel</a>
+            <div class="op-field">
+                <label class="op-label">Description</label>
+                <textarea asp-for="Description" class="op-input" rows="4" style="resize:vertical"></textarea>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label class="op-label">Contact Email</label>
+                    <input asp-for="Email" class="op-input" type="email" />
+                </div>
+                <div class="col-md-6">
+                    <label class="op-label">Phone</label>
+                    <input asp-for="PhoneNumber" class="op-input" />
+                </div>
+            </div>
+
+            <div class="op-field">
+                <label class="op-label">Logo URL</label>
+                <input asp-for="LogoUrl" class="op-input" placeholder="https://..." />
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn-viator" style="padding:10px 24px;border:none;cursor:pointer;border-radius:8px;font-family:'Poppins',sans-serif;font-size:.9rem;">
+                    <i class="bi bi-check-lg me-1"></i>Save Profile
+                </button>
+                <a asp-action="Dashboard" class="btn btn-outline-secondary">Cancel</a>
+            </div>
         </form>
     </div>
 </div>
+
+<style>
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.75rem 2rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .op-field {
+        margin-bottom: 1rem;
+    }
+
+    .op-label {
+        display: block;
+        font-size: .82rem;
+        font-weight: 600;
+        color: var(--viator-dark);
+        margin-bottom: 6px;
+    }
+
+    .op-input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid var(--viator-border);
+        border-radius: 8px;
+        font-size: .9rem;
+        font-family: 'Poppins',sans-serif;
+        color: var(--viator-dark);
+        transition: border-color .15s;
+        outline: none;
+    }
+
+        .op-input:focus {
+            border-color: var(--viator-green);
+        }
+</style>

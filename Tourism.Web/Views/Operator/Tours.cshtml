@@ -1,11 +1,12 @@
 ﻿@model IEnumerable<Tourism.Data.Models.Entities.Tour>
+@using System.Globalization
 @{
     ViewData["Title"] = "My Tours";
 }
 
 @if (TempData["Success"] != null)
 {
-    <div class="alert alert-success alert-dismissible fade show">
+    <div class="alert alert-success alert-dismissible fade show mx-4 mt-3">
         @TempData["Success"]
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     </div>
@@ -13,42 +14,113 @@
 
 <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1>My Tours</h1>
-        <a asp-action="CreateTour" class="btn btn-primary">+ New Tour</a>
+        <div>
+            <h1 class="fw-bold mb-0" style="font-size:1.8rem;">My Tours</h1>
+            <p class="text-muted mb-0" style="font-size:.9rem;">Manage your tour listings</p>
+        </div>
+        <a asp-action="CreateTour" class="btn-viator" style="display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:8px;text-decoration:none;">
+            <i class="bi bi-plus-lg"></i> New Tour
+        </a>
     </div>
 
-    <table class="table table-hover">
-        <thead class="table-light">
-            <tr>
-                <th>Title</th>
-                <th>Destination</th>
-                <th>Price</th>
-                <th>Date</th>
-                <th>Bookings</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tour in Model)
-            {
-                <tr>
-                    <td>@tour.Title</td>
-                    <td>@tour.Destination?.Name</td>
-                    <td>@tour.PricePerPerson.ToString("0.00") €</td>
-                    <td>@tour.StartDate.ToString("dd.MM.yyyy")</td>
-                    <td><span class="badge bg-primary">@tour.Bookings.Count</span></td>
-                    <td>
-                        <a asp-action="EditTour" asp-route-id="@tour.Id" class="btn btn-sm btn-outline-primary">Edit</a>
-                        <form asp-action="DeleteTour" asp-route-id="@tour.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('Are you sure?')">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                        </form>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    @if (!Model.Any())
+    {
+        <div style="text-align:center;padding:60px 20px;background:#fff;border:1px solid var(--viator-border);border-radius:16px;color:var(--viator-gray)">
+            <div style="font-size:3rem;margin-bottom:12px">🗺️</div>
+            <p style="margin-bottom:16px">No tours yet.</p>
+            <a asp-action="CreateTour" class="btn-viator" style="padding:10px 24px;text-decoration:none;">Add your first tour</a>
+        </div>
+    }
+    else
+    {
+        <div class="dashboard-card">
+            <div class="table-responsive">
+                <table class="table table-hover dash-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Tour</th>
+                            <th>Destination</th>
+                            <th>Price</th>
+                            <th>Start Date</th>
+                            <th class="text-center">Bookings</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var tour in Model)
+                        {
+                            <tr>
+                                <td class="fw-500">@tour.Title</td>
+                                <td class="text-muted small">
+                                    <i class="bi bi-geo-alt-fill" style="color:var(--viator-green)"></i> @tour.Destination?.Name
+                                </td>
+                                <td class="fw-500">
+                                    @tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €
+                                    @if (tour.DiscountPercent > 0)
+                                    {
+                                        <span style="background:#FEE2E2;color:#DC2626;padding:2px 7px;border-radius:5px;font-size:.7rem;font-weight:700;margin-left:4px;">-@tour.DiscountPercent.ToString("0")%</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">@tour.StartDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill" style="background:var(--viator-green-light);color:var(--viator-green);">@tour.Bookings.Count</span>
+                                </td>
+                                <td class="text-center">
+                                    <div class="d-flex gap-2 justify-content-center">
+                                        <a asp-action="EditTour" asp-route-id="@tour.Id"
+                                           style="background:#EFF6FF;color:#3B82F6;border:none;padding:5px 12px;border-radius:7px;font-size:.78rem;font-weight:600;text-decoration:none;">
+                                            <i class="bi bi-pencil me-1"></i>Edit
+                                        </a>
+                                        <form asp-action="DeleteTour" asp-route-id="@tour.Id" method="post" class="m-0"
+                                              onsubmit="return confirm('Delete @tour.Title?')">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit"
+                                                    style="background:#FEF2F2;color:#DC2626;border:none;padding:5px 12px;border-radius:7px;font-size:.78rem;font-weight:600;cursor:pointer;">
+                                                <i class="bi bi-trash me-1"></i>Delete
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 
-    <a asp-action="Dashboard" class="btn btn-outline-secondary mt-2">← Dashboard</a>
+    <a asp-action="Dashboard" class="btn btn-outline-secondary mt-3">← Dashboard</a>
 </div>
+
+<style>
+    .dashboard-card {
+        background: #fff;
+        border: 1px solid var(--viator-border);
+        border-radius: var(--radius);
+        padding: 1.25rem 1.4rem;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .dash-table {
+        font-size: .875rem;
+    }
+
+        .dash-table thead th {
+            font-size: .72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .04em;
+            color: var(--viator-gray);
+            border-bottom-width: 1px;
+            padding: .5rem;
+        }
+
+        .dash-table tbody td {
+            vertical-align: middle;
+            padding: .65rem .5rem;
+        }
+
+    .fw-500 {
+        font-weight: 500;
+    }
+</style>

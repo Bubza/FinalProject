@@ -787,7 +787,7 @@
 
             // Create the new autocomplete element
             const placeAuto = new PlaceAutocompleteElement({
-                types: ["(cities)"]
+                types: ["(regions)"]
             });
 
             // Style it to match our input
@@ -817,7 +817,7 @@
                 autocompleteService.getPlacePredictions(
                     {
                         input: val,
-                        types: ["(cities)"],
+                        types: ["(regions)"],
                         sessionToken,
                         locationBias: new google.maps.LatLngBounds(
                             new google.maps.LatLng(35.0, -10.0),  // SW Europe
@@ -831,8 +831,16 @@
                         dropdown.innerHTML = "";
                         predictions.slice(0, 5).forEach(function(p) {
                             const item = document.createElement("div");
-                            item.style.cssText = "padding:10px 16px;cursor:pointer;font-size:.88rem;color:#1A1A1A;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:10px";
-                            item.innerHTML = `<i class="bi bi-geo-alt" style="color:#00AA6C"></i> ${p.description}`;
+                            item.style.cssText = "padding:10px 16px;cursor:pointer;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:12px";
+                            const parts = p.description.split(",");
+                            const mainText = parts[0].trim();
+                            const subText = parts.length > 1 ? parts[parts.length - 1].trim() : "";
+                            item.innerHTML = `
+                                <i class="bi bi-geo-alt-fill" style="color:#00AA6C;font-size:1.1rem;flex-shrink:0"></i>
+                                <div>
+                                    <div style="font-size:.88rem;font-weight:600;color:#1A1A1A">${mainText}</div>
+                                    ${subText ? `<div style="font-size:.75rem;color:#6B7280;margin-top:1px">${subText}</div>` : ""}
+                                </div>`;
                             item.addEventListener("mousedown", function(e) {
                                 e.preventDefault();
                                 // Use only the city name (first part before comma)

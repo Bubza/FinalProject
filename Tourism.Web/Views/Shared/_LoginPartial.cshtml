@@ -10,10 +10,6 @@
         var displayName = !string.IsNullOrEmpty(currentUser?.FullName) ? currentUser.FullName : User.Identity?.Name;
 
         <li class="nav-item" style="display:flex;align-items:center;gap:8px;">
-            <a asp-area="Identity" asp-page="/Account/Manage/Index"
-               style="padding:7px 14px;border-radius:999px;border:1.5px solid #E5E7EB;color:#1A1A1A;font-size:.875rem;font-weight:500;text-decoration:none;white-space:nowrap;transition:all .15s;">
-                👤 @displayName
-            </a>
             <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Page("/Index", new { area = "" })" style="margin:0;">
                 <button type="submit"
                         style="padding:7px 18px;border-radius:999px;background:transparent;border:1.5px solid #E5E7EB;color:#1A1A1A;font-size:.875rem;font-weight:500;cursor:pointer;font-family:'Poppins',sans-serif;white-space:nowrap;transition:all .15s;">

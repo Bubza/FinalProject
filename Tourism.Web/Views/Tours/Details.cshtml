@@ -200,6 +200,16 @@
                     </div>
                 }
             </div>
+
+            <div style="text-align:center;margin-top:20px;">
+                <a asp-controller="Tours" asp-action="Index"
+                   asp-route-search="@Model.DestinationName"
+                   style="display:inline-flex;align-items:center;gap:8px;background:var(--viator-green-light);color:var(--viator-green);border:1.5px solid #A7F3D0;border-radius:999px;padding:10px 22px;font-size:.875rem;font-weight:600;text-decoration:none;">
+                    <i class="bi bi-compass"></i>
+                    Explore more tours in @Model.DestinationName
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
         }
     </article>
 

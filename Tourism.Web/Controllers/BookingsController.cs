@@ -16,12 +16,14 @@ namespace Tourism.Web.Controllers
         private readonly IBookingService _bookingService;
         private readonly ITourService _tourService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IReviewService _reviewService;
 
-        public BookingsController(IBookingService bookingService, ITourService tourService, UserManager<ApplicationUser> userManager)
+        public BookingsController(IBookingService bookingService, ITourService tourService, UserManager<ApplicationUser> userManager, IReviewService reviewService)
         {
             _bookingService = bookingService;
             _tourService = tourService;
             _userManager = userManager;
+            _reviewService = reviewService;
         }
 
         // GET: /Bookings
@@ -167,6 +169,14 @@ namespace Tourism.Web.Controllers
             ViewBag.UserEmail = User.FindFirstValue(ClaimTypes.Email);
             ViewBag.TotalTrips = viewModels.Count(b => b.Status == BookingStatus.Completed || b.Status == BookingStatus.Confirmed);
             ViewBag.TotalSpent = viewModels.Where(b => b.Status != BookingStatus.Cancelled).Sum(b => b.TotalPrice);
+            ViewBag.DestinationsVisited = viewModels
+                .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                .Select(b => b.DestinationName)
+                .Distinct()
+                .Count();
+
+            var reviews = await _reviewService.GetByUserIdAsync(userId);
+            ViewBag.MyReviews = reviews;
 
             return View(viewModels);
         }

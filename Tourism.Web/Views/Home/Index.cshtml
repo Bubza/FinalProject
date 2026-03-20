@@ -6,6 +6,9 @@
 <!-- ── HERO ── -->
 <section class="hero-section">
     <div class="hero-bg">
+        <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1499678329028-101435549a4e?w=1600&auto=format&fit=crop');"></div>
+        <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1600&auto=format&fit=crop');"></div>
+        <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=1600&auto=format&fit=crop');"></div>
         <div class="hero-overlay"></div>
     </div>
     <div class="container hero-content">
@@ -16,7 +19,7 @@
             <form asp-controller="Tours" asp-action="Index" method="get" class="search-bar">
                 <div class="search-field search-field-main">
                     <i class="bi bi-search"></i>
-                    <input type="text" name="search" placeholder="Search destination or tour..." class="search-input" />
+                    <input type="text" id="homeSearchInput" name="search" placeholder="Search destination or tour..." class="search-input" autocomplete="off" />
                 </div>
                 <div class="search-field search-field-price" style="min-width:200px">
                     <i class="bi bi-calendar3" style="flex-shrink:0"></i>
@@ -36,7 +39,52 @@
             <span class="hero-badge"><i class="bi bi-star"></i> Verified reviews</span>
         </div>
     </div>
+
+    <!-- Slideshow dots -->
+    <div style="position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;">
+        <span class="hero-dot active" data-idx="0"></span>
+        <span class="hero-dot" data-idx="1"></span>
+        <span class="hero-dot" data-idx="2"></span>
+    </div>
 </section>
+
+<style>
+    .hero-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.45);
+        cursor: pointer;
+        transition: background .3s, transform .3s;
+    }
+
+        .hero-dot.active {
+            background: #fff;
+            transform: scale(1.3);
+        }
+</style>
+
+<script>
+    (function() {
+        const slides = document.querySelectorAll('.hero-slide');
+        const dots   = document.querySelectorAll('.hero-dot');
+        let current  = 0;
+
+        slides[0].classList.add('active');
+
+        function goTo(idx) {
+            slides[current].classList.remove('active');
+            dots[current].classList.remove('active');
+            current = idx;
+            slides[current].classList.add('active');
+            dots[current].classList.add('active');
+        }
+
+        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.idx)));
+
+        setInterval(() => goTo((current + 1) % slides.length), 5000);
+    })();
+</script>
 
 <!-- ── WHY US ── -->
 <section class="why-section">
@@ -177,14 +225,33 @@
         min-height: 520px;
         display: flex;
         align-items: center;
-        overflow: hidden;
+        overflow: visible;
     }
 
     .hero-bg {
         position: absolute;
         inset: 0;
-        background: linear-gradient(135deg, #0a4d35 0%, #00AA6C 50%, #1a7a52 100%);
     }
+
+    .hero-slide {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        opacity: 0;
+        transition: opacity 1.2s ease-in-out;
+    }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-slide::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 60, 35, 0.52);
+        }
 
     .hero-overlay {
         position: absolute;
@@ -215,6 +282,8 @@
 
     .hero-search {
         margin-bottom: 24px;
+        position: relative;
+        z-index: 100;
     }
 
     .search-bar {
@@ -226,6 +295,7 @@
         max-width: 700px;
         margin: 0 auto;
         box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        overflow: visible;
     }
 
     .search-field {
@@ -474,4 +544,70 @@
             }
         });
     </script>
+
+    <script>
+        async function initHomeAutocomplete() {
+            const input = document.getElementById("homeSearchInput");
+            if (!input) return;
+            const parent = input.parentElement;
+            parent.style.position = "relative";
+
+            const autocompleteService = new google.maps.places.AutocompleteService();
+            const sessionToken = new google.maps.places.AutocompleteSessionToken();
+
+            const dropdown = document.createElement("div");
+            dropdown.style.cssText = "position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:1000;display:none;margin-top:4px;overflow:hidden;font-family:'Poppins',sans-serif";
+            parent.appendChild(dropdown);
+
+            input.addEventListener("input", function() {
+                const val = this.value.trim();
+                if (val.length < 2) { dropdown.style.display = "none"; return; }
+                autocompleteService.getPlacePredictions(
+                    {
+                        input: val,
+                        types: ["(regions)"],
+                        sessionToken,
+                        locationBias: new google.maps.LatLngBounds(
+                            new google.maps.LatLng(35.0, -10.0),
+                            new google.maps.LatLng(70.0, 40.0)
+                        )
+                    },
+                    function(predictions, status) {
+                        if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+                            dropdown.style.display = "none"; return;
+                        }
+                        dropdown.innerHTML = "";
+                        predictions.slice(0, 5).forEach(function(p) {
+                            const item = document.createElement("div");
+                            item.style.cssText = "padding:10px 16px;cursor:pointer;border-bottom:1px solid #F3F4F6;display:flex;align-items:center;gap:12px";
+                            const parts = p.description.split(",");
+                            const mainText = parts[0].trim();
+                            const subText = parts.length > 1 ? parts[parts.length - 1].trim() : "";
+                            item.innerHTML = `
+                                <i class="bi bi-geo-alt-fill" style="color:#00AA6C;font-size:1.1rem;flex-shrink:0"></i>
+                                <div>
+                                    <div style="font-size:.88rem;font-weight:600;color:#1A1A1A">${mainText}</div>
+                                    ${subText ? `<div style="font-size:.75rem;color:#6B7280;margin-top:1px">${subText}</div>` : ""}
+                                </div>`;
+                            item.addEventListener("mousedown", function(e) {
+                                e.preventDefault();
+                                input.value = p.description.split(",")[0].trim();
+                                dropdown.style.display = "none";
+                                input.closest("form").submit();
+                            });
+                            item.addEventListener("mouseover", function() { this.style.background = "#E6F7F1"; });
+                            item.addEventListener("mouseout",  function() { this.style.background = ""; });
+                            dropdown.appendChild(item);
+                        });
+                        dropdown.style.display = "block";
+                    }
+                );
+            });
+
+            input.addEventListener("blur",    function() { setTimeout(function() { dropdown.style.display = "none"; }, 150); });
+            input.addEventListener("keydown", function(e) { if (e.key === "Escape") dropdown.style.display = "none"; });
+        }
+        window.initHomeMaps = initHomeAutocomplete;
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initHomeMaps"></script>
 }

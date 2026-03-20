@@ -1,39 +1,16 @@
-﻿<style>
-    :root {
-        --viator-green: #00AA6C;
-        --viator-green-dark: #008A57;
-        --viator-green-light: #E6F7F1;
-        --viator-dark: #1A1A1A;
-        --viator-gray: #6B7280;
-        --viator-border: #E5E7EB;
-        --radius: 12px;
-        --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
-    }
+﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
+@using System.Globalization
+@{
+    ViewData["Title"] = "Saved Tours";
+}
 
-    .btn-viator {
-        background: var(--viator-green);
-        color: #fff !important;
-        border: none;
-        padding: 9px 20px;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 0.875rem;
-        cursor: pointer;
-        transition: background 0.15s;
-        text-decoration: none;
-        display: inline-block;
-    }
-
-        .btn-viator:hover {
-            background: var(--viator-green-dark);
-        }
-
+<style>
     .tour-card {
         border-radius: var(--radius);
         overflow: hidden;
         background: #fff;
         border: 1px solid var(--viator-border);
-        transition: box-shadow 0.2s,transform 0.2s;
+        transition: box-shadow 0.2s, transform 0.2s;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -48,12 +25,14 @@
         width: 100%;
         height: 200px;
         object-fit: cover;
+        display: block;
+        background: var(--viator-green-light);
     }
 
     .tour-card-img-placeholder {
         width: 100%;
         height: 200px;
-        background: linear-gradient(135deg,#e0f2eb,#c5e8d8);
+        background: var(--viator-green-light);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -66,6 +45,7 @@
         flex: 1;
         display: flex;
         flex-direction: column;
+        min-height: 130px;
     }
 
     .tour-card-meta {
@@ -89,7 +69,7 @@
         font-size: 0.85rem;
         color: var(--viator-gray);
         flex: 1;
-        margin-bottom: 12px;
+        margin-bottom: 0;
     }
 
     .tour-card-footer {
@@ -101,23 +81,39 @@
     }
 
     .tour-price {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 700;
         color: var(--viator-dark);
     }
+
+    .btn-viator {
+        background: var(--viator-green);
+        color: #fff !important;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+        .btn-viator:hover {
+            background: var(--viator-green-dark);
+        }
 </style>
-@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
-@{
-    ViewData["Title"] = "Saved Tours";
-}
 
 <div class="container my-4">
     <h1 class="mb-4">Saved Tours</h1>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info">
-            No saved tours yet. <a asp-controller="Tours" asp-action="Index">Browse tours</a> and add some!
+        <div style="text-align:center;padding:60px 20px;background:#fff;border:1px solid var(--viator-border);border-radius:16px;color:var(--viator-gray)">
+            <div style="font-size:3rem;margin-bottom:12px">&#9825;</div>
+            <p style="margin-bottom:16px">No saved tours yet.</p>
+            <a asp-controller="Tours" asp-action="Index" class="btn-viator" style="padding:10px 24px;">Browse tours</a>
         </div>
     }
     else
@@ -129,7 +125,13 @@
                     <div class="tour-card">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
-                            <img src="@tour.ImageUrl" class="tour-card-img" alt="@tour.Title" />
+                            <img src="@tour.ImageUrl"
+                                 class="tour-card-img"
+                                 alt="@tour.Title"
+                                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+                            <div class="tour-card-img-placeholder" style="display:none;">
+                                <i class="bi bi-map"></i>
+                            </div>
                         }
                         else
                         {
@@ -147,8 +149,8 @@
                         </div>
                         <div class="tour-card-footer">
                             <div class="tour-price">
-                                @tour.PricePerPerson.ToString("C")
-                                <small>/ person</small>
+                                @tour.PricePerPerson.ToString("N2", CultureInfo.InvariantCulture) €
+                                <small style="font-weight:400;font-size:.8rem;color:var(--viator-gray)">/ person</small>
                             </div>
                             <div class="d-flex gap-2 align-items-center">
                                 <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">

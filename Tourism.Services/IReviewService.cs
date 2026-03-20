@@ -6,6 +6,7 @@ namespace Tourism.Services
     {
         Task<IEnumerable<Review>> GetAllAsync();
         Task<IEnumerable<Review>> GetByTourIdAsync(int tourId);
+        Task<IEnumerable<Review>> GetByUserIdAsync(string userId);
         Task<Review?> GetByIdAsync(int id);
         Task CreateAsync(Review review);
         Task DeleteAsync(int id);

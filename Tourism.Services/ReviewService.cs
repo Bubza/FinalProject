@@ -26,6 +26,15 @@ namespace Tourism.Services
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<Review>> GetByUserIdAsync(string userId)
+        {
+            return await _context.Reviews
+                .Include(r => r.Tour)
+                .Where(r => r.UserId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<Review?> GetByIdAsync(int id)
         {
             return await _context.Reviews.Include(r => r.Tour).FirstOrDefaultAsync(r => r.Id == id);

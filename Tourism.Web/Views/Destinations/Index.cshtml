@@ -129,22 +129,60 @@
                        onfocus="this.style.borderColor='#1A1A1A'" onblur="this.style.borderColor='#E5E7EB'" />
             </div>
 
-            <!-- Country dropdown pill -->
-            <select name="country" onchange="this.form.submit()"
-                    style="border:1.5px solid #E5E7EB;border-radius:50px;padding:8px 30px 8px 16px;font-size:0.85rem;font-family:'Poppins',sans-serif;outline:none;cursor:pointer;background:#fff url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 24 24%27%3E%3Cpath fill=%27%236B7280%27 d=%27M7 10l5 5 5-5z%27/%3E%3C/svg%3E') no-repeat right 10px center;appearance:none;">
-                <option value="">All countries</option>
-                @foreach (var c in (List<string>)ViewBag.Countries)
-                {
-                    if (qCountry == c)
+            <!-- Country dropdown pill (custom) -->
+            <input type="hidden" name="country" id="countryHidden" value="@qCountry" />
+            <div style="position:relative" id="countryDropWrap">
+                <button type="button" id="countryDropBtn"
+                        style="border:1.5px solid #E5E7EB;border-radius:50px;padding:8px 30px 8px 16px;font-size:0.85rem;font-family:'Poppins',sans-serif;outline:none;cursor:pointer;background:#fff;color:#1A1A1A;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;transition:border-color .15s"
+                        onmouseover="this.style.borderColor='#1A1A1A'" onmouseout="if(!document.getElementById('countryDropList').classList.contains('open'))this.style.borderColor='#E5E7EB'">
+                    <span id="countryDropLabel">@(string.IsNullOrEmpty(qCountry) ? "All countries" : qCountry)</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" style="flex-shrink:0"><path fill="#6B7280" d="M7 10l5 5 5-5z" /></svg>
+                </button>
+                <ul id="countryDropList"
+                    style="display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:170px;background:#fff;border:1.5px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);padding:6px 0;z-index:999;list-style:none;margin:0">
+                    <li data-val="" style="padding:9px 18px;font-size:0.85rem;cursor:pointer;font-family:'Poppins',sans-serif;@(string.IsNullOrEmpty(qCountry) ? "background:#E6F7F1;color:#00AA6C;font-weight:600" : "color:#1A1A1A")"
+                        onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='@(string.IsNullOrEmpty(qCountry) ? "#E6F7F1" : "transparent")'">
+                        All countries
+                    </li>
+                    @foreach (var c in (List<string>)ViewBag.Countries)
                     {
-                        <option value="@c" selected="selected">@c</option>
+                        var isActive = qCountry == c;
+                        <li data-val="@c" style="padding:9px 18px;font-size:0.85rem;cursor:pointer;font-family:'Poppins',sans-serif;@(isActive ? "background:#E6F7F1;color:#00AA6C;font-weight:600" : "color:#1A1A1A")"
+                            onmouseover="this.style.background='#F3F4F6'" onmouseout="this.style.background='@(isActive ? "#E6F7F1" : "transparent")'">
+                            @c
+                        </li>
                     }
-                    else
-                    {
-                        <option value="@c">@c</option>
-                    }
-                }
-            </select>
+                </ul>
+            </div>
+            <script>
+                (function () {
+                    var btn = document.getElementById('countryDropBtn');
+                    var list = document.getElementById('countryDropList');
+                    var hidden = document.getElementById('countryHidden');
+                    var label = document.getElementById('countryDropLabel');
+                    btn.addEventListener('click', function (e) {
+                        e.stopPropagation();
+                        var open = list.style.display === 'block';
+                        list.style.display = open ? 'none' : 'block';
+                        list.classList.toggle('open', !open);
+                        btn.style.borderColor = open ? '#E5E7EB' : '#1A1A1A';
+                    });
+                    list.querySelectorAll('li').forEach(function (li) {
+                        li.addEventListener('click', function () {
+                            hidden.value = this.dataset.val;
+                            label.textContent = this.dataset.val || 'All countries';
+                            list.style.display = 'none';
+                            list.classList.remove('open');
+                            document.getElementById('destForm').submit();
+                        });
+                    });
+                    document.addEventListener('click', function () {
+                        list.style.display = 'none';
+                        list.classList.remove('open');
+                        btn.style.borderColor = '#E5E7EB';
+                    });
+                })();
+            </script>
 
             <!-- Clear pill -->
             @if (!string.IsNullOrEmpty(qSearch) || !string.IsNullOrEmpty(qCountry))

@@ -35,24 +35,6 @@
     <article class="vt-detail-main">
         <h1 class="vt-detail-title">@Model.Title</h1>
 
-        <!-- Share button -->
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
-            <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.innerHTML='<i class=\'bi bi-check-lg\'></i> Copied!';setTimeout(()=>{this.innerHTML='<i class=\'bi bi-link-45deg\'></i> Copy link'},2000)})"
-                    style="background:var(--viator-light);border:1px solid var(--viator-border);padding:6px 14px;border-radius:8px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--viator-dark);display:flex;align-items:center;gap:5px;">
-                <i class="bi bi-link-45deg"></i> Copy link
-            </button>
-            <a href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
-               target="_blank" rel="noopener"
-               style="background:#1877F2;color:#fff;padding:6px 12px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;">
-                <i class="bi bi-facebook"></i>
-            </a>
-            <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(Model.Title)&url=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
-               target="_blank" rel="noopener"
-               style="background:#1DA1F2;color:#fff;padding:6px 12px;border-radius:8px;font-size:.8rem;font-weight:600;text-decoration:none;display:flex;align-items:center;gap:5px;">
-                <i class="bi bi-twitter-x"></i>
-            </a>
-        </div>
-
         <div class="vt-detail-meta">
             <span class="vt-meta-pill"><i class="bi bi-geo-alt-fill"></i> @Model.DestinationName</span>
             <span class="vt-meta-pill"><i class="bi bi-building"></i> @Model.TourOperatorName</span>
@@ -193,6 +175,25 @@
         </div>
 
         <div class="vt-detail-divider"></div>
+
+        <!-- Share -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+            <span style="font-size:.82rem;color:var(--viator-gray);font-weight:600;margin-right:4px;">Share:</span>
+            <button onclick="navigator.clipboard.writeText(window.location.href).then(()=>{this.innerHTML='<i class=\'bi bi-check-lg\'></i> Copied!';setTimeout(()=>{this.innerHTML='<i class=\'bi bi-link-45deg\'></i> Copy link'},2000)})"
+                    style="background:var(--viator-light);border:1px solid var(--viator-border);padding:6px 14px;border-radius:50px;font-size:.8rem;font-weight:600;cursor:pointer;color:var(--viator-dark);display:inline-flex;align-items:center;gap:5px;">
+                <i class="bi bi-link-45deg"></i> Copy link
+            </button>
+            <a href="https://www.facebook.com/sharer/sharer.php?u=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
+               target="_blank" rel="noopener"
+               style="background:#1877F2;color:#fff;padding:6px 14px;border-radius:50px;font-size:.8rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                <i class="bi bi-facebook"></i> Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?text=@Uri.EscapeDataString(Model.Title)&url=@Uri.EscapeDataString(Context.Request.Scheme + "://" + Context.Request.Host + Context.Request.Path)"
+               target="_blank" rel="noopener"
+               style="background:#000;color:#fff;padding:6px 14px;border-radius:50px;font-size:.8rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+                <i class="bi bi-twitter-x"></i> X
+            </a>
+        </div>
 
         <h2 class="vt-detail-section-title">
             Reviews

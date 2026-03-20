@@ -7,10 +7,12 @@ namespace Tourism.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ITourService _tourService;
+        private readonly IDestinationService _destinationService;
 
-        public HomeController(ITourService tourService)
+        public HomeController(ITourService tourService, IDestinationService destinationService)
         {
             _tourService = tourService;
+            _destinationService = destinationService;
         }
 
         // GET: / — Начална страница
@@ -33,6 +35,13 @@ namespace Tourism.Web.Controllers
                     DestinationName = t.Destination.Name,
                     TourOperatorName = t.TourOperator.Name
                 })
+                .ToList();
+
+            var destinations = await _destinationService.GetAllAsync();
+            ViewBag.Destinations = destinations
+                .OrderByDescending(d => d.Tours.Count)
+                .Take(10)
+                .Select(d => new { d.Id, d.Name, d.Country, d.ImageUrl })
                 .ToList();
 
             return View(featuredTours);

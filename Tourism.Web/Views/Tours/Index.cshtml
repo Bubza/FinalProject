@@ -438,7 +438,7 @@
                 </button>
                 <input type="hidden" name="people" id="peopleInput" value="@qPeople" />
                 <div id="peopleDropdown" style="display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid var(--border);border-radius:16px;padding:1.25rem 1.5rem;box-shadow:0 8px 32px rgba(0,0,0,.15);z-index:999;min-width:260px">
-                    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:1rem">You can select up to 15 travelers</p>
+                    <p style="font-size:0.8rem;color:var(--gray);margin-bottom:1rem">You can select up to 25 travelers</p>
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
                         <span style="font-weight:500">Travelers</span>
                         <div style="display:flex;align-items:center;gap:12px">
@@ -597,7 +597,7 @@
         <div class="tour-grid">
             @foreach (var tour in Model)
             {
-                <div class="tcard">
+                <a asp-action="Details" asp-route-id="@tour.Id" style="text-decoration:none;color:inherit;display:block" class="tcard">
                     <div class="tcard-img-wrap">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
@@ -611,7 +611,7 @@
                         {
                             <span class="tcard-badge">⭐ Best Seller</span>
                         }
-                        <form asp-controller="Favorites" asp-action="Add" method="post" style="display:inline">
+                        <form asp-controller="Favorites" asp-action="Add" method="post" style="display:inline;position:relative;z-index:2" onclick="event.stopPropagation()">
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="id" value="@tour.Id" />
                             <button type="submit" class="tcard-heart" title="Save to favorites">
@@ -651,9 +651,8 @@
                                 <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
                             }
                         </div>
-                        <a asp-action="Details" asp-route-id="@tour.Id" class="btn-details">View</a>
                     </div>
-                </div>
+                </a>
             }
         </div>
     }
@@ -763,7 +762,7 @@
         document.addEventListener("click", function() { document.getElementById("peopleDropdown").style.display = "none"; });
 
         function changePeople(delta) {
-            currentPeople = Math.max(1, Math.min(15, currentPeople + delta));
+            currentPeople = Math.max(1, Math.min(25, currentPeople + delta));
             document.getElementById("peopleCount").textContent = currentPeople;
         }
         function applyPeople() {

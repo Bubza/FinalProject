@@ -140,7 +140,7 @@
             @foreach (var tour in Model)
             {
                 <div class="col">
-                    <div class="tour-card">
+                    <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" style="text-decoration:none;color:inherit;display:block;height:100%" class="tour-card">
                         @if (!string.IsNullOrEmpty(tour.ImageUrl))
                         {
                             <img src="@tour.ImageUrl" class="tour-card-img" alt="@tour.Title" />
@@ -181,11 +181,9 @@
                                     <small>/ person</small>
                                 </div>
                             </div>
-                            <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-viator">
-                                View Details
-                            </a>
+                            <span style="font-size:.82rem;color:var(--viator-green);font-weight:600">View Details →</span>
                         </div>
-                    </div>
+                    </a>
                 </div>
             }
         </div>

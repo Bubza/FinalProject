@@ -56,7 +56,7 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
-
+app.UseRequestLocalization("en-US");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

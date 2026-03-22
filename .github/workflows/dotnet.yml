@@ -1,0 +1,36 @@
+name: NaviGo CI/CD
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore TourismApp.sln
+
+      - name: Build solution
+        run: dotnet build TourismApp.sln --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test Tourism.Tests/Tourism.Tests.csproj --no-build --configuration Release --verbosity normal
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: '**/TestResults/*.trx'

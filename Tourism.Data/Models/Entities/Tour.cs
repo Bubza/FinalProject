@@ -32,6 +32,6 @@
         public TourOperator TourOperator { get; set; } = null!;
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
+        public ICollection<TourImage> Images { get; set; } = new List<TourImage>();
     }
-}  
-
+}

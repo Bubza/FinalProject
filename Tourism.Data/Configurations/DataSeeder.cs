@@ -397,6 +397,77 @@ namespace Tourism.Data.Seeding
                     CreatedAt = new DateTime(2026, 2, 15)
                 }
             );
+
+            // Tour Images (3-4 per tour)
+            builder.Entity<TourImage>().HasData(
+                // Classic Rome (1)
+                new TourImage { Id = 1, TourId = 1, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80" },
+                new TourImage { Id = 2, TourId = 1, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=1200&q=80" },
+                new TourImage { Id = 3, TourId = 1, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1200&q=80" },
+                new TourImage { Id = 4, TourId = 1, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1571366343168-631c5bcca7a4?w=1200&q=80" },
+                // Rome & Vatican VIP (2)
+                new TourImage { Id = 5, TourId = 2, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1531572753322-ad063cecc140?w=1200&q=80" },
+                new TourImage { Id = 6, TourId = 2, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80" },
+                new TourImage { Id = 7, TourId = 2, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1490644658840-3f2e3f8c5625?w=1200&q=80" },
+                // Romantic Paris (3)
+                new TourImage { Id = 8, TourId = 3, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&q=80" },
+                new TourImage { Id = 9, TourId = 3, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1200&q=80" },
+                new TourImage { Id = 10, TourId = 3, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1541171418693-a55571e5c25f?w=1200&q=80" },
+                new TourImage { Id = 11, TourId = 3, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=1200&q=80" },
+                // Paris Weekend (4)
+                new TourImage { Id = 12, TourId = 4, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=1200&q=80" },
+                new TourImage { Id = 13, TourId = 4, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=1200&q=80" },
+                new TourImage { Id = 14, TourId = 4, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1520939817895-060bdaf4fe1b?w=1200&q=80" },
+                // Barcelona & Gaudi (5)
+                new TourImage { Id = 15, TourId = 5, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200&q=80" },
+                new TourImage { Id = 16, TourId = 5, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1583422409516-2895a77efded?w=1200&q=80" },
+                new TourImage { Id = 17, TourId = 5, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1561518776-e76a5e48f731?w=1200&q=80" },
+                new TourImage { Id = 18, TourId = 5, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=1200&q=80" },
+                // Adriatic Pearl (6)
+                new TourImage { Id = 19, TourId = 6, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1555990793-da11153b2473?w=1200&q=80" },
+                new TourImage { Id = 20, TourId = 6, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1600240644455-3edc55c375fe?w=1200&q=80" },
+                new TourImage { Id = 21, TourId = 6, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1548625149-720834e8fa96?w=1200&q=80" },
+                // Athens Adventure (7)
+                new TourImage { Id = 22, TourId = 7, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1555993539-1732b0258235?w=1200&q=80" },
+                new TourImage { Id = 23, TourId = 7, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1603565816030-6b389eeb23cb?w=1200&q=80" },
+                new TourImage { Id = 24, TourId = 7, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1568515387631-8b650bbcdb90?w=1200&q=80" },
+                new TourImage { Id = 25, TourId = 7, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1541726260-e6b6a6a1b27e?w=1200&q=80" },
+                // Magic of Prague (8)
+                new TourImage { Id = 26, TourId = 8, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=1200&q=80" },
+                new TourImage { Id = 27, TourId = 8, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1541849546-216549ae216d?w=1200&q=80" },
+                new TourImage { Id = 28, TourId = 8, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1592906209472-a36b1f3782ef?w=1200&q=80" },
+                // Prague & Vienna (9)
+                new TourImage { Id = 29, TourId = 9, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=1200&q=80" },
+                new TourImage { Id = 30, TourId = 9, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=1200&q=80" },
+                new TourImage { Id = 31, TourId = 9, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?w=1200&q=80" },
+                // Istanbul (10)
+                new TourImage { Id = 32, TourId = 10, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1527838832700-5059252407fa?w=1200&q=80" },
+                new TourImage { Id = 33, TourId = 10, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=1200&q=80" },
+                new TourImage { Id = 34, TourId = 10, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=1200&q=80" },
+                new TourImage { Id = 35, TourId = 10, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1570939274717-7eda259b50ed?w=1200&q=80" },
+                // Amsterdam (11)
+                new TourImage { Id = 36, TourId = 11, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=1200&q=80" },
+                new TourImage { Id = 37, TourId = 11, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1512470876302-972faa2aa9a4?w=1200&q=80" },
+                new TourImage { Id = 38, TourId = 11, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1576924542622-772281b13e94?w=1200&q=80" },
+                // Imperial Vienna (12)
+                new TourImage { Id = 39, TourId = 12, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1516550893923-42d28e5677af?w=1200&q=80" },
+                new TourImage { Id = 40, TourId = 12, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1523731407965-2430cd12f5e4?w=1200&q=80" },
+                new TourImage { Id = 41, TourId = 12, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1200&q=80" },
+                new TourImage { Id = 42, TourId = 12, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1609767791926-c9e2e7ca33ac?w=1200&q=80" },
+                // Santorini Island of Dreams (13)
+                new TourImage { Id = 43, TourId = 13, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&q=80" },
+                new TourImage { Id = 44, TourId = 13, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1200&q=80" },
+                new TourImage { Id = 45, TourId = 13, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80" },
+                new TourImage { Id = 46, TourId = 13, SortOrder = 4, ImageUrl = "https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=1200&q=80" },
+                // Santorini Weekend (14)
+                new TourImage { Id = 47, TourId = 14, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1200&q=80" },
+                new TourImage { Id = 48, TourId = 14, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&q=80" },
+                new TourImage { Id = 49, TourId = 14, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1551918120-9739cb430c6d?w=1200&q=80" },
+                // Balkan Express (15)
+                new TourImage { Id = 50, TourId = 15, SortOrder = 1, ImageUrl = "https://images.unsplash.com/photo-1590147534648-1ac5cca59621?w=1200&q=80" },
+                new TourImage { Id = 51, TourId = 15, SortOrder = 2, ImageUrl = "https://images.unsplash.com/photo-1555993539-1732b0258235?w=1200&q=80" },
+                new TourImage { Id = 52, TourId = 15, SortOrder = 3, ImageUrl = "https://images.unsplash.com/photo-1555990793-da11153b2473?w=1200&q=80" }
+            );
         }
     }
 }

@@ -49,6 +49,12 @@
 </section>
 
 <style>
+    .row > .col,
+    .row > [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+    }
+
     .hero-dot {
         width: 8px;
         height: 8px;

@@ -22,11 +22,43 @@
     </div>
 </div>
 
-@if (!string.IsNullOrEmpty(Model.ImageUrl))
+@{
+    var tourImages = ViewBag.TourImages as List<Tourism.Data.Models.Entities.TourImage>;
+    var allImages = new List<string>();
+    if (tourImages != null && tourImages.Any())
+        allImages = tourImages.Select(i => i.ImageUrl).ToList();
+    else if (!string.IsNullOrEmpty(Model.ImageUrl))
+        allImages.Add(Model.ImageUrl);
+    var mainImage = allImages.FirstOrDefault() ?? "";
+}
+
+@if (allImages.Any())
 {
-    <div class="vt-detail-hero">
-        <img src="@Model.ImageUrl" alt="@Model.Title" class="vt-detail-hero-img" />
-        <div class="vt-detail-hero-gradient"></div>
+    <div class="gallery-wrap">
+        <!-- Main large image -->
+        <div class="gallery-main" id="galleryMain">
+            <img src="@mainImage" alt="@Model.Title" id="galleryMainImg"
+                 onerror="this.style.background='#E6F7F1'" />
+            @if (allImages.Count > 1)
+            {
+                <button class="gallery-arrow gallery-prev" onclick="galleryNav(-1)">&#8249;</button>
+                <button class="gallery-arrow gallery-next" onclick="galleryNav(1)">&#8250;</button>
+                <div class="gallery-counter"><span id="galleryCurrent">1</span> / @allImages.Count</div>
+            }
+        </div>
+        @* Thumbnails removed
+            <div class="gallery-thumbs">
+                @for (int i = 0; i < allImages.Count; i++)
+                {
+                    <div class="gallery-thumb @(i == 0 ? "active" : "")"
+                         onclick="galleryGoTo(@i)"
+                         data-src="@allImages[i]">
+                        <img src="@allImages[i]" alt="Photo @(i+1)"
+                             onerror="this.parentElement.style.display='none'" />
+                    </div>
+                }
+            </div>
+        *@
     </div>
 }
 
@@ -469,6 +501,124 @@
 </div>
 
 <style>
+    /* ── Photo gallery ───────────────────────────────────── */
+    .gallery-wrap {
+        background: #000;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .gallery-main {
+        position: relative;
+        width: 100%;
+        height: 460px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+        .gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity .3s;
+        }
+
+    .gallery-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,.55);
+        color: #fff;
+        border: none;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        font-size: 1.6rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: background .2s;
+        line-height: 1;
+        padding: 0;
+    }
+
+        .gallery-arrow:hover {
+            background: rgba(0,0,0,.8);
+        }
+
+    .gallery-prev {
+        left: 16px;
+    }
+
+    .gallery-next {
+        right: 16px;
+    }
+
+    .gallery-counter {
+        position: absolute;
+        bottom: 14px;
+        right: 16px;
+        background: rgba(0,0,0,.55);
+        color: #fff;
+        font-size: .78rem;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .gallery-thumbs {
+        display: flex;
+        gap: 4px;
+        padding: 4px;
+        background: #111;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+        .gallery-thumbs::-webkit-scrollbar {
+            display: none;
+        }
+
+    .gallery-thumb {
+        flex-shrink: 0;
+        width: 72px;
+        height: 48px;
+        overflow: hidden;
+        cursor: pointer;
+        border-radius: 4px;
+        opacity: .55;
+        border: 2px solid transparent;
+        transition: opacity .2s, border-color .2s;
+    }
+
+        .gallery-thumb.active {
+            opacity: 1;
+            border-color: #00AA6C;
+        }
+
+        .gallery-thumb:hover {
+            opacity: .85;
+        }
+
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    @@media (max-width: 640px) {
+        .gallery-main {
+            height: 260px;
+        }
+
+        .gallery-thumb {
+            width: 72px;
+            height: 50px;
+        }
+    }
+
     .vt-detail-hero {
         position: relative;
         height: 420px;
@@ -920,6 +1070,35 @@
 </style>
 
 @section Scripts {
+    <script>
+        // ── Photo gallery ─────────────────────────────────────
+        var galleryImages = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(allImages));
+        var galleryCurrent = 0;
+
+        function galleryGoTo(idx) {
+            galleryCurrent = (idx + galleryImages.length) % galleryImages.length;
+            var img = document.getElementById('galleryMainImg');
+            if (!img) return;
+            img.style.opacity = '0';
+            setTimeout(function() {
+                img.src = galleryImages[galleryCurrent];
+                img.style.opacity = '1';
+            }, 150);
+            var counter = document.getElementById('galleryCurrent');
+            if (counter) counter.textContent = galleryCurrent + 1;
+            document.querySelectorAll('.gallery-thumb').forEach(function(t, i) {
+                t.classList.toggle('active', i === galleryCurrent);
+            });
+        }
+
+        function galleryNav(dir) { galleryGoTo(galleryCurrent + dir); }
+
+        // Keyboard arrows
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft')  galleryNav(-1);
+            if (e.key === 'ArrowRight') galleryNav(1);
+        });
+    </script>
     <script>
         function initMap() {
             const geocoder = new google.maps.Geocoder();

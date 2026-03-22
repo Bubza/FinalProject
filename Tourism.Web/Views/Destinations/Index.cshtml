@@ -39,10 +39,16 @@
         flex-direction: column;
     }
 
-        .tour-card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-3px);
-        }
+    .row > .col,
+    .row > [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .tour-card:hover {
+        box-shadow: var(--shadow-lg);
+        transform: translateY(-3px);
+    }
 
     .tour-card-img {
         width: 100%;

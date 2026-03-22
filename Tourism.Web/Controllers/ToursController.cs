@@ -168,6 +168,8 @@ namespace Tourism.Web.Controllers
                 .Select(star => new { Star = star, Count = tour.Reviews.Count(r => r.Rating == star) })
                 .ToList();
 
+            ViewBag.TourImages = tour.Images.OrderBy(i => i.SortOrder).ToList();
+
             return View(viewModel);
         }
     }

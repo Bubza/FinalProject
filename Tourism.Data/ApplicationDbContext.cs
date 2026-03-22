@@ -16,6 +16,7 @@ namespace Tourism.Data
         public DbSet<Review> Reviews { get; set; }
         public DbSet<TourOperator> TourOperators { get; set; }
         public DbSet<FavoriteTour> FavoriteTours { get; set; }
+        public DbSet<TourImage> TourImages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -61,8 +62,14 @@ namespace Tourism.Data
                 .HasIndex(f => new { f.UserId, f.TourId })
                 .IsUnique();
 
+            // TourImage → Tour (many-to-one)
+            builder.Entity<TourImage>()
+                .HasOne(i => i.Tour)
+                .WithMany(t => t.Images)
+                .HasForeignKey(i => i.TourId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             Tourism.Data.Seeding.DataSeeder.Seed(builder);
         }
     }
 }
-

@@ -16,5 +16,7 @@
 
         // Navigation
         public Tour Tour { get; set; } = null!;
+        public ApplicationUser User { get; set; } = null!; 
+
     }
 }

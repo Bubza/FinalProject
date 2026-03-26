@@ -12,6 +12,8 @@
 
         // Linked user account
         public string? UserId { get; set; }
+        public ApplicationUser? User { get; set; } 
+
 
         // Navigation
         public ICollection<Tour> Tours { get; set; } = new List<Tour>();

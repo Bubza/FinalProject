@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tourism.Data;
 
@@ -11,9 +12,11 @@ using Tourism.Data;
 namespace Tourism.Data.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260325165206_AddMissingUserNavigationProperties")]
+    partial class AddMissingUserNavigationProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,7 +257,6 @@ namespace Tourism.Data.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("TourId")
@@ -465,8 +467,7 @@ namespace Tourism.Data.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("DiscountPercent")
-                        .HasPrecision(5, 2)
-                        .HasColumnType("decimal(5,2)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("DurationDays")
                         .HasColumnType("int");
@@ -482,7 +483,6 @@ namespace Tourism.Data.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("PricePerPerson")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("StartDate")

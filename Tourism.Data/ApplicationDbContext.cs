@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Tourism.Data.Models.Entities;
+
 namespace Tourism.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
@@ -21,6 +23,19 @@ namespace Tourism.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            // Fix decimal precision warnings
+            builder.Entity<Booking>()
+                .Property(b => b.TotalPrice)
+                .HasPrecision(18, 2);
+
+            builder.Entity<Tour>()
+                .Property(t => t.PricePerPerson)
+                .HasPrecision(18, 2);
+
+            builder.Entity<Tour>()
+                .Property(t => t.DiscountPercent)
+                .HasPrecision(5, 2);
 
             // Tour → Destination (many-to-one)
             builder.Entity<Tour>()

@@ -13,11 +13,13 @@ namespace Tourism.Web.Controllers
     {
         private readonly IBookingService _bookingService;
         private readonly ITourService _tourService;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentController(IBookingService bookingService, ITourService tourService)
+        public PaymentController(IBookingService bookingService, ITourService tourService, IPaymentService paymentService)
         {
             _bookingService = bookingService;
             _tourService = tourService;
+            _paymentService = paymentService;
         }
 
         // GET: /Payment/Checkout
@@ -27,7 +29,6 @@ namespace Tourism.Web.Controllers
             if (string.IsNullOrEmpty(json))
                 return RedirectToAction("Index", "Tours");
 
-            // Keep data alive so POST can use it too
             TempData.Keep("PendingBooking");
 
             var data = JsonSerializer.Deserialize<PendingBookingData>(json)!;
@@ -50,12 +51,12 @@ namespace Tourism.Web.Controllers
 
             var data = JsonSerializer.Deserialize<PendingBookingData>(json)!;
 
-            // Basic validation
+            //basic validation
             var cleanCard = cardNumber?.Replace(" ", "") ?? "";
             if (cleanCard.Length < 16 || string.IsNullOrWhiteSpace(expiry) ||
                 string.IsNullOrWhiteSpace(cvv) || string.IsNullOrWhiteSpace(cardHolder))
             {
-                TempData["PendingBooking"] = json; // restore
+                TempData["PendingBooking"] = json;
                 TempData["PaymentError"] = "Please fill in all card details correctly.";
                 ViewBag.TourTitle = data.TourTitle;
                 ViewBag.TotalPrice = data.TotalPrice;
@@ -64,7 +65,7 @@ namespace Tourism.Web.Controllers
                 return View();
             }
 
-            // Save booking as Confirmed
+            // Save booking
             var booking = new Booking
             {
                 UserId = User.FindFirstValue(ClaimTypes.NameIdentifier)!,
@@ -73,8 +74,18 @@ namespace Tourism.Web.Controllers
                 TotalPrice = data.TotalPrice,
                 Status = BookingStatus.Confirmed
             };
-
             await _bookingService.CreateAsync(booking);
+
+            // Save payment record
+            var payment = new Payment
+            {
+                BookingId = booking.Id,
+                Amount = data.TotalPrice,
+                Method = "Card",
+                Status = "Paid",
+                TransactionId = "TXN-" + Guid.NewGuid().ToString("N")[..12].ToUpper()
+            };
+            await _paymentService.CreateAsync(payment);
 
             TempData["BookingSuccess_Title"] = data.TourTitle;
             TempData["BookingSuccess_Price"] = data.TotalPrice.ToString("F2");

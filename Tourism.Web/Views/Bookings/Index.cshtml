@@ -169,7 +169,7 @@
                     </div>
                     <div class="booking-actions">
                         <span class="@badgeClass">@statusText</span>
-                        <div class="booking-price">@booking.TotalPrice.ToString("C")</div>
+                        <div class="booking-price">@booking.TotalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))</div>
                         @if (booking.Status == Tourism.Data.Models.Enums.BookingStatus.Pending)
                         {
                             <form asp-action="Cancel" asp-route-id="@booking.Id" method="post"

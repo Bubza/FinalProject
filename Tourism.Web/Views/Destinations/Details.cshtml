@@ -258,7 +258,7 @@
                     <div class="tcard-footer">
                         <div>
                             <div class="tcard-price-label">from</div>
-                            <div class="tcard-price">@tour.PricePerPerson.ToString("C")</div>
+                            <div class="tcard-price">@tour.PricePerPerson.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))</div>
                         </div>
                         <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-details">View</a>
                     </div>

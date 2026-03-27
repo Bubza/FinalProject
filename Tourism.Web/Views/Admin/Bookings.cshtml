@@ -44,7 +44,7 @@
                     <td>@booking.Tour?.Title</td>
                     <td>@booking.Tour?.Destination?.Name</td>
                     <td>@booking.NumberOfPeople</td>
-                    <td>@booking.TotalPrice.ToString("C")</td>
+                    <td>@booking.TotalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))</td>
                     <td>@booking.BookedAt.ToString("dd.MM.yyyy")</td>
                     <td>
                         @{

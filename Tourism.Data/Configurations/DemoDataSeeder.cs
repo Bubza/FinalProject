@@ -126,7 +126,7 @@ namespace Tourism.Data.Seeding
                 var petar = ids["petar.georgiev@demo.bg"];
                 var elena = ids["elena.todorova@demo.bg"];
                 var stefan = ids["stefan.dimitrov@demo.bg"];
-                var anna = ids["anna.kristeva@demo.bg"];
+                var anna = ids["anna.mileva@demo.bg"];
 
                 db.Reviews.AddRange(
                     new Review
@@ -188,7 +188,7 @@ namespace Tourism.Data.Seeding
                 var petar = ids["petar.georgiev@demo.bg"];
                 var elena = ids["elena.todorova@demo.bg"];
                 var stefan = ids["stefan.dimitrov@demo.bg"];
-                var anna = ids["anna.kristeva@demo.bg"];
+                var anna = ids["anna.mileva@demo.bg"];
 
                 db.FavoriteTours.AddRange(
                     // Maria
@@ -275,8 +275,8 @@ namespace Tourism.Data.Seeding
                     },
                     new Tourism.Data.Models.Entities.ContactMessage
                     {
-                        Name = "Anna Kristeva",
-                        Email = "anna.kristeva@demo.bg",
+                        Name = "Anna Mileva",
+                        Email = "anna.mileva@demo.bg",
                         Subject = "Accessibility — Santorini Weekend",
                         Message = "Hello! I am interested in the Santorini Weekend tour but I have limited mobility. Could you let me know whether the tour is suitable for someone who uses a walking stick, and whether the villa has ground-floor rooms available? Many thanks.",
                         SentAt = new DateTime(2026, 3, 15),

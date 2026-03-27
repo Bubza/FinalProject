@@ -35,7 +35,7 @@
                     <td>@tour.Title</td>
                     <td>@tour.Destination?.Name</td>
                     <td>@tour.TourOperator?.Name</td>
-                    <td>@tour.PricePerPerson.ToString("C")</td>
+                    <td>@tour.PricePerPerson.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))</td>
                     <td>@tour.StartDate.ToString("dd.MM.yyyy")</td>
                     <td>
                         <a asp-action="EditTour" asp-route-id="@tour.Id" class="btn btn-sm btn-outline-primary">Edit</a>

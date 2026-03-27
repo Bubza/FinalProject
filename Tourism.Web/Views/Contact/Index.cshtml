@@ -1,0 +1,44 @@
+﻿@model Tourism.Data.Models.Entities.ContactMessage
+@{
+    ViewData["Title"] = "Contact Us";
+}
+
+<div class="container py-5" style="max-width:760px">
+    <h1 class="fw-bold mb-1" style="color:#00AA6C">Contact Us</h1>
+    <p class="text-muted mb-4">Have a question about a tour or a booking? We'd love to hear from you.</p>
+
+    <div class="card border-0 shadow-sm rounded-4 p-4">
+        <form asp-action="Index" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label fw-semibold">Your Name</label>
+                <input asp-for="Name" class="form-control rounded-3" placeholder="Maria Ivanova" />
+                <span asp-validation-for="Name" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label fw-semibold">Email Address</label>
+                <input asp-for="Email" type="email" class="form-control rounded-3" placeholder="you@example.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Subject" class="form-label fw-semibold">Subject</label>
+                <input asp-for="Subject" class="form-control rounded-3" placeholder="e.g. Group booking enquiry" />
+                <span asp-validation-for="Subject" class="text-danger small"></span>
+            </div>
+            <div class="mb-4">
+                <label asp-for="Message" class="form-label fw-semibold">Message</label>
+                <textarea asp-for="Message" class="form-control rounded-3" rows="5" placeholder="Tell us how we can help..."></textarea>
+                <span asp-validation-for="Message" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn text-white rounded-pill px-4" style="background:#00AA6C">
+                <i class="bi bi-send me-1"></i> Send Message
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

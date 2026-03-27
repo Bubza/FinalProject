@@ -26,10 +26,12 @@
         // Foreign Keys
         public int DestinationId { get; set; }
         public int TourOperatorId { get; set; }
+        public int CategoryId { get; set; }
 
         // Navigation
         public Destination Destination { get; set; } = null!;
         public TourOperator TourOperator { get; set; } = null!;
+        public Category Category { get; set; } = null!;
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<Review> Reviews { get; set; } = new List<Review>();
         public ICollection<TourImage> Images { get; set; } = new List<TourImage>();

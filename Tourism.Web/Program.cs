@@ -8,7 +8,7 @@ using Tourism.Data.Models.Entities;
 
 var cultureInfo = new CultureInfo("de-DE");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US"); 
+CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("en-US");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,6 +26,7 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 // Services
 builder.Services.AddScoped<ITourService, TourService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
@@ -33,6 +34,9 @@ builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 builder.Services.AddScoped<ITourOperatorService, TourOperatorService>();
 builder.Services.AddScoped<IFavoriteTourService, FavoriteTourService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IContactMessageService, ContactMessageService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 
 // Add MVC Controllers + Razor Pages
 builder.Services.AddControllersWithViews();
@@ -44,6 +48,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     await AdminSeeder.SeedAsync(scope.ServiceProvider);
+    await DemoDataSeeder.SeedAsync(scope.ServiceProvider);
 }
 
 // Middleware pipeline

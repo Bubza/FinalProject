@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Tourism.Data.Models.Entities;
 
 namespace Tourism.Data
@@ -19,12 +18,15 @@ namespace Tourism.Data
         public DbSet<TourOperator> TourOperators { get; set; }
         public DbSet<FavoriteTour> FavoriteTours { get; set; }
         public DbSet<TourImage> TourImages { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<ContactMessage> ContactMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // Fix decimal precision warnings
+            // Decimal precision
             builder.Entity<Booking>()
                 .Property(b => b.TotalPrice)
                 .HasPrecision(18, 2);
@@ -37,51 +39,68 @@ namespace Tourism.Data
                 .Property(t => t.DiscountPercent)
                 .HasPrecision(5, 2);
 
-            // Tour → Destination (many-to-one)
+            builder.Entity<Payment>()
+                .Property(p => p.Amount)
+                .HasPrecision(18, 2);
+
+            // Tour → Destination
             builder.Entity<Tour>()
                 .HasOne(t => t.Destination)
                 .WithMany(d => d.Tours)
                 .HasForeignKey(t => t.DestinationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Tour → TourOperator (many-to-one)
+            // Tour → TourOperator
             builder.Entity<Tour>()
                 .HasOne(t => t.TourOperator)
                 .WithMany(o => o.Tours)
                 .HasForeignKey(t => t.TourOperatorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Booking → Tour (many-to-one)
+            // Tour → Category
+            builder.Entity<Tour>()
+                .HasOne(t => t.Category)
+                .WithMany(c => c.Tours)
+                .HasForeignKey(t => t.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Booking → Tour
             builder.Entity<Booking>()
                 .HasOne(b => b.Tour)
                 .WithMany(t => t.Bookings)
                 .HasForeignKey(b => b.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Review → Tour (many-to-one)
+            // Review → Tour
             builder.Entity<Review>()
                 .HasOne(r => r.Tour)
                 .WithMany(t => t.Reviews)
                 .HasForeignKey(r => r.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // FavoriteTour → Tour (many-to-one)
+            // FavoriteTour → Tour
             builder.Entity<FavoriteTour>()
                 .HasOne(f => f.Tour)
                 .WithMany()
                 .HasForeignKey(f => f.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Unique constraint: един потребител не може да добави един маршрут два пъти
             builder.Entity<FavoriteTour>()
                 .HasIndex(f => new { f.UserId, f.TourId })
                 .IsUnique();
 
-            // TourImage → Tour (many-to-one)
+            // TourImage → Tour
             builder.Entity<TourImage>()
                 .HasOne(i => i.Tour)
                 .WithMany(t => t.Images)
                 .HasForeignKey(i => i.TourId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Payment → Booking
+            builder.Entity<Payment>()
+                .HasOne(p => p.Booking)
+                .WithMany()
+                .HasForeignKey(p => p.BookingId)
                 .OnDelete(DeleteBehavior.Cascade);
 
             Tourism.Data.Seeding.DataSeeder.Seed(builder);

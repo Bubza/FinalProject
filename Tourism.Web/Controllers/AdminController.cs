@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
+using Tourism.Web.Models.ViewModels;
 
 namespace Tourism.Web.Controllers
 {
@@ -46,81 +47,70 @@ namespace Tourism.Web.Controllers
             var bookingList = bookings.ToList();
             var tourList = tours.ToList();
 
-            // ── Summary counters ──────────────────────────────────────────
-            ViewBag.TotalTours = tourList.Count;
-            ViewBag.TotalBookings = bookingList.Count;
-            ViewBag.TotalReviews = reviews.Count();
-            ViewBag.TotalOperators = operators.Count();
-            ViewBag.TotalUsers = users.Count;
-
-            // ── Booking status breakdown ──────────────────────────────────
-            ViewBag.PendingBookings = bookingList.Count(b => b.Status == BookingStatus.Pending);
-            ViewBag.ConfirmedBookings = bookingList.Count(b => b.Status == BookingStatus.Confirmed);
-            ViewBag.CancelledBookings = bookingList.Count(b => b.Status == BookingStatus.Cancelled);
-            ViewBag.CompletedBookings = bookingList.Count(b => b.Status == BookingStatus.Completed);
-
-            // ── Revenue (confirmed + completed bookings only) ─────────────
-            ViewBag.TotalRevenue = bookingList
-                .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
-                .Sum(b => b.TotalPrice);
-
-            // ── Most popular tours (by booking count) ────────────────────
-            ViewBag.PopularTours = tourList
-                .OrderByDescending(t => t.Bookings.Count)
-                .Take(5)
-                .Select(t => new
-                {
-                    t.Id,
-                    t.Title,
-                    DestinationName = t.Destination?.Name ?? "-",
-                    BookingCount = t.Bookings.Count,
-                    Revenue = t.Bookings
-                        .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
-                        .Sum(b => b.TotalPrice)
-                })
-                .ToList();
-
-            // ── Top rated tours (by average review score) ─────────────────
-            ViewBag.TopRatedTours = tourList
-                .Where(t => t.Reviews.Any())
-                .OrderByDescending(t => t.Reviews.Average(r => r.Rating))
-                .Take(5)
-                .Select(t => new
-                {
-                    t.Id,
-                    t.Title,
-                    DestinationName = t.Destination?.Name ?? "-",
-                    AvgRating = Math.Round(t.Reviews.Average(r => r.Rating), 1),
-                    ReviewCount = t.Reviews.Count
-                })
-                .ToList();
-
-            // ── Upcoming tours with available spots ───────────────────────
+            // Build upcoming tours with spot data
             var upcomingTours = tourList
                 .Where(t => t.StartDate > DateTime.UtcNow)
                 .OrderBy(t => t.StartDate)
                 .Take(5)
-                .ToList();
-
-            var upcomingWithSpots = new List<object>();
-            foreach (var t in upcomingTours)
-            {
-                var booked = t.Bookings
-                    .Where(b => b.Status != BookingStatus.Cancelled)
-                    .Sum(b => b.NumberOfPeople);
-                upcomingWithSpots.Add(new
+                .Select(t =>
                 {
-                    t.Id,
-                    t.Title,
-                    t.StartDate,
-                    t.MaxParticipants,
-                    BookedSpots = booked,
-                    AvailableSpots = t.MaxParticipants - booked
-                });
-            }
-            ViewBag.UpcomingTours = upcomingWithSpots;
+                    var booked = t.Bookings
+                        .Where(b => b.Status != BookingStatus.Cancelled)
+                        .Sum(b => b.NumberOfPeople);
+                    return new UpcomingTourItem
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        StartDate = t.StartDate,
+                        MaxParticipants = t.MaxParticipants,
+                        BookedSpots = booked,
+                        AvailableSpots = t.MaxParticipants - booked
+                    };
+                }).ToList();
 
-            return View();
+            var model = new AdminDashboardViewModel
+            {
+                TotalTours = tourList.Count,
+                TotalBookings = bookingList.Count,
+                TotalReviews = reviews.Count(),
+                TotalOperators = operators.Count(),
+                TotalUsers = users.Count,
+                PendingBookings = bookingList.Count(b => b.Status == BookingStatus.Pending),
+                ConfirmedBookings = bookingList.Count(b => b.Status == BookingStatus.Confirmed),
+                CancelledBookings = bookingList.Count(b => b.Status == BookingStatus.Cancelled),
+                CompletedBookings = bookingList.Count(b => b.Status == BookingStatus.Completed),
+                TotalRevenue = bookingList
+                    .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                    .Sum(b => b.TotalPrice),
+                PopularTours = tourList
+                    .OrderByDescending(t => t.Bookings.Count)
+                    .Take(5)
+                    .Select(t => new PopularTourItem
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        DestinationName = t.Destination?.Name ?? "-",
+                        BookingCount = t.Bookings.Count,
+                        Revenue = t.Bookings
+                            .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                            .Sum(b => b.TotalPrice)
+                    }).ToList(),
+                TopRatedTours = tourList
+                    .Where(t => t.Reviews.Any())
+                    .OrderByDescending(t => t.Reviews.Average(r => r.Rating))
+                    .Take(5)
+                    .Select(t => new TopRatedTourItem
+                    {
+                        Id = t.Id,
+                        Title = t.Title,
+                        DestinationName = t.Destination?.Name ?? "-",
+                        AvgRating = Math.Round(t.Reviews.Average(r => r.Rating), 1),
+                        ReviewCount = t.Reviews.Count
+                    }).ToList(),
+                UpcomingTours = upcomingTours
+            };
+
+            return View(model);
         }
 
         // ===== TOURS =====
@@ -274,7 +264,6 @@ namespace Tourism.Web.Controllers
             var op = await _tourOperatorService.GetByIdAsync(operatorId);
             if (op == null) return NotFound();
 
-            // Remove Operator role from previous linked user
             if (!string.IsNullOrEmpty(op.UserId) && op.UserId != userId)
             {
                 var prevUser = await _userManager.FindByIdAsync(op.UserId);
@@ -370,7 +359,6 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> CreateDestination(Destination destination)
         {
             ModelState.Clear();
-
             await _destinationService.CreateAsync(destination);
             TempData["Success"] = "Destination added!";
             return RedirectToAction(nameof(Destinations));

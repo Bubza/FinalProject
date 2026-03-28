@@ -35,7 +35,6 @@
 @if (allImages.Any())
 {
     <div class="gallery-wrap">
-        <!-- Main large image -->
         <div class="gallery-main" id="galleryMain">
             <img src="@mainImage" alt="@Model.Title" id="galleryMainImg"
                  onerror="this.style.background='#E6F7F1'" />
@@ -46,19 +45,6 @@
                 <div class="gallery-counter"><span id="galleryCurrent">1</span> / @allImages.Count</div>
             }
         </div>
-        @* Thumbnails removed
-            <div class="gallery-thumbs">
-                @for (int i = 0; i < allImages.Count; i++)
-                {
-                    <div class="gallery-thumb @(i == 0 ? "active" : "")"
-                         onclick="galleryGoTo(@i)"
-                         data-src="@allImages[i]">
-                        <img src="@allImages[i]" alt="Photo @(i+1)"
-                             onerror="this.parentElement.style.display='none'" />
-                    </div>
-                }
-            </div>
-        *@
     </div>
 }
 
@@ -99,6 +85,37 @@
 
         <div class="vt-detail-divider"></div>
 
+        <!-- Wikipedia Destination Guide -->
+        <h2 class="vt-detail-section-title">
+            <i class="bi bi-globe2" style="color:var(--viator-green)"></i>
+            About @Model.DestinationName
+        </h2>
+        <div id="wiki-section">
+            <div id="wiki-loading" style="display:flex;align-items:center;gap:8px;color:var(--viator-gray);font-size:.875rem;">
+                <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                Loading destination info...
+            </div>
+            <div id="wiki-content" style="display:none;">
+                <div style="background:var(--viator-light);border:1px solid var(--viator-border);border-radius:var(--radius);padding:16px 20px;">
+                    <div style="display:flex;gap:14px;align-items:flex-start;">
+                        <img id="wiki-thumb" src="" alt="" style="width:100px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0;display:none;" />
+                        <div>
+                            <p id="wiki-extract" style="font-size:.875rem;color:#374151;line-height:1.7;margin:0 0 8px;"></p>
+                            <a id="wiki-link" href="#" target="_blank" rel="noopener"
+                               style="font-size:.8rem;font-weight:600;color:var(--viator-green);text-decoration:none;display:inline-flex;align-items:center;gap:4px;">
+                                <i class="bi bi-box-arrow-up-right"></i> Read more on Wikipedia
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="wiki-error" style="display:none;font-size:.875rem;color:var(--viator-gray);">
+                Destination information not available.
+            </div>
+        </div>
+
+        <div class="vt-detail-divider"></div>
+
         <h2 class="vt-detail-section-title">Details</h2>
         <div class="vt-info-grid">
             <div class="vt-info-item">
@@ -136,7 +153,6 @@
         <!-- What's Included / Not Included -->
         <h2 class="vt-detail-section-title"><i class="bi bi-list-check" style="color:var(--viator-green)"></i> What's included</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
-            <!-- Included -->
             <div style="background:#F0FDF4;border:1px solid #BBF7D0;border-radius:var(--radius);padding:16px 20px;">
                 <div style="font-weight:700;font-size:.88rem;color:#166534;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
                     <i class="bi bi-check-circle-fill" style="color:#16A34A"></i> Included
@@ -164,7 +180,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- Not included -->
             <div style="background:#FFF7F7;border:1px solid #FECACA;border-radius:var(--radius);padding:16px 20px;">
                 <div style="font-weight:700;font-size:.88rem;color:#991B1B;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
                     <i class="bi bi-x-circle-fill" style="color:#DC2626"></i> Not included
@@ -237,7 +252,6 @@
 
         @if (ViewBag.Reviews != null && ((IEnumerable<Tourism.Web.Models.ViewModels.ReviewViewModel>)ViewBag.Reviews).Any())
         {
-            <!-- Rating breakdown bars -->
             <div style="background:#fff;border:1px solid var(--viator-border);border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
                 <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;">
                     <div style="text-align:center;min-width:70px;">
@@ -346,7 +360,6 @@
                                 else
                                 {
                                     @rec.PricePerPerson.ToString("0")
-
                                     <text> €</text>
                                 }
                             </div>
@@ -501,7 +514,6 @@
 </div>
 
 <style>
-    /* ── Photo gallery ───────────────────────────────────── */
     .gallery-wrap {
         background: #000;
         width: 100%;
@@ -617,27 +629,6 @@
             width: 72px;
             height: 50px;
         }
-    }
-
-    .vt-detail-hero {
-        position: relative;
-        height: 420px;
-        overflow: hidden;
-    }
-
-    .vt-detail-hero-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    .vt-detail-hero-gradient {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 120px;
-        background: linear-gradient(to bottom,transparent,#fff);
     }
 
     .vt-detail-layout {
@@ -954,17 +945,6 @@
             color: var(--viator-green);
         }
 
-    .vt-booking-hint {
-        font-size: 0.8rem;
-        color: var(--viator-gray);
-        text-align: center;
-        margin-top: 12px;
-    }
-
-        .vt-booking-hint a {
-            color: var(--viator-green);
-        }
-
     .vt-booking-guarantee {
         display: flex;
         align-items: center;
@@ -1059,10 +1039,6 @@
             position: static;
         }
 
-        .vt-detail-hero {
-            height: 280px;
-        }
-
         .vt-info-grid {
             grid-template-columns: 1fr;
         }
@@ -1093,11 +1069,39 @@
 
         function galleryNav(dir) { galleryGoTo(galleryCurrent + dir); }
 
-        // Keyboard arrows
         document.addEventListener('keydown', function(e) {
             if (e.key === 'ArrowLeft')  galleryNav(-1);
             if (e.key === 'ArrowRight') galleryNav(1);
         });
+    </script>
+    <script>
+        // Wikipedia Destination Guide
+        (function() {
+            var dest = "@Model.DestinationName";
+            fetch("https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(dest))
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById("wiki-loading").style.display = "none";
+                    if (data.extract) {
+                        document.getElementById("wiki-extract").textContent = data.extract;
+                        document.getElementById("wiki-link").href = (data.content_urls && data.content_urls.desktop && data.content_urls.desktop.page)
+                            ? data.content_urls.desktop.page
+                            : "https://en.wikipedia.org/wiki/" + encodeURIComponent(dest);
+                        if (data.thumbnail && data.thumbnail.source) {
+                            var thumb = document.getElementById("wiki-thumb");
+                            thumb.src = data.thumbnail.source;
+                            thumb.style.display = "block";
+                        }
+                        document.getElementById("wiki-content").style.display = "block";
+                    } else {
+                        document.getElementById("wiki-error").style.display = "block";
+                    }
+                })
+                .catch(function() {
+                    document.getElementById("wiki-loading").style.display = "none";
+                    document.getElementById("wiki-error").style.display = "block";
+                });
+        })();
     </script>
     <script>
         function initMap() {

@@ -18,6 +18,7 @@ namespace Tourism.Web.Controllers
         private readonly IDestinationService _destinationService;
         private readonly ITourOperatorService _tourOperatorService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<AdminController> _logger;
 
         public AdminController(
             ITourService tourService,
@@ -25,7 +26,8 @@ namespace Tourism.Web.Controllers
             IReviewService reviewService,
             IDestinationService destinationService,
             ITourOperatorService tourOperatorService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<AdminController> logger)
         {
             _tourService = tourService;
             _bookingService = bookingService;
@@ -33,11 +35,14 @@ namespace Tourism.Web.Controllers
             _destinationService = destinationService;
             _tourOperatorService = tourOperatorService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // GET: /Admin — Dashboard
         public async Task<IActionResult> Index()
         {
+            _logger.LogInformation("Admin dashboard accessed by {User}", User.Identity?.Name);
+
             var tours = await _tourService.GetAllAsync();
             var bookings = await _bookingService.GetAllAsync();
             var reviews = await _reviewService.GetAllAsync();
@@ -47,7 +52,6 @@ namespace Tourism.Web.Controllers
             var bookingList = bookings.ToList();
             var tourList = tours.ToList();
 
-            // Build upcoming tours with spot data
             var upcomingTours = tourList
                 .Where(t => t.StartDate > DateTime.UtcNow)
                 .OrderBy(t => t.StartDate)
@@ -124,7 +128,6 @@ namespace Tourism.Web.Controllers
         {
             var destinations = await _destinationService.GetAllAsync();
             var operators = await _tourOperatorService.GetAllAsync();
-
             ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
             ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
             return View();
@@ -141,13 +144,13 @@ namespace Tourism.Web.Controllers
             {
                 var destinations = await _destinationService.GetAllAsync();
                 var operators = await _tourOperatorService.GetAllAsync();
-
                 ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
                 ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
                 return View(tour);
             }
 
             await _tourService.CreateAsync(tour);
+            _logger.LogInformation("Admin {User} created tour '{Title}'", User.Identity?.Name, tour.Title);
             TempData["Success"] = "Tour added successfully!";
             return RedirectToAction(nameof(Tours));
         }
@@ -159,7 +162,6 @@ namespace Tourism.Web.Controllers
 
             var destinations = await _destinationService.GetAllAsync();
             var operators = await _tourOperatorService.GetAllAsync();
-
             ViewBag.Destinations = new SelectList(destinations, "Id", "Name", tour.DestinationId);
             ViewBag.TourOperators = new SelectList(operators, "Id", "Name", tour.TourOperatorId);
             return View(tour);
@@ -176,13 +178,13 @@ namespace Tourism.Web.Controllers
             {
                 var destinations = await _destinationService.GetAllAsync();
                 var operators = await _tourOperatorService.GetAllAsync();
-
                 ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
                 ViewBag.TourOperators = new SelectList(operators, "Id", "Name");
                 return View(tour);
             }
 
             await _tourService.UpdateAsync(tour);
+            _logger.LogInformation("Admin {User} updated tour ID {TourId}", User.Identity?.Name, tour.Id);
             TempData["Success"] = "Tour updated!";
             return RedirectToAction(nameof(Tours));
         }
@@ -192,6 +194,7 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> DeleteTour(int id)
         {
             await _tourService.DeleteAsync(id);
+            _logger.LogWarning("Admin {User} deleted tour ID {TourId}", User.Identity?.Name, id);
             TempData["Success"] = "Tour deleted.";
             return RedirectToAction(nameof(Tours));
         }
@@ -220,6 +223,7 @@ namespace Tourism.Web.Controllers
             {
                 booking.Status = BookingStatus.Confirmed;
                 await _bookingService.UpdateAsync(booking);
+                _logger.LogInformation("Admin {User} confirmed booking ID {BookingId}", User.Identity?.Name, id);
             }
             TempData["Success"] = "Booking confirmed!";
             return RedirectToAction(nameof(Bookings));
@@ -234,6 +238,7 @@ namespace Tourism.Web.Controllers
             {
                 booking.Status = BookingStatus.Cancelled;
                 await _bookingService.UpdateAsync(booking);
+                _logger.LogWarning("Admin {User} cancelled booking ID {BookingId}", User.Identity?.Name, id);
             }
             TempData["Success"] = "Booking cancelled.";
             return RedirectToAction(nameof(Bookings));
@@ -278,6 +283,7 @@ namespace Tourism.Web.Controllers
             if (newUser != null && !await _userManager.IsInRoleAsync(newUser, "Operator"))
                 await _userManager.AddToRoleAsync(newUser, "Operator");
 
+            _logger.LogInformation("Admin {User} assigned user {UserId} to operator ID {OperatorId}", User.Identity?.Name, userId, operatorId);
             TempData["Success"] = "Operator account assigned successfully!";
             return RedirectToAction(nameof(Operators));
         }
@@ -296,6 +302,7 @@ namespace Tourism.Web.Controllers
                         await _userManager.RemoveFromRoleAsync(user, "Operator");
                 }
                 await _tourOperatorService.DeleteAsync(id);
+                _logger.LogWarning("Admin {User} deleted operator '{Name}' (ID {Id})", User.Identity?.Name, op.Name, id);
             }
             TempData["Success"] = "Operator deleted.";
             return RedirectToAction(nameof(Operators));
@@ -317,6 +324,7 @@ namespace Tourism.Web.Controllers
 
             tour.DiscountPercent = Math.Clamp(discountPercent, 0, 90);
             await _tourService.UpdateAsync(tour);
+            _logger.LogInformation("Admin {User} set {Discount}% discount on tour '{Title}'", User.Identity?.Name, discountPercent, tour.Title);
 
             TempData["Success"] = discountPercent > 0
                 ? $"Discount of {discountPercent:0}% set on \"{tour.Title}\"."
@@ -337,6 +345,8 @@ namespace Tourism.Web.Controllers
                 tour.DiscountPercent = percent;
                 await _tourService.UpdateAsync(tour);
             }
+
+            _logger.LogInformation("Admin {User} applied bulk discount of {Discount}% to {Count} tours", User.Identity?.Name, percent, tours.Count);
 
             TempData["Success"] = percent > 0
                 ? $"Bulk discount of {percent:0}% applied to all {tours.Count} tours."
@@ -360,6 +370,7 @@ namespace Tourism.Web.Controllers
         {
             ModelState.Clear();
             await _destinationService.CreateAsync(destination);
+            _logger.LogInformation("Admin {User} created destination '{Name}'", User.Identity?.Name, destination.Name);
             TempData["Success"] = "Destination added!";
             return RedirectToAction(nameof(Destinations));
         }
@@ -369,6 +380,7 @@ namespace Tourism.Web.Controllers
         public async Task<IActionResult> DeleteDestination(int id)
         {
             await _destinationService.DeleteAsync(id);
+            _logger.LogWarning("Admin {User} deleted destination ID {Id}", User.Identity?.Name, id);
             TempData["Success"] = "Destination deleted.";
             return RedirectToAction(nameof(Destinations));
         }

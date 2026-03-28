@@ -17,19 +17,22 @@ namespace Tourism.Web.Controllers
         private readonly IDestinationService _destinationService;
         private readonly ITourOperatorService _operatorService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<OperatorController> _logger;
 
         public OperatorController(
             ITourService tourService,
             IBookingService bookingService,
             IDestinationService destinationService,
             ITourOperatorService operatorService,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            ILogger<OperatorController> logger)
         {
             _tourService = tourService;
             _bookingService = bookingService;
             _destinationService = destinationService;
             _operatorService = operatorService;
             _userManager = userManager;
+            _logger = logger;
         }
 
         private async Task<TourOperator?> GetMyOperatorAsync()
@@ -44,6 +47,8 @@ namespace Tourism.Web.Controllers
         {
             var op = await GetMyOperatorAsync();
             if (op == null) return RedirectToAction("NoOperator");
+
+            _logger.LogInformation("Operator dashboard accessed by {User} (Operator: {OperatorName})", User.Identity?.Name, op.Name);
 
             var tours = (await _tourService.GetAllAsync())
                 .Where(t => t.TourOperatorId == op.Id).ToList();
@@ -118,6 +123,7 @@ namespace Tourism.Web.Controllers
 
             tour.TourOperatorId = op.Id;
             await _tourService.CreateAsync(tour);
+            _logger.LogInformation("Operator {User} created tour '{Title}'", User.Identity?.Name, tour.Title);
             TempData["Success"] = "Tour added successfully!";
             return RedirectToAction(nameof(Tours));
         }
@@ -156,6 +162,7 @@ namespace Tourism.Web.Controllers
 
             tour.TourOperatorId = op.Id;
             await _tourService.UpdateAsync(tour);
+            _logger.LogInformation("Operator {User} updated tour ID {TourId}", User.Identity?.Name, tour.Id);
             TempData["Success"] = "Tour updated!";
             return RedirectToAction(nameof(Tours));
         }
@@ -169,6 +176,7 @@ namespace Tourism.Web.Controllers
             if (tour == null || tour.TourOperatorId != op?.Id) return NotFound();
 
             await _tourService.DeleteAsync(id);
+            _logger.LogWarning("Operator {User} deleted tour ID {TourId}", User.Identity?.Name, id);
             TempData["Success"] = "Tour deleted.";
             return RedirectToAction(nameof(Tours));
         }
@@ -208,6 +216,7 @@ namespace Tourism.Web.Controllers
             {
                 booking.Status = BookingStatus.Confirmed;
                 await _bookingService.UpdateAsync(booking);
+                _logger.LogInformation("Operator {User} confirmed booking ID {BookingId}", User.Identity?.Name, id);
             }
             TempData["Success"] = "Booking confirmed!";
             return RedirectToAction(nameof(Bookings));
@@ -222,6 +231,7 @@ namespace Tourism.Web.Controllers
             {
                 booking.Status = BookingStatus.Cancelled;
                 await _bookingService.UpdateAsync(booking);
+                _logger.LogWarning("Operator {User} cancelled booking ID {BookingId}", User.Identity?.Name, id);
             }
             TempData["Success"] = "Booking cancelled.";
             return RedirectToAction(nameof(Bookings));
@@ -251,6 +261,7 @@ namespace Tourism.Web.Controllers
             op.PhoneNumber = model.PhoneNumber;
             op.LogoUrl = model.LogoUrl;
             await _operatorService.UpdateAsync(op);
+            _logger.LogInformation("Operator {User} updated their profile", User.Identity?.Name);
             TempData["Success"] = "Profile updated!";
             return RedirectToAction(nameof(Profile));
         }
@@ -279,6 +290,7 @@ namespace Tourism.Web.Controllers
 
             tour.DiscountPercent = Math.Clamp(discountPercent, 0, 90);
             await _tourService.UpdateAsync(tour);
+            _logger.LogInformation("Operator {User} set {Discount}% discount on tour '{Title}'", User.Identity?.Name, discountPercent, tour.Title);
 
             TempData["Success"] = discountPercent > 0
                 ? $"Discount of {discountPercent:0}% set on \"{tour.Title}\"."
@@ -303,6 +315,8 @@ namespace Tourism.Web.Controllers
                 tour.DiscountPercent = percent;
                 await _tourService.UpdateAsync(tour);
             }
+
+            _logger.LogInformation("Operator {User} applied bulk discount of {Discount}% to {Count} tours", User.Identity?.Name, percent, tours.Count);
 
             TempData["Success"] = percent > 0
                 ? $"Bulk discount of {percent:0}% applied to all {tours.Count} tours."

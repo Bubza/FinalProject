@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
+using Tourism.Web.Models.ViewModels;
 
 namespace Tourism.Web.Controllers
 {
@@ -49,20 +50,27 @@ namespace Tourism.Web.Controllers
             var allBookings = await _bookingService.GetAllAsync();
             var myBookings = allBookings.Where(b => tours.Any(t => t.Id == b.TourId)).ToList();
 
-            ViewBag.Operator = op;
-            ViewBag.TotalTours = tours.Count;
-            ViewBag.TotalBookings = myBookings.Count;
-            ViewBag.PendingBookings = myBookings.Count(b => b.Status == BookingStatus.Pending);
-            ViewBag.Revenue = myBookings
-                .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
-                .Sum(b => b.TotalPrice);
+            var model = new OperatorDashboardViewModel
+            {
+                Operator = op,
+                TotalTours = tours.Count,
+                TotalBookings = myBookings.Count,
+                PendingBookings = myBookings.Count(b => b.Status == BookingStatus.Pending),
+                Revenue = myBookings
+                    .Where(b => b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Completed)
+                    .Sum(b => b.TotalPrice),
+                PopularTours = tours
+                    .OrderByDescending(t => t.Bookings.Count)
+                    .Take(5)
+                    .Select(t => new OperatorPopularTourItem
+                    {
+                        Title = t.Title,
+                        BookingCount = t.Bookings.Count,
+                        PricePerPerson = t.PricePerPerson
+                    }).ToList()
+            };
 
-            ViewBag.PopularTours = tours
-                .OrderByDescending(t => t.Bookings.Count)
-                .Take(5)
-                .Select(t => new { t.Title, BookingCount = t.Bookings.Count, t.PricePerPerson });
-
-            return View();
+            return View(model);
         }
 
         public IActionResult NoOperator() => View();
@@ -177,7 +185,6 @@ namespace Tourism.Web.Controllers
             var myBookings = allBookings
                 .Where(b => tours.Any(t => t.Id == b.TourId)).ToList();
 
-            // Load real user names
             var userNames = new Dictionary<string, string>();
             foreach (var b in myBookings)
             {

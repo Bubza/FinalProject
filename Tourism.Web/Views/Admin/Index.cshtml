@@ -1,12 +1,13 @@
+﻿@model Tourism.Web.Models.ViewModels.AdminDashboardViewModel
 ﻿@using System.Globalization
 @{
     ViewData["Title"] = "Admin Dashboard";
-    var revenue = (decimal)ViewBag.TotalRevenue;
-    var total = (int)ViewBag.TotalBookings;
-    var confirmed = (int)ViewBag.ConfirmedBookings;
-    var pending = (int)ViewBag.PendingBookings;
-    var cancelled = (int)ViewBag.CancelledBookings;
-    var completed = (int)ViewBag.CompletedBookings;
+    var revenue = Model.TotalRevenue;
+    var total = Model.TotalBookings;
+    var confirmed = Model.ConfirmedBookings;
+    var pending = Model.PendingBookings;
+    var cancelled = Model.CancelledBookings;
+    var completed = Model.CompletedBookings;
 
     int Pct(int val) => total > 0 ? (int)Math.Round(val * 100.0 / total) : 0;
 }
@@ -37,35 +38,35 @@
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card h-100">
                 <div class="stat-icon" style="background:#E6F7F1;color:var(--viator-green);"><i class="bi bi-map"></i></div>
-                <div class="stat-num">@ViewBag.TotalTours</div>
+                <div class="stat-num">@Model.TotalTours</div>
                 <div class="stat-label">Tours</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card h-100">
                 <div class="stat-icon" style="background:#EFF6FF;color:#3B82F6;"><i class="bi bi-calendar-check"></i></div>
-                <div class="stat-num">@ViewBag.TotalBookings</div>
+                <div class="stat-num">@Model.TotalBookings</div>
                 <div class="stat-label">Bookings</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card h-100">
                 <div class="stat-icon" style="background:#FEF9C3;color:#CA8A04;"><i class="bi bi-clock-history"></i></div>
-                <div class="stat-num">@ViewBag.PendingBookings</div>
+                <div class="stat-num">@Model.PendingBookings</div>
                 <div class="stat-label">Pending</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card h-100">
                 <div class="stat-icon" style="background:#FEF2F2;color:#EF4444;"><i class="bi bi-star-half"></i></div>
-                <div class="stat-num">@ViewBag.TotalReviews</div>
+                <div class="stat-num">@Model.TotalReviews</div>
                 <div class="stat-label">Reviews</div>
             </div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="stat-card h-100">
                 <div class="stat-icon" style="background:#F3E8FF;color:#9333EA;"><i class="bi bi-people"></i></div>
-                <div class="stat-num">@ViewBag.TotalUsers</div>
+                <div class="stat-num">@Model.TotalUsers</div>
                 <div class="stat-label">Users</div>
             </div>
         </div>
@@ -158,21 +159,21 @@
         <div class="col-lg-6">
             <div class="dashboard-card h-100">
                 <h5 class="dashboard-card-title"><i class="bi bi-fire me-2" style="color:#F97316;"></i>Most Popular Tours</h5>
-                @if (((IEnumerable<dynamic>)ViewBag.PopularTours).Any())
+                @if ((Model.PopularTours).Any())
                 {
                     <table class="table table-hover dash-table">
                         <thead>
                             <tr><th>Tour</th><th>Destination</th><th class="text-center">Bookings</th><th class="text-end">Revenue</th></tr>
                         </thead>
                         <tbody>
-                            @foreach (var t in ViewBag.PopularTours)
+                            @foreach (var t in Model.PopularTours)
                             {
                                 <tr>
                                     <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
                                     <td class="text-muted small">@t.DestinationName</td>
                                     <td class="text-center"><span class="badge rounded-pill" style="background:var(--viator-green-light);color:var(--viator-green);">@t.BookingCount</span></td>
                                     @{
-                                        decimal tRev = (decimal)t.Revenue;
+                                        decimal tRev = t.Revenue;
                                     }
                                     <td class="text-end small text-muted">@tRev.ToString("N2", CultureInfo.InvariantCulture) €</td>
                                 </tr>
@@ -191,16 +192,16 @@
         <div class="col-lg-6">
             <div class="dashboard-card h-100">
                 <h5 class="dashboard-card-title"><i class="bi bi-star-fill me-2" style="color:#FBBF24;"></i>Top Rated Tours</h5>
-                @if (((IEnumerable<dynamic>)ViewBag.TopRatedTours).Any())
+                @if ((Model.TopRatedTours).Any())
                 {
                     <table class="table table-hover dash-table">
                         <thead>
                             <tr><th>Tour</th><th>Destination</th><th class="text-center">Rating</th><th class="text-center">Reviews</th></tr>
                         </thead>
                         <tbody>
-                            @foreach (var t in ViewBag.TopRatedTours)
+                            @foreach (var t in Model.TopRatedTours)
                             {
-                                double avg = (double)t.AvgRating;
+                                double avg = t.AvgRating;
                                 <tr>
                                     <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
                                     <td class="text-muted small">@t.DestinationName</td>
@@ -239,7 +240,7 @@
     <!-- Upcoming tours availability -->
     <div class="dashboard-card mb-4">
         <h5 class="dashboard-card-title"><i class="bi bi-calendar-event me-2" style="color:#3B82F6;"></i>Upcoming Tours — Availability</h5>
-        @if (((IEnumerable<dynamic>)ViewBag.UpcomingTours).Any())
+        @if ((Model.UpcomingTours).Any())
         {
             <div class="table-responsive">
                 <table class="table table-hover dash-table">
@@ -247,17 +248,17 @@
                         <tr><th>Tour</th><th>Start Date</th><th class="text-center">Capacity</th><th class="text-center">Booked</th><th class="text-center">Available</th><th style="min-width:140px;">Fill Rate</th></tr>
                     </thead>
                     <tbody>
-                        @foreach (var t in ViewBag.UpcomingTours)
+                        @foreach (var t in Model.UpcomingTours)
                         {
-                            int max = (int)t.MaxParticipants;
-                            int booked = (int)t.BookedSpots;
-                            int avail = (int)t.AvailableSpots;
+                            int max = t.MaxParticipants;
+                            int booked = t.BookedSpots;
+                            int avail = t.AvailableSpots;
                             int fillPct = max > 0 ? (int)Math.Round(booked * 100.0 / max) : 0;
                             string barColor = fillPct >= 90 ? "#EF4444" : fillPct >= 60 ? "#F97316" : "#00AA6C";
                             <tr>
                                 <td><a asp-controller="Tours" asp-action="Details" asp-route-id="@t.Id" class="text-dark text-decoration-none fw-500 hover-green">@t.Title</a></td>
                                 @{
-                                    DateTime tDate = (DateTime)t.StartDate;
+                                    DateTime tDate = t.StartDate;
                                 }
                                 <td class="text-muted small">@tDate.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</td>
                                 <td class="text-center">@max</td>

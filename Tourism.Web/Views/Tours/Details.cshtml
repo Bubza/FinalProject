@@ -113,6 +113,53 @@
                 Destination information not available.
             </div>
         </div>
+        <div class="vt-detail-divider"></div>
+
+        <!-- Weather Widget -->
+        <h2 class="vt-detail-section-title">
+            <i class="bi bi-cloud-sun" style="color:var(--viator-green)"></i>
+            Current Weather in @Model.DestinationName
+        </h2>
+        <div id="weather-section">
+            <div id="weather-loading" style="display:flex;align-items:center;gap:8px;color:var(--viator-gray);font-size:.875rem;">
+                <div class="spinner-border spinner-border-sm text-success" role="status"></div>
+                Loading weather...
+            </div>
+            <div id="weather-content" style="display:none;">
+                <div style="background:linear-gradient(135deg,#E6F7F1 0%,#EFF6FF 100%);border:1px solid var(--viator-border);border-radius:var(--radius);padding:16px 20px;">
+                    <div style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;">
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <img id="weather-icon" src="" alt="" style="width:52px;height:52px;" />
+                            <div>
+                                <div id="weather-temp" style="font-size:2rem;font-weight:800;color:var(--viator-dark);line-height:1;"></div>
+                                <div id="weather-desc" style="font-size:.82rem;color:var(--viator-gray);text-transform:capitalize;margin-top:2px;"></div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:20px;flex-wrap:wrap;">
+                            <div style="text-align:center;">
+                                <div style="font-size:.72rem;color:var(--viator-gray);text-transform:uppercase;letter-spacing:.04em;">Feels like</div>
+                                <div id="weather-feels" style="font-size:.95rem;font-weight:600;"></div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:.72rem;color:var(--viator-gray);text-transform:uppercase;letter-spacing:.04em;">Humidity</div>
+                                <div id="weather-humidity" style="font-size:.95rem;font-weight:600;"></div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:.72rem;color:var(--viator-gray);text-transform:uppercase;letter-spacing:.04em;">Wind</div>
+                                <div id="weather-wind" style="font-size:.95rem;font-weight:600;"></div>
+                            </div>
+                            <div style="text-align:center;">
+                                <div style="font-size:.72rem;color:var(--viator-gray);text-transform:uppercase;letter-spacing:.04em;">Visibility</div>
+                                <div id="weather-visibility" style="font-size:.95rem;font-weight:600;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="weather-error" style="display:none;font-size:.875rem;color:var(--viator-gray);">
+                Weather information not available.
+            </div>
+        </div>
 
         <div class="vt-detail-divider"></div>
 
@@ -514,535 +561,77 @@
 </div>
 
 <style>
-    .gallery-wrap {
-        background: #000;
-        width: 100%;
-        margin-bottom: 0;
-    }
-
-    .gallery-main {
-        position: relative;
-        width: 100%;
-        height: 460px;
-        overflow: hidden;
-        cursor: pointer;
-    }
-
-        .gallery-main img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: opacity .3s;
-        }
-
-    .gallery-arrow {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0,0,0,.55);
-        color: #fff;
-        border: none;
-        width: 44px;
-        height: 44px;
-        border-radius: 50%;
-        font-size: 1.6rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        z-index: 10;
-        transition: background .2s;
-        line-height: 1;
-        padding: 0;
-    }
-
-        .gallery-arrow:hover {
-            background: rgba(0,0,0,.8);
-        }
-
-    .gallery-prev {
-        left: 16px;
-    }
-
-    .gallery-next {
-        right: 16px;
-    }
-
-    .gallery-counter {
-        position: absolute;
-        bottom: 14px;
-        right: 16px;
-        background: rgba(0,0,0,.55);
-        color: #fff;
-        font-size: .78rem;
-        padding: 4px 10px;
-        border-radius: 999px;
-        font-family: 'Poppins', sans-serif;
-    }
-
-    .gallery-thumbs {
-        display: flex;
-        gap: 4px;
-        padding: 4px;
-        background: #111;
-        overflow-x: auto;
-        scrollbar-width: none;
-    }
-
-        .gallery-thumbs::-webkit-scrollbar {
-            display: none;
-        }
-
-    .gallery-thumb {
-        flex-shrink: 0;
-        width: 72px;
-        height: 48px;
-        overflow: hidden;
-        cursor: pointer;
-        border-radius: 4px;
-        opacity: .55;
-        border: 2px solid transparent;
-        transition: opacity .2s, border-color .2s;
-    }
-
-        .gallery-thumb.active {
-            opacity: 1;
-            border-color: #00AA6C;
-        }
-
-        .gallery-thumb:hover {
-            opacity: .85;
-        }
-
-        .gallery-thumb img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-    @@media (max-width: 640px) {
-        .gallery-main {
-            height: 260px;
-        }
-
-        .gallery-thumb {
-            width: 72px;
-            height: 50px;
-        }
-    }
-
-    .vt-detail-layout {
-        display: grid;
-        grid-template-columns: 1fr 340px;
-        gap: 40px;
-        padding-top: 32px;
-        padding-bottom: 60px;
-        align-items: start;
-    }
-
-    .vt-detail-title {
-        font-family: 'DM Serif Display',serif;
-        font-size: 2rem;
-        margin-bottom: 16px;
-        line-height: 1.25;
-    }
-
-    .vt-detail-meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 20px;
-    }
-
-    .vt-meta-pill {
-        background: var(--viator-light);
-        border: 1px solid var(--viator-border);
-        border-radius: 50px;
-        padding: 5px 14px;
-        font-size: 0.82rem;
-        font-weight: 500;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-        .vt-meta-pill i {
-            color: var(--viator-green);
-        }
-
-    .vt-rating-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-    }
-
-    .vt-rating-stars {
-        color: #F59E0B;
-        font-size: 1.3rem;
-        letter-spacing: 2px;
-    }
-
-    .vt-rating-score {
-        font-size: 1.3rem;
-        font-weight: 700;
-    }
-
-    .vt-rating-label {
-        color: var(--viator-gray);
-        font-size: 0.875rem;
-    }
-
-    .vt-rating-bar-wrap {
-        flex: 1;
-        min-width: 80px;
-        height: 6px;
-        background: var(--viator-border);
-        border-radius: 3px;
-        overflow: hidden;
-    }
-
-    .vt-rating-bar {
-        height: 100%;
-        background: var(--viator-green);
-        border-radius: 3px;
-    }
-
-    .vt-detail-divider {
-        border: none;
-        border-top: 1px solid var(--viator-border);
-        margin: 28px 0;
-    }
-
-    .vt-detail-section-title {
-        font-family: 'DM Serif Display',serif;
-        font-size: 1.3rem;
-        margin-bottom: 16px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    .vt-review-badge {
-        background: var(--viator-green);
-        color: #fff;
-        font-size: 0.75rem;
-        border-radius: 50px;
-        padding: 2px 10px;
-        font-family: 'DM Sans',sans-serif;
-    }
-
-    .vt-detail-desc {
-        color: #374151;
-        line-height: 1.75;
-        font-size: 0.95rem;
-    }
-
-    .vt-info-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
-    }
-
-    .vt-info-item {
-        display: flex;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 14px;
-        border: 1px solid var(--viator-border);
-        border-radius: 10px;
-    }
-
-        .vt-info-item > i {
-            color: var(--viator-green);
-            font-size: 1.2rem;
-            margin-top: 2px;
-        }
-
-    .vt-info-label {
-        font-size: 0.75rem;
-        color: var(--viator-gray);
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
-    }
-
-    .vt-info-value {
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .vt-reviews-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .vt-review-card {
-        border: 1px solid var(--viator-border);
-        border-radius: var(--radius);
-        padding: 20px;
-    }
-
-    .vt-review-header {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        margin-bottom: 12px;
-    }
-
-    .vt-reviewer-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--viator-green);
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-
-    .vt-reviewer-name {
-        font-weight: 600;
-        font-size: 0.9rem;
-    }
-
-    .vt-review-date {
-        font-size: 0.78rem;
-        color: var(--viator-gray);
-    }
-
-    .vt-review-stars .star-filled {
-        color: #F59E0B;
-    }
-
-    .vt-review-stars .star-empty {
-        color: #D1D5DB;
-    }
-
-    .vt-review-text {
-        color: #374151;
-        font-size: 0.9rem;
-        line-height: 1.6;
-        margin: 0;
-    }
-
-    .vt-no-reviews {
-        text-align: center;
-        padding: 40px;
-        background: var(--viator-light);
-        border-radius: var(--radius);
-        color: var(--viator-gray);
-    }
-
-    .vt-booking-card {
-        position: sticky;
-        top: 80px;
-        background: #fff;
-        border: 1.5px solid var(--viator-border);
-        border-radius: 16px;
-        padding: 28px;
-        box-shadow: var(--shadow-md);
-    }
-
-    .vt-booking-price {
-        margin-bottom: 6px;
-    }
-
-    .vt-price-big {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--viator-dark);
-    }
-
-    .vt-price-per {
-        font-size: 0.85rem;
-        color: var(--viator-gray);
-        margin-left: 6px;
-    }
-
-    .vt-booking-rating {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 20px;
-        font-weight: 600;
-    }
-
-    .vt-booking-dates {
-        background: var(--viator-light);
-        border-radius: 10px;
-        padding: 14px 16px;
-        margin-bottom: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .vt-booking-date-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        font-size: 0.875rem;
-    }
-
-    .vt-book-btn {
-        display: block;
-        width: 100%;
-        text-align: center;
-        padding: 14px !important;
-        font-size: 1rem !important;
-        border-radius: 10px !important;
-    }
-
-    .vt-fav-btn {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        border: 1.5px solid #E5E7EB;
-        border-radius: 10px;
-        background: transparent;
-        cursor: pointer;
-        font-size: 0.875rem;
-        font-family: 'DM Sans',sans-serif;
-        font-weight: 600;
-        color: var(--viator-dark);
-        transition: all 0.15s;
-        text-align: center;
-    }
-
-        .vt-fav-btn:hover {
-            border-color: #ef4444;
-            color: #ef4444;
-        }
-
-        .vt-fav-btn.vt-fav-active {
-            border-color: #ef4444;
-            color: #ef4444;
-            background: #FEF2F2;
-        }
-
-    .vt-review-btn {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        border: 1.5px solid var(--viator-border);
-        border-radius: 10px;
-        text-align: center;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--viator-gray);
-        text-decoration: none;
-        margin-top: 8px;
-        transition: all 0.15s;
-    }
-
-        .vt-review-btn:hover {
-            border-color: var(--viator-green);
-            color: var(--viator-green);
-        }
-
-    .vt-booking-guarantee {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.78rem;
-        color: var(--viator-gray);
-        border-top: 1px solid var(--viator-border);
-        margin-top: 20px;
-        padding-top: 16px;
-    }
-
-        .vt-booking-guarantee i {
-            color: var(--viator-green);
-        }
-
-    .vt-avail-badge {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 0.82rem;
-        font-weight: 600;
-        margin-bottom: 16px;
-    }
-
-    .vt-avail-ok {
-        background: var(--viator-green-light);
-        color: var(--viator-green-dark);
-    }
-
-    .vt-avail-low {
-        background: #FFF7ED;
-        color: #C2410C;
-    }
-
-    .vt-avail-full {
-        background: #FEF2F2;
-        color: #DC2626;
-    }
-
-    .vt-rec-card {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        border: 1px solid var(--viator-border);
-        border-radius: 10px;
-        overflow: hidden;
-        text-decoration: none;
-        color: var(--viator-dark);
-        transition: box-shadow 0.15s,transform 0.15s;
-    }
-
-        .vt-rec-card:hover {
-            box-shadow: var(--shadow-md);
-            transform: translateY(-2px);
-            color: var(--viator-dark);
-        }
-
-    .vt-rec-img {
-        width: 80px;
-        height: 72px;
-        object-fit: cover;
-        flex-shrink: 0;
-    }
-
-    .vt-rec-body {
-        flex: 1;
-        padding: 8px 0;
-    }
-
-    .vt-rec-title {
-        font-weight: 600;
-        font-size: 0.875rem;
-        margin: 2px 0 4px;
-    }
-
-    .vt-rec-price {
-        font-weight: 700;
-        font-size: 0.95rem;
-        padding-right: 16px;
-        flex-shrink: 0;
-        color: var(--viator-dark);
-    }
-
-    @@media (max-width:900px) {
-        .vt-detail-layout {
-            grid-template-columns: 1fr;
-        }
-
-        .vt-booking-card {
-            position: static;
-        }
-
-        .vt-info-grid {
-            grid-template-columns: 1fr;
-        }
-    }
+    .gallery-wrap { background: #000; width: 100%; margin-bottom: 0; }
+    .gallery-main { position: relative; width: 100%; height: 460px; overflow: hidden; cursor: pointer; }
+    .gallery-main img { width: 100%; height: 100%; object-fit: cover; transition: opacity .3s; }
+    .gallery-arrow { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,.55); color: #fff; border: none; width: 44px; height: 44px; border-radius: 50%; font-size: 1.6rem; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: background .2s; line-height: 1; padding: 0; }
+    .gallery-arrow:hover { background: rgba(0,0,0,.8); }
+    .gallery-prev { left: 16px; }
+    .gallery-next { right: 16px; }
+    .gallery-counter { position: absolute; bottom: 14px; right: 16px; background: rgba(0,0,0,.55); color: #fff; font-size: .78rem; padding: 4px 10px; border-radius: 999px; font-family: 'Poppins', sans-serif; }
+    .gallery-thumbs { display: flex; gap: 4px; padding: 4px; background: #111; overflow-x: auto; scrollbar-width: none; }
+    .gallery-thumbs::-webkit-scrollbar { display: none; }
+    .gallery-thumb { flex-shrink: 0; width: 72px; height: 48px; overflow: hidden; cursor: pointer; border-radius: 4px; opacity: .55; border: 2px solid transparent; transition: opacity .2s, border-color .2s; }
+    .gallery-thumb.active { opacity: 1; border-color: #00AA6C; }
+    .gallery-thumb:hover { opacity: .85; }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    @@media (max-width: 640px) { .gallery-main { height: 260px; } .gallery-thumb { width: 72px; height: 50px; } }
+    .vt-detail-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; padding-top: 32px; padding-bottom: 60px; align-items: start; }
+    .vt-detail-title { font-family: 'DM Serif Display',serif; font-size: 2rem; margin-bottom: 16px; line-height: 1.25; }
+    .vt-detail-meta { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .vt-meta-pill { background: var(--viator-light); border: 1px solid var(--viator-border); border-radius: 50px; padding: 5px 14px; font-size: 0.82rem; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; }
+    .vt-meta-pill i { color: var(--viator-green); }
+    .vt-rating-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .vt-rating-stars { color: #F59E0B; font-size: 1.3rem; letter-spacing: 2px; }
+    .vt-rating-score { font-size: 1.3rem; font-weight: 700; }
+    .vt-rating-label { color: var(--viator-gray); font-size: 0.875rem; }
+    .vt-rating-bar-wrap { flex: 1; min-width: 80px; height: 6px; background: var(--viator-border); border-radius: 3px; overflow: hidden; }
+    .vt-rating-bar { height: 100%; background: var(--viator-green); border-radius: 3px; }
+    .vt-detail-divider { border: none; border-top: 1px solid var(--viator-border); margin: 28px 0; }
+    .vt-detail-section-title { font-family: 'DM Serif Display',serif; font-size: 1.3rem; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
+    .vt-review-badge { background: var(--viator-green); color: #fff; font-size: 0.75rem; border-radius: 50px; padding: 2px 10px; font-family: 'DM Sans',sans-serif; }
+    .vt-detail-desc { color: #374151; line-height: 1.75; font-size: 0.95rem; }
+    .vt-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .vt-info-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 1px solid var(--viator-border); border-radius: 10px; }
+    .vt-info-item > i { color: var(--viator-green); font-size: 1.2rem; margin-top: 2px; }
+    .vt-info-label { font-size: 0.75rem; color: var(--viator-gray); text-transform: uppercase; letter-spacing: 0.4px; }
+    .vt-info-value { font-weight: 600; font-size: 0.9rem; }
+    .vt-reviews-list { display: flex; flex-direction: column; gap: 16px; }
+    .vt-review-card { border: 1px solid var(--viator-border); border-radius: var(--radius); padding: 20px; }
+    .vt-review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .vt-reviewer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--viator-green); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
+    .vt-reviewer-name { font-weight: 600; font-size: 0.9rem; }
+    .vt-review-date { font-size: 0.78rem; color: var(--viator-gray); }
+    .vt-review-stars .star-filled { color: #F59E0B; }
+    .vt-review-stars .star-empty { color: #D1D5DB; }
+    .vt-review-text { color: #374151; font-size: 0.9rem; line-height: 1.6; margin: 0; }
+    .vt-no-reviews { text-align: center; padding: 40px; background: var(--viator-light); border-radius: var(--radius); color: var(--viator-gray); }
+    .vt-booking-card { position: sticky; top: 80px; background: #fff; border: 1.5px solid var(--viator-border); border-radius: 16px; padding: 28px; box-shadow: var(--shadow-md); }
+    .vt-booking-price { margin-bottom: 6px; }
+    .vt-price-big { font-size: 2rem; font-weight: 800; color: var(--viator-dark); }
+    .vt-price-per { font-size: 0.85rem; color: var(--viator-gray); margin-left: 6px; }
+    .vt-booking-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 20px; font-weight: 600; }
+    .vt-booking-dates { background: var(--viator-light); border-radius: 10px; padding: 14px 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; }
+    .vt-booking-date-row { display: flex; align-items: center; gap: 10px; font-size: 0.875rem; }
+    .vt-book-btn { display: block; width: 100%; text-align: center; padding: 14px !important; font-size: 1rem !important; border-radius: 10px !important; }
+    .vt-fav-btn { display: block; width: 100%; padding: 10px; border: 1.5px solid #E5E7EB; border-radius: 10px; background: transparent; cursor: pointer; font-size: 0.875rem; font-family: 'DM Sans',sans-serif; font-weight: 600; color: var(--viator-dark); transition: all 0.15s; text-align: center; }
+    .vt-fav-btn:hover { border-color: #ef4444; color: #ef4444; }
+    .vt-fav-btn.vt-fav-active { border-color: #ef4444; color: #ef4444; background: #FEF2F2; }
+    .vt-review-btn { display: block; width: 100%; padding: 10px; border: 1.5px solid var(--viator-border); border-radius: 10px; text-align: center; font-size: 0.875rem; font-weight: 600; color: var(--viator-gray); text-decoration: none; margin-top: 8px; transition: all 0.15s; }
+    .vt-review-btn:hover { border-color: var(--viator-green); color: var(--viator-green); }
+    .vt-booking-guarantee { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--viator-gray); border-top: 1px solid var(--viator-border); margin-top: 20px; padding-top: 16px; }
+    .vt-booking-guarantee i { color: var(--viator-green); }
+    .vt-avail-badge { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 600; margin-bottom: 16px; }
+    .vt-avail-ok { background: var(--viator-green-light); color: var(--viator-green-dark); }
+    .vt-avail-low { background: #FFF7ED; color: #C2410C; }
+    .vt-avail-full { background: #FEF2F2; color: #DC2626; }
+    .vt-rec-card { display: flex; align-items: center; gap: 12px; border: 1px solid var(--viator-border); border-radius: 10px; overflow: hidden; text-decoration: none; color: var(--viator-dark); transition: box-shadow 0.15s,transform 0.15s; }
+    .vt-rec-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); color: var(--viator-dark); }
+    .vt-rec-img { width: 80px; height: 72px; object-fit: cover; flex-shrink: 0; }
+    .vt-rec-body { flex: 1; padding: 8px 0; }
+    .vt-rec-title { font-weight: 600; font-size: 0.875rem; margin: 2px 0 4px; }
+    .vt-rec-price { font-weight: 700; font-size: 0.95rem; padding-right: 16px; flex-shrink: 0; color: var(--viator-dark); }
+    @@media (max-width:900px) { .vt-detail-layout { grid-template-columns: 1fr; } .vt-booking-card { position: static; } .vt-info-grid { grid-template-columns: 1fr; } }
 </style>
 
 @section Scripts {
@@ -1103,6 +692,36 @@
                 });
         })();
     </script>
+
+    <script>
+        // Weather Widget
+        (function() {
+            var city = "@Model.DestinationName";
+            var apiKey = "77673c28f0620c7b3fb3c6cddc60c421";
+            fetch("https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + apiKey + "&units=metric")
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    document.getElementById("weather-loading").style.display = "none";
+                    if (data.main) {
+                        document.getElementById("weather-temp").textContent = Math.round(data.main.temp) + "°C";
+                        document.getElementById("weather-desc").textContent = data.weather[0].description;
+                        document.getElementById("weather-feels").textContent = Math.round(data.main.feels_like) + "°C";
+                        document.getElementById("weather-humidity").textContent = data.main.humidity + "%";
+                        document.getElementById("weather-wind").textContent = Math.round(data.wind.speed) + " m/s";
+                        document.getElementById("weather-visibility").textContent = data.visibility ? (data.visibility / 1000).toFixed(1) + " km" : "N/A";
+                        document.getElementById("weather-icon").src = "https://openweathermap.org/img/wn/" + data.weather[0].icon + "@@2x.png";
+                        document.getElementById("weather-content").style.display = "block";
+                    } else {
+                        document.getElementById("weather-error").style.display = "block";
+                    }
+                })
+                .catch(function() {
+                    document.getElementById("weather-loading").style.display = "none";
+                    document.getElementById("weather-error").style.display = "block";
+                });
+        })();
+    </script>
+
     <script>
         function initMap() {
             const geocoder = new google.maps.Geocoder();

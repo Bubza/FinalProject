@@ -45,8 +45,11 @@ builder.Services.AddRazorPages();
 var app = builder.Build();
 
 // Seed admin role and user
+// Auto-migrate on startup
 using (var scope = app.Services.CreateScope())
 {
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    db.Database.Migrate();
     await AdminSeeder.SeedAsync(scope.ServiceProvider);
     await DemoDataSeeder.SeedAsync(scope.ServiceProvider);
 }

@@ -778,3 +778,309 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var0 sysname;
+SELECT @var0 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[TourOperators]') AND [c].[name] = N'UserId');
+IF @var0 IS NOT NULL EXEC(N'ALTER TABLE [TourOperators] DROP CONSTRAINT [' + @var0 + '];');
+ALTER TABLE [TourOperators] ALTER COLUMN [UserId] nvarchar(450) NULL;
+GO
+
+DECLARE @var1 sysname;
+SELECT @var1 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Reviews]') AND [c].[name] = N'UserId');
+IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [Reviews] DROP CONSTRAINT [' + @var1 + '];');
+ALTER TABLE [Reviews] ALTER COLUMN [UserId] nvarchar(450) NOT NULL;
+GO
+
+DECLARE @var2 sysname;
+SELECT @var2 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Bookings]') AND [c].[name] = N'UserId');
+IF @var2 IS NOT NULL EXEC(N'ALTER TABLE [Bookings] DROP CONSTRAINT [' + @var2 + '];');
+ALTER TABLE [Bookings] ALTER COLUMN [UserId] nvarchar(450) NOT NULL;
+GO
+
+CREATE INDEX [IX_TourOperators_UserId] ON [TourOperators] ([UserId]);
+GO
+
+CREATE INDEX [IX_Reviews_UserId] ON [Reviews] ([UserId]);
+GO
+
+CREATE INDEX [IX_Bookings_UserId] ON [Bookings] ([UserId]);
+GO
+
+ALTER TABLE [Bookings] ADD CONSTRAINT [FK_Bookings_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE;
+GO
+
+ALTER TABLE [FavoriteTours] ADD CONSTRAINT [FK_FavoriteTours_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE;
+GO
+
+ALTER TABLE [Reviews] ADD CONSTRAINT [FK_Reviews_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]) ON DELETE CASCADE;
+GO
+
+ALTER TABLE [TourOperators] ADD CONSTRAINT [FK_TourOperators_AspNetUsers_UserId] FOREIGN KEY ([UserId]) REFERENCES [AspNetUsers] ([Id]);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260325165206_AddMissingUserNavigationProperties', N'8.0.23');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var3 sysname;
+SELECT @var3 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Tours]') AND [c].[name] = N'DiscountPercent');
+IF @var3 IS NOT NULL EXEC(N'ALTER TABLE [Tours] DROP CONSTRAINT [' + @var3 + '];');
+ALTER TABLE [Tours] ALTER COLUMN [DiscountPercent] decimal(5,2) NOT NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260325170503_FixDecimalPrecision', N'8.0.23');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Tours] ADD [CategoryId] int NOT NULL DEFAULT 0;
+GO
+
+CREATE TABLE [Categories] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(max) NOT NULL,
+    [Description] nvarchar(max) NOT NULL,
+    [IconClass] nvarchar(max) NOT NULL,
+    CONSTRAINT [PK_Categories] PRIMARY KEY ([Id])
+);
+GO
+
+CREATE TABLE [ContactMessages] (
+    [Id] int NOT NULL IDENTITY,
+    [Name] nvarchar(max) NOT NULL,
+    [Email] nvarchar(max) NOT NULL,
+    [Subject] nvarchar(max) NOT NULL,
+    [Message] nvarchar(max) NOT NULL,
+    [SentAt] datetime2 NOT NULL,
+    [IsRead] bit NOT NULL,
+    CONSTRAINT [PK_ContactMessages] PRIMARY KEY ([Id])
+);
+GO
+
+CREATE TABLE [Payments] (
+    [Id] int NOT NULL IDENTITY,
+    [BookingId] int NOT NULL,
+    [Amount] decimal(18,2) NOT NULL,
+    [Method] nvarchar(max) NOT NULL,
+    [Status] nvarchar(max) NOT NULL,
+    [TransactionId] nvarchar(max) NOT NULL,
+    [PaidAt] datetime2 NOT NULL,
+    CONSTRAINT [PK_Payments] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_Payments_Bookings_BookingId] FOREIGN KEY ([BookingId]) REFERENCES [Bookings] ([Id]) ON DELETE CASCADE
+);
+GO
+
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Description', N'IconClass', N'Name') AND [object_id] = OBJECT_ID(N'[Categories]'))
+    SET IDENTITY_INSERT [Categories] ON;
+INSERT INTO [Categories] ([Id], [Description], [IconClass], [Name])
+VALUES (1, N'Explore ancient ruins, museums, and the stories behind the world''s greatest civilisations.', N'bi-bank', N'Cultural & Historical'),
+(2, N'Sun, sea, and sand — the finest coastal and island escapes in Europe.', N'bi-water', N'Beach & Island'),
+(3, N'Compact, action-packed getaways to Europe''s most vibrant and charming cities.', N'bi-buildings', N'City Break'),
+(4, N'Multi-destination road trips, trekking routes, and experiences off the beaten path.', N'bi-compass', N'Adventure'),
+(5, N'Premium hotels, skip-the-line access, private guides, and unforgettable fine dining.', N'bi-stars', N'Luxury'),
+(6, N'Kid-friendly itineraries designed to create memories for the whole family.', N'bi-people', N'Family');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Description', N'IconClass', N'Name') AND [object_id] = OBJECT_ID(N'[Categories]'))
+    SET IDENTITY_INSERT [Categories] OFF;
+GO
+
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Country', N'Description', N'ImageUrl', N'Name') AND [object_id] = OBJECT_ID(N'[Destinations]'))
+    SET IDENTITY_INSERT [Destinations] ON;
+INSERT INTO [Destinations] ([Id], [Country], [Description], [ImageUrl], [Name])
+VALUES (11, N'Portugal', N'A city of seven hills — historic trams, Fado music, Moorish castles, and the world''s finest custard tarts.', N'https://images.unsplash.com/photo-1558370781-d6196949e317?w=800&q=80', N'Lisbon'),
+(12, N'Hungary', N'The Pearl of the Danube — grand thermal baths, stunning Parliament, ruin bars, and a vibrant nightlife scene.', N'https://images.unsplash.com/photo-1541343672885-9be56236302a?w=800&q=80', N'Budapest'),
+(13, N'Greece', N'The jewel of the Cyclades — windmills, whitewashed alleys, vibrant beach clubs, and crystal-clear Aegean waters.', N'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=800&q=80', N'Mykonos');
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Country', N'Description', N'ImageUrl', N'Name') AND [object_id] = OBJECT_ID(N'[Destinations]'))
+    SET IDENTITY_INSERT [Destinations] OFF;
+GO
+
+UPDATE [TourImages] SET [ImageUrl] = N'https://images.unsplash.com/photo-1552832230-c0197dd411b5?w=1200&q=80'
+WHERE [Id] = 6;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 1
+WHERE [Id] = 1;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 5
+WHERE [Id] = 2;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 5
+WHERE [Id] = 3;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 3
+WHERE [Id] = 4;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 1
+WHERE [Id] = 5;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 2
+WHERE [Id] = 6;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 1
+WHERE [Id] = 7;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 3
+WHERE [Id] = 8;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 3
+WHERE [Id] = 9;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 1
+WHERE [Id] = 10;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 3
+WHERE [Id] = 11;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 1
+WHERE [Id] = 12;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 2
+WHERE [Id] = 13;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 5
+WHERE [Id] = 14;
+SELECT @@ROWCOUNT;
+
+GO
+
+UPDATE [Tours] SET [CategoryId] = 4, [ImageUrl] = N'https://images.unsplash.com/photo-1590147534648-1ac5cca59621?w=800&q=80'
+WHERE [Id] = 15;
+SELECT @@ROWCOUNT;
+
+GO
+
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'CategoryId', N'CreatedAt', N'Description', N'DestinationId', N'DiscountPercent', N'DurationDays', N'EndDate', N'ImageUrl', N'MaxParticipants', N'PricePerPerson', N'StartDate', N'Title', N'TourOperatorId') AND [object_id] = OBJECT_ID(N'[Tours]'))
+    SET IDENTITY_INSERT [Tours] ON;
+INSERT INTO [Tours] ([Id], [CategoryId], [CreatedAt], [Description], [DestinationId], [DiscountPercent], [DurationDays], [EndDate], [ImageUrl], [MaxParticipants], [PricePerPerson], [StartDate], [Title], [TourOperatorId])
+VALUES (16, 3, '2026-02-18T00:00:00.0000000', N'5 magical days in Lisbon — ride the iconic Tram 28 through Alfama, explore Belém Tower, taste pastel de nata in historic cafés, and watch the sun set over the Tagus river.', 11, 10.0, 5, '2026-05-10T00:00:00.0000000', N'https://images.unsplash.com/photo-1558370781-d6196949e317?w=800&q=80', 20, 749.0, '2026-05-05T00:00:00.0000000', N'Lisbon Highlights', 2),
+(17, 3, '2026-02-20T00:00:00.0000000', N'A 7-day journey through Portugal''s two most beloved cities — cobblestone Lisbon and the port wine cellars of Porto, with a day trip to Sintra''s fairy-tale palaces.', 11, 0.0, 7, '2026-06-19T00:00:00.0000000', N'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800&q=80', 18, 999.0, '2026-06-12T00:00:00.0000000', N'Lisbon & Porto — Atlantic Coast', 3),
+(18, 3, '2026-02-22T00:00:00.0000000', N'4 days in one of Europe''s most breathtaking capitals — Buda Castle, the Parliament building, a relaxing soak in Széchenyi Baths, and an evening cruise on the glittering Danube.', 12, 0.0, 4, '2026-04-29T00:00:00.0000000', N'https://images.unsplash.com/photo-1541343672885-9be56236302a?w=800&q=80', 22, 649.0, '2026-04-25T00:00:00.0000000', N'Budapest Royal', 1),
+(19, 4, '2026-02-25T00:00:00.0000000', N'6 days combining the grandeur of Budapest with a relaxing escape to Lake Balaton — Central Europe''s largest lake. Wine tastings, spa villages, and stunning lakeside sunsets included.', 12, 12.0, 6, '2026-07-16T00:00:00.0000000', N'https://images.unsplash.com/photo-1549555340-9f9e3b0c5b0e?w=800&q=80', 16, 849.0, '2026-07-10T00:00:00.0000000', N'Budapest & Lake Balaton', 5),
+(20, 2, '2026-03-01T00:00:00.0000000', N'7 sun-soaked days on the most glamorous island in the Cyclades — party beaches, windmill sunsets, fresh seafood by the water, and day trips to the sacred island of Delos.', 13, 0.0, 7, '2026-07-27T00:00:00.0000000', N'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=800&q=80', 12, 1299.0, '2026-07-20T00:00:00.0000000', N'Mykonos Escape', 2),
+(21, 5, '2026-03-02T00:00:00.0000000', N'The ultimate Greek island experience — 4 nights on vibrant Mykonos followed by 4 nights on dreamy Santorini. Ferry included, boutique hotel, private sunset tour.', 13, 8.0, 8, '2026-08-13T00:00:00.0000000', N'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80', 10, 1799.0, '2026-08-05T00:00:00.0000000', N'Mykonos & Santorini — Island Duo', 4),
+(22, 1, '2026-03-03T00:00:00.0000000', N'See all the must-see sights of Rome without breaking the bank — Colosseum, Pantheon, Piazza Navona, and the Vatican, with comfortable 3* accommodation and daily breakfast.', 1, 20.0, 4, '2026-05-19T00:00:00.0000000', N'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=800&q=80', 30, 549.0, '2026-05-15T00:00:00.0000000', N'Rome Budget Explorer', 1),
+(23, 2, '2026-03-04T00:00:00.0000000', N'An epic 10-day island-hopping adventure — Athens, Mykonos, Paros, and Santorini. Ferry passes, guided excursions, and handpicked boutique hotels all included.', 5, 0.0, 10, '2026-09-18T00:00:00.0000000', N'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80', 14, 1599.0, '2026-09-08T00:00:00.0000000', N'Greek Island Hopping', 2),
+(24, 4, '2026-03-05T00:00:00.0000000', N'8 days across the Iberian Peninsula — Barcelona, Madrid, Seville, and Lisbon. High-speed trains, flamenco show, wine tasting, and a blend of Moorish and modern Europe.', 3, 0.0, 8, '2026-10-18T00:00:00.0000000', N'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=800&q=80', 20, 1249.0, '2026-10-10T00:00:00.0000000', N'Spain & Portugal — Iberian Grand Tour', 3),
+(25, 3, '2026-03-06T00:00:00.0000000', N'Experience Prague in its most enchanting season — Christmas markets, steaming mulled wine, snow-covered rooftops, and the Old Town Square glowing in festive lights.', 6, 15.0, 4, '2026-12-09T00:00:00.0000000', N'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=80', 30, 499.0, '2026-12-05T00:00:00.0000000', N'Winter Magic in Prague', 3);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'CategoryId', N'CreatedAt', N'Description', N'DestinationId', N'DiscountPercent', N'DurationDays', N'EndDate', N'ImageUrl', N'MaxParticipants', N'PricePerPerson', N'StartDate', N'Title', N'TourOperatorId') AND [object_id] = OBJECT_ID(N'[Tours]'))
+    SET IDENTITY_INSERT [Tours] OFF;
+GO
+
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'ImageUrl', N'SortOrder', N'TourId') AND [object_id] = OBJECT_ID(N'[TourImages]'))
+    SET IDENTITY_INSERT [TourImages] ON;
+INSERT INTO [TourImages] ([Id], [ImageUrl], [SortOrder], [TourId])
+VALUES (53, N'https://images.unsplash.com/photo-1558370781-d6196949e317?w=1200&q=80', 1, 16),
+(54, N'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&q=80', 2, 16),
+(55, N'https://images.unsplash.com/photo-1513735492246-483525079686?w=1200&q=80', 3, 16),
+(56, N'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=1200&q=80', 1, 17),
+(57, N'https://images.unsplash.com/photo-1558370781-d6196949e317?w=1200&q=80', 2, 17),
+(58, N'https://images.unsplash.com/photo-1513735492246-483525079686?w=1200&q=80', 3, 17),
+(59, N'https://images.unsplash.com/photo-1541343672885-9be56236302a?w=1200&q=80', 1, 18),
+(60, N'https://images.unsplash.com/photo-1565426873118-a17ed65d74b9?w=1200&q=80', 2, 18),
+(61, N'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1200&q=80', 3, 18),
+(62, N'https://images.unsplash.com/photo-1541343672885-9be56236302a?w=1200&q=80', 1, 19),
+(63, N'https://images.unsplash.com/photo-1549555340-9f9e3b0c5b0e?w=1200&q=80', 2, 19),
+(64, N'https://images.unsplash.com/photo-1516496636080-14fb876e029d?w=1200&q=80', 3, 19),
+(65, N'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=1200&q=80', 1, 20),
+(66, N'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80', 2, 20),
+(67, N'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&q=80', 3, 20),
+(68, N'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1200&q=80', 1, 21),
+(69, N'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?w=1200&q=80', 2, 21),
+(70, N'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&q=80', 3, 21),
+(71, N'https://images.unsplash.com/photo-1515542622106-78bda8ba0e5b?w=1200&q=80', 1, 22),
+(72, N'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1200&q=80', 2, 22),
+(73, N'https://images.unsplash.com/photo-1571366343168-631c5bcca7a4?w=1200&q=80', 3, 22),
+(74, N'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=1200&q=80', 1, 23),
+(75, N'https://images.unsplash.com/photo-1555993539-1732b0258235?w=1200&q=80', 2, 23),
+(76, N'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=1200&q=80', 3, 23),
+(77, N'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=1200&q=80', 1, 24),
+(78, N'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?w=1200&q=80', 2, 24),
+(79, N'https://images.unsplash.com/photo-1558370781-d6196949e317?w=1200&q=80', 3, 24),
+(80, N'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=1200&q=80', 1, 25),
+(81, N'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=1200&q=80', 2, 25),
+(82, N'https://images.unsplash.com/photo-1541849546-216549ae216d?w=1200&q=80', 3, 25);
+IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'ImageUrl', N'SortOrder', N'TourId') AND [object_id] = OBJECT_ID(N'[TourImages]'))
+    SET IDENTITY_INSERT [TourImages] OFF;
+GO
+
+CREATE INDEX [IX_Tours_CategoryId] ON [Tours] ([CategoryId]);
+GO
+
+CREATE INDEX [IX_Payments_BookingId] ON [Payments] ([BookingId]);
+GO
+
+ALTER TABLE [Tours] ADD CONSTRAINT [FK_Tours_Categories_CategoryId] FOREIGN KEY ([CategoryId]) REFERENCES [Categories] ([Id]) ON DELETE NO ACTION;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260327193015_AddCategoryPaymentContact', N'8.0.23');
+GO
+
+COMMIT;
+GO
+

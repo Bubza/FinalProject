@@ -6,7 +6,6 @@ using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
-using Tourism.Data.Models.Entities;
 
 namespace Tourism.Web.Controllers
 {
@@ -257,11 +256,11 @@ namespace Tourism.Web.Controllers
             return View(operators);
         }
 
-        public async Task<IActionResult> AssignOperator()
+        public async Task<IActionResult> AssignOperator(int? operatorId = null)
         {
             var operators = await _tourOperatorService.GetAllAsync();
             var allUsers = _userManager.Users.ToList();
-            ViewBag.Operators = new SelectList(operators, "Id", "Name");
+            ViewBag.Operators = new SelectList(operators, "Id", "Name", operatorId);
             ViewBag.Users = new SelectList(allUsers, "Id", "Email");
             return View();
         }
@@ -388,11 +387,25 @@ namespace Tourism.Web.Controllers
             TempData["Success"] = "Destination deleted.";
             return RedirectToAction(nameof(Destinations));
         }
+
         // ===== MESSAGES =====
         public async Task<IActionResult> Messages()
         {
             var messages = await _contactMessageService.GetAllAsync();
             _logger.LogInformation("Admin {User} viewed contact messages", User.Identity?.Name);
+
+            var emailToUserId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var msg in messages)
+            {
+                if (!emailToUserId.ContainsKey(msg.Email))
+                {
+                    var user = await _userManager.FindByEmailAsync(msg.Email);
+                    if (user != null)
+                        emailToUserId[msg.Email] = user.Id;
+                }
+            }
+            ViewBag.EmailToUserId = emailToUserId;
+
             return View(messages);
         }
 

@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "Contact Messages";
     var unread = Model.Count(m => !m.IsRead);
+    var messages = Model.ToList();
+    var lookup = ViewBag.EmailToUserId as Dictionary<string, string> ?? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 }
 
 @if (TempData["Success"] != null)
@@ -30,7 +32,7 @@
         </div>
     </div>
 
-    @if (!Model.Any())
+    @if (!messages.Any())
     {
         <div class="text-center py-5 text-muted">
             <i class="bi bi-envelope" style="font-size:2.5rem;"></i>
@@ -53,8 +55,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var msg in Model)
+                    @for (int i = 0; i < messages.Count; i++)
                     {
+                        var msg = messages[i];
+                        var userId = lookup.ContainsKey(msg.Email) ? lookup[msg.Email] : null;
                         <tr class="@(!msg.IsRead ? "table-warning" : "")">
                             <td>
                                 @if (msg.IsRead)
@@ -66,15 +70,33 @@
                                     <span class="badge" style="background:#FEF3C7;color:#92400E;"><i class="bi bi-envelope-fill"></i> Unread</span>
                                 }
                             </td>
-                            <td class="fw-500">@msg.Name</td>
+                            <td>
+                                @if (userId != null)
+                                {
+                                    <a href="/Users/Profile/@userId" class="fw-500 text-decoration-none" style="color:var(--viator-green);">
+                                        @msg.Name
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="fw-500">@msg.Name</span>
+                                }
+                            </td>
                             <td class="text-muted small">@msg.Email</td>
                             <td class="fw-500">@msg.Subject</td>
-                            <td class="text-muted small" style="max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                                @msg.Message
+                            <td>
+                                <button class="btn btn-link p-0 text-muted small text-start"
+                                        style="max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;"
+                                        data-bs-toggle="modal" data-bs-target="#msgModal@(i)">
+                                    @msg.Message
+                                </button>
                             </td>
                             <td class="text-muted small">@msg.SentAt.ToString("dd MMM yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</td>
                             <td class="text-end">
                                 <div class="d-flex gap-2 justify-content-end">
+                                    <button class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#msgModal@(i)" title="Read full message">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
                                     @if (!msg.IsRead)
                                     {
                                         <form asp-action="MarkMessageRead" method="post" style="display:inline">
@@ -96,6 +118,55 @@
                                 </div>
                             </td>
                         </tr>
+
+                        <!-- Modal -->
+                        <div class="modal fade" id="msgModal@(i)" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">@msg.Subject</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="d-flex gap-3 mb-3">
+                                            <div>
+                                                <div style="font-size:.75rem;color:#6B7280;text-transform:uppercase;">From</div>
+                                                <div class="fw-500">
+                                                    @if (userId != null)
+                                                    {
+                                                        <a href="/Users/Profile/@userId" style="color:var(--viator-green);text-decoration:none;">@msg.Name</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        @msg.Name
+                                                    }
+                                                </div>
+                                                <div class="text-muted small">@msg.Email</div>
+                                            </div>
+                                            <div class="ms-auto text-end">
+                                                <div style="font-size:.75rem;color:#6B7280;text-transform:uppercase;">Sent</div>
+                                                <div class="small">@msg.SentAt.ToString("dd MMM yyyy HH:mm", System.Globalization.CultureInfo.InvariantCulture)</div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <p style="white-space:pre-wrap;line-height:1.7;">@msg.Message</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        @if (!msg.IsRead)
+                                        {
+                                            <form asp-action="MarkMessageRead" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@msg.Id" />
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="bi bi-check-lg me-1"></i> Mark as Read
+                                                </button>
+                                            </form>
+                                        }
+                                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     }
                 </tbody>
             </table>

@@ -672,7 +672,10 @@
                 .then(function(data) {
                     document.getElementById("wiki-loading").style.display = "none";
                     if (data.extract) {
-                        document.getElementById("wiki-extract").textContent = data.extract;
+                        // Show only first 2 sentences
+                        var sentences = data.extract.match(/[^.!?]+[.!?]+/g) || [data.extract];
+                        var shortText = sentences.slice(0, 2).join(' ');
+                        document.getElementById("wiki-extract").textContent = shortText;
                         document.getElementById("wiki-link").href = (data.content_urls && data.content_urls.desktop && data.content_urls.desktop.page)
                             ? data.content_urls.desktop.page
                             : "https://en.wikipedia.org/wiki/" + encodeURIComponent(dest);

@@ -5,6 +5,7 @@ using Tourism.Data.Seeding;
 using Tourism.Services;
 using System.Globalization;
 using Tourism.Data.Models.Entities;
+using Tourism.Data.Configurations;
 
 var cultureInfo = new CultureInfo("de-DE");
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
@@ -41,6 +42,10 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 // Add MVC Controllers + Razor Pages
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("en-US");
+});
 
 var app = builder.Build();
 

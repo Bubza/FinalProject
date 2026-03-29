@@ -241,7 +241,7 @@
         <div class="tour-grid">
             @foreach (var tour in ViewBag.Tours)
             {
-                <div class="tcard">
+                <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="tcard" style="text-decoration:none;color:inherit;display:block;">
                     <div class="tcard-img-wrap">
                         @if (!string.IsNullOrEmpty((string)tour.ImageUrl))
                         {
@@ -273,9 +273,8 @@
                             <div class="tcard-price-label">from</div>
                             <div class="tcard-price">@tour.PricePerPerson.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("de-DE"))</div>
                         </div>
-                        <a asp-controller="Tours" asp-action="Details" asp-route-id="@tour.Id" class="btn-details">View</a>
                     </div>
-                </div>
+                </a>
             }
         </div>
     }

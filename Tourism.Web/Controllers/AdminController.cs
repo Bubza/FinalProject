@@ -6,6 +6,7 @@ using Tourism.Data.Models.Entities;
 using Tourism.Data.Models.Enums;
 using Tourism.Services;
 using Tourism.Web.Models.ViewModels;
+using Tourism.Data.Models.Entities;
 
 namespace Tourism.Web.Controllers
 {
@@ -19,6 +20,7 @@ namespace Tourism.Web.Controllers
         private readonly ITourOperatorService _tourOperatorService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<AdminController> _logger;
+        private readonly IContactMessageService _contactMessageService;
 
         public AdminController(
             ITourService tourService,
@@ -27,7 +29,8 @@ namespace Tourism.Web.Controllers
             IDestinationService destinationService,
             ITourOperatorService tourOperatorService,
             UserManager<ApplicationUser> userManager,
-            ILogger<AdminController> logger)
+            ILogger<AdminController> logger,
+            IContactMessageService contactMessageService)
         {
             _tourService = tourService;
             _bookingService = bookingService;
@@ -36,6 +39,7 @@ namespace Tourism.Web.Controllers
             _tourOperatorService = tourOperatorService;
             _userManager = userManager;
             _logger = logger;
+            _contactMessageService = contactMessageService;
         }
 
         // GET: /Admin — Dashboard
@@ -383,6 +387,32 @@ namespace Tourism.Web.Controllers
             _logger.LogWarning("Admin {User} deleted destination ID {Id}", User.Identity?.Name, id);
             TempData["Success"] = "Destination deleted.";
             return RedirectToAction(nameof(Destinations));
+        }
+        // ===== MESSAGES =====
+        public async Task<IActionResult> Messages()
+        {
+            var messages = await _contactMessageService.GetAllAsync();
+            _logger.LogInformation("Admin {User} viewed contact messages", User.Identity?.Name);
+            return View(messages);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MarkMessageRead(int id)
+        {
+            await _contactMessageService.MarkAsReadAsync(id);
+            TempData["Success"] = "Message marked as read.";
+            return RedirectToAction(nameof(Messages));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteMessage(int id)
+        {
+            await _contactMessageService.DeleteAsync(id);
+            _logger.LogWarning("Admin {User} deleted contact message ID {Id}", User.Identity?.Name, id);
+            TempData["Success"] = "Message deleted.";
+            return RedirectToAction(nameof(Messages));
         }
     }
 }

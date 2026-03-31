@@ -20,7 +20,7 @@ namespace Tourism.Services
                 .Include(t => t.TourOperator)
                 .Include(t => t.Reviews)
                 .ToListAsync();
-        }
+        }   
 
         public async Task<Tour?> GetByIdAsync(int id)
         {
@@ -69,7 +69,7 @@ namespace Tourism.Services
             var query = _context.Tours
                 .Include(t => t.Destination)
                 .Include(t => t.TourOperator)
-                .Include(t => t.Reviews)
+                .Include(t => t.Reviews)    
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))

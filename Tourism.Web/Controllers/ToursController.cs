@@ -74,12 +74,12 @@ namespace Tourism.Web.Controllers
                 ImageUrl = t.ImageUrl,
                 StartDate = t.StartDate,
                 EndDate = t.EndDate,
-                DestinationName = t.Destination.Name,
-                TourOperatorName = t.TourOperator.Name,
+                DestinationName = t.Destination?.Name,
+                TourOperatorName = t.TourOperator?.Name,
                 AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
                 ReviewCount = t.Reviews.Count,
                 CategoryId = t.CategoryId,
-                CategoryName = t.Category.Name
+                CategoryName = t.Category?.Name
             });
 
             viewModels = sortBy switch
@@ -124,14 +124,14 @@ namespace Tourism.Web.Controllers
                 StartDate = tour.StartDate,
                 EndDate = tour.EndDate,
                 DestinationId = tour.DestinationId,
-                DestinationName = tour.Destination.Name,
-                DestinationCountry = tour.Destination.Country,
+                DestinationName = tour.Destination?.Name,
+                DestinationCountry = tour.Destination?.Country,
                 TourOperatorId = tour.TourOperatorId,
-                TourOperatorName = tour.TourOperator.Name,
+                TourOperatorName = tour.TourOperator?.Name,
                 AverageRating = tour.Reviews.Any() ? tour.Reviews.Average(r => r.Rating) : 0,
                 ReviewCount = tour.Reviews.Count,
                 CategoryId = tour.CategoryId,
-                CategoryName = tour.Category.Name
+                CategoryName = tour.Category?.Name
             };
 
             if (User.Identity?.IsAuthenticated == true)
@@ -169,7 +169,7 @@ namespace Tourism.Web.Controllers
                 PricePerPerson = t.PricePerPerson,
                 DurationDays = t.DurationDays,
                 ImageUrl = t.ImageUrl,
-                DestinationName = t.Destination.Name,
+                DestinationName = t.Destination?.Name,
                 AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
                 ReviewCount = t.Reviews.Count
             }).ToList();

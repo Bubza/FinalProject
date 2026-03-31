@@ -129,7 +129,9 @@ namespace Tourism.Web.Controllers
                 TourOperatorId = tour.TourOperatorId,
                 TourOperatorName = tour.TourOperator.Name,
                 AverageRating = tour.Reviews.Any() ? tour.Reviews.Average(r => r.Rating) : 0,
-                ReviewCount = tour.Reviews.Count
+                ReviewCount = tour.Reviews.Count,
+                CategoryId = tour.CategoryId,
+                CategoryName = tour.Category.Name
             };
 
             if (User.Identity?.IsAuthenticated == true)

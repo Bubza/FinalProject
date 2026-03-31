@@ -30,6 +30,7 @@ namespace Tourism.Services
                 .Include(t => t.Reviews)
                 .Include(t => t.Bookings)
                 .Include(t => t.Images.OrderBy(i => i.SortOrder))
+                .Include(t => t.Category)
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 

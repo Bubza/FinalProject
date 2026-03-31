@@ -11,9 +11,10 @@ namespace Tourism.Tests
 
         private static TourOperator MakeOperator(int id = 1) =>
             new TourOperator { Id = id, Name = "Op", Description = "D", Email = "e@e.com", PhoneNumber = "123", LogoUrl = "logo.jpg" };
+        private static Category MakeCategory(int id = 1) =>
+    new Category { Id = id, Name = "Adventure" };
 
-        private static Tour MakeTour(int id, string title, int destinationId = 1, int operatorId = 1, decimal price = 100, decimal discount = 0) =>
-            new Tour
+        private static Tour MakeTour(int id, string title, int destinationId = 1, int operatorId = 1, decimal price = 100, decimal discount = 0, int categoryId = 1) => new Tour
             {
                 Id = id,
                 Title = title,
@@ -26,7 +27,9 @@ namespace Tourism.Tests
                 StartDate = DateTime.UtcNow.AddMonths(1),
                 EndDate = DateTime.UtcNow.AddMonths(1).AddDays(3),
                 DestinationId = destinationId,
-                TourOperatorId = operatorId
+                TourOperatorId = operatorId,
+                CategoryId = categoryId   // ← add this
+
             };
 
         [Fact]
@@ -53,6 +56,7 @@ namespace Tourism.Tests
         public async Task GetByIdAsync_ReturnsCorrectTour()
         {
             using var ctx = TestDbContextFactory.Create();
+            ctx.Categories.Add(MakeCategory());   // ← add this
             ctx.Destinations.Add(MakeDestination());
             ctx.TourOperators.Add(MakeOperator());
             ctx.Tours.Add(MakeTour(1, "Classic Rome"));
@@ -74,6 +78,7 @@ namespace Tourism.Tests
         public async Task GetByIdAsync_IncludesDestination()
         {
             using var ctx = TestDbContextFactory.Create();
+            ctx.Categories.Add(MakeCategory());   // ← add this
             ctx.Destinations.Add(MakeDestination(1, "Paris", "France"));
             ctx.TourOperators.Add(MakeOperator());
             ctx.Tours.Add(MakeTour(1, "Paris Tour"));

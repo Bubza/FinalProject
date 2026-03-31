@@ -153,7 +153,7 @@ namespace Tourism.Services
                 var sameOperator = allTours
                     .Where(t => t.TourOperatorId == currentTour.TourOperatorId && !result.Any(r => r.Id == t.Id))
                     .OrderByDescending(t => t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0)
-                    .Take(count - result.Count)
+                    .Take(count - result.Count) 
                     .ToList();
 
                 result.AddRange(sameOperator);

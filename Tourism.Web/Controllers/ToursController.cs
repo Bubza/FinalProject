@@ -13,19 +13,23 @@ namespace Tourism.Web.Controllers
         private readonly IFavoriteTourService _favoriteService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IBookingService _bookingService;
+        private readonly ICategoryService _categoryService;
 
         public ToursController(ITourService tourService, IFavoriteTourService favoriteService,
-            UserManager<ApplicationUser> userManager, IBookingService bookingService)
+            UserManager<ApplicationUser> userManager, IBookingService bookingService,
+            ICategoryService categoryService)
         {
             _tourService = tourService;
             _favoriteService = favoriteService;
             _userManager = userManager;
             _bookingService = bookingService;
+            _categoryService = categoryService;
         }
 
         // GET: /Tours
         public async Task<IActionResult> Index(string? search, decimal? minPrice, decimal? maxPrice,
-            string? duration, int? minRating, string? sortBy, string? startDate, string? endDate, int? people)
+            string? duration, int? minRating, string? sortBy, string? startDate, string? endDate,
+            int? people, int? categoryId)
         {
             var tours = await _tourService.SearchAsync(search, null, maxPrice);
             var filtered = tours.AsEnumerable();
@@ -56,6 +60,9 @@ namespace Tourism.Web.Controllers
             if (minRating.HasValue)
                 filtered = filtered.Where(t => t.Reviews.Any() && t.Reviews.Average(r => r.Rating) >= minRating);
 
+            if (categoryId.HasValue)
+                filtered = filtered.Where(t => t.CategoryId == categoryId.Value);
+
             var viewModels = filtered.Select(t => new TourViewModel
             {
                 Id = t.Id,
@@ -70,7 +77,9 @@ namespace Tourism.Web.Controllers
                 DestinationName = t.Destination.Name,
                 TourOperatorName = t.TourOperator.Name,
                 AverageRating = t.Reviews.Any() ? t.Reviews.Average(r => r.Rating) : 0,
-                ReviewCount = t.Reviews.Count
+                ReviewCount = t.Reviews.Count,
+                CategoryId = t.CategoryId,
+                CategoryName = t.Category.Name
             });
 
             viewModels = sortBy switch
@@ -83,7 +92,15 @@ namespace Tourism.Web.Controllers
                 _ => viewModels
             };
 
-            return View(viewModels.ToList());
+            var categories = (await _categoryService.GetAllAsync()).Where(c => c.Tours.Any());
+
+            var vm = new ToursIndexViewModel
+            {
+                Tours = viewModels.ToList(),
+                Categories = categories
+            };
+
+            return View(vm);
         }
 
         // GET: /Tours/Details/5
@@ -119,14 +136,12 @@ namespace Tourism.Web.Controllers
             {
                 ViewBag.IsFavorite = await _favoriteService.IsFavoriteAsync(userId!, id);
 
-                // Check if user has a confirmed or completed booking for this tour
                 var userBookings = await _bookingService.GetByUserIdAsync(userId!);
                 ViewBag.HasBooking = userBookings.Any(b => b.TourId == id &&
                     (b.Status == Tourism.Data.Models.Enums.BookingStatus.Confirmed ||
                      b.Status == Tourism.Data.Models.Enums.BookingStatus.Completed));
             }
 
-            // Reviews with user names
             var reviews = new List<ReviewViewModel>();
             foreach (var r in tour.Reviews)
             {
@@ -143,7 +158,6 @@ namespace Tourism.Web.Controllers
             }
             ViewBag.Reviews = reviews;
 
-            // Personalised recommendations
             var recommendations = await _tourService.GetRecommendationsAsync(id, userId, 3);
             ViewBag.Recommendations = recommendations.Select(t => new TourViewModel
             {
@@ -158,12 +172,10 @@ namespace Tourism.Web.Controllers
                 ReviewCount = t.Reviews.Count
             }).ToList();
 
-            // Booked spots for availability display (exclude cancelled, sum people)
             ViewBag.BookedSpots = tour.Bookings
                 .Where(b => b.Status != Tourism.Data.Models.Enums.BookingStatus.Cancelled)
                 .Sum(b => b.NumberOfPeople);
 
-            // Rating breakdown for bar chart (5★ down to 1★)
             ViewBag.RatingBreakdown = Enumerable.Range(1, 5).Reverse()
                 .Select(star => new { Star = star, Count = tour.Reviews.Count(r => r.Rating == star) })
                 .ToList();

@@ -38,5 +38,7 @@ namespace Tourism.Web.Models.ViewModels
         public string TourOperatorName { get; set; } = string.Empty;
         public double AverageRating { get; set; }
         public int ReviewCount { get; set; }
+        public int CategoryId { get; set; }
+        public string CategoryName { get; set; } = string.Empty;
     }
 }

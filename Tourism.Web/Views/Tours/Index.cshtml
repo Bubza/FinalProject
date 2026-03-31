@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
+﻿@model Tourism.Web.Models.ViewModels.ToursIndexViewModel
 @{
     ViewData["Title"] = "Tour Catalog";
     var qSearch = Context.Request.Query["search"].ToString();
@@ -10,7 +10,9 @@
     var qStartDate = Context.Request.Query["startDate"].ToString();
     var qEndDate = Context.Request.Query["endDate"].ToString();
     var qPeople = Context.Request.Query["people"].ToString();
+    var qCategory = Context.Request.Query["categoryId"].ToString();
     int.TryParse(qPeople, out int qPeopleInt);
+    int.TryParse(qCategory, out int qCategoryInt);
     var euroCulture = System.Globalization.CultureInfo.GetCultureInfo("de-DE");
 }
 
@@ -408,29 +410,15 @@
                 <input type="hidden" name="endDate" id="endDateInput" value="@qEndDate" />
                 <input type="text" id="datePicker" style="position:absolute;opacity:0;pointer-events:none;width:1px;height:1px;top:100%;left:0" readonly />
             </div>
-            <button type="button" class="pill-btn pill-filter" onclick="document.getElementById('filterDrawer').classList.toggle('open')">
+            <button type="button" class="pill-btn pill-filter @(!string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) || !string.IsNullOrEmpty(qRating) || qCategoryInt > 0 ? "active" : "")" onclick="document.getElementById('filterDrawer').classList.toggle('open')">
                 <i class="bi bi-sliders"></i> Filters
+                @if (!string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) || !string.IsNullOrEmpty(qRating) || qCategoryInt > 0)
+                {
+                    <span style="background:var(--g);color:#fff;border-radius:50%;width:18px;height:18px;font-size:.7rem;display:inline-flex;align-items:center;justify-content:center;font-weight:700">
+                        @(((!string.IsNullOrEmpty(qDuration) ? 1 : 0) + (!string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) ? 1 : 0) + (!string.IsNullOrEmpty(qRating) ? 1 : 0) + (qCategoryInt > 0 ? 1 : 0)))
+                    </span>
+                }
             </button>
-            @if (qDuration == "1-3")
-            {
-                <span class="pill-btn active">1–3 days ×</span>
-            }
-            @if (qDuration == "4-7")
-            {
-                <span class="pill-btn active">4–7 days ×</span>
-            }
-            @if (qDuration == "8+")
-            {
-                <span class="pill-btn active">8+ days ×</span>
-            }
-            @if (!string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice))
-            {
-                <span class="pill-btn active">Price ×</span>
-            }
-            @if (!string.IsNullOrEmpty(qRating))
-            {
-                <span class="pill-btn active">Rating @qRating+ ×</span>
-            }
             <!-- People pill -->
             <div style="position:relative">
                 <button type="button" class="pill-btn @(!string.IsNullOrEmpty(qPeople) && qPeopleInt > 0 ? "active" : "")" id="peoplePillBtn">
@@ -456,7 +444,7 @@
             </div>
 
             <div class="ms-auto d-flex align-items-center gap-2">
-                @if (!string.IsNullOrEmpty(qSearch) || !string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qRating) || !string.IsNullOrEmpty(qStartDate) || qPeopleInt > 0)
+                @if (!string.IsNullOrEmpty(qSearch) || !string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qRating) || !string.IsNullOrEmpty(qStartDate) || qPeopleInt > 0 || qCategoryInt > 0)
                 {
                     <a asp-action="Index" style="font-size:0.85rem;font-weight:600;color:#DC2626;text-decoration:none;white-space:nowrap;padding:7px 12px;border:1.5px solid #FECACA;border-radius:50px;background:#FEF2F2">Clear all</a>
                 }
@@ -509,7 +497,7 @@
         </div>
 
         <!-- collapsible filter drawer -->
-        <div class="filter-drawer @(!string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) || !string.IsNullOrEmpty(qRating) ? "open" : "")" id="filterDrawer">
+        <div class="filter-drawer @(!string.IsNullOrEmpty(qDuration) || !string.IsNullOrEmpty(qMinPrice) || !string.IsNullOrEmpty(qMaxPrice) || !string.IsNullOrEmpty(qRating) || qCategoryInt > 0 ? "open" : "")" id="filterDrawer">
             <div class="filter-row">
                 <div class="fg">
                     <label>Min. price (€)</label>
@@ -579,6 +567,23 @@
                         }
                     </select>
                 </div>
+                <div class="fg">
+                    <label>Category</label>
+                    <select name="categoryId">
+                        <option value="">All</option>
+                        @foreach (var cat in Model.Categories)
+                        {
+                            @if (qCategoryInt == cat.Id)
+                            {
+                                <option value="@cat.Id" selected>@cat.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@cat.Id">@cat.Name</option>
+                            }
+                        }
+                    </select>
+                </div>
                 <div class="fg" style="flex:0;min-width:auto;flex-direction:row;gap:8px;align-self:flex-end">
                     <button type="submit" class="btn-apply">Apply</button>
                     <a asp-action="Index" class="btn-reset">Reset</a>
@@ -587,16 +592,16 @@
         </div>
     </form>
 
-    <p class="results-meta">Found: <strong>@Model.Count()</strong> tours</p>
+    <p class="results-meta">Found: <strong>@Model.Tours.Count()</strong> tours</p>
 
-    @if (!Model.Any())
+    @if (!Model.Tours.Any())
     {
         <div class="alert alert-info">No tours found. <a asp-action="Index">Show all</a></div>
     }
     else
     {
         <div class="tour-grid">
-            @foreach (var tour in Model)
+            @foreach (var tour in Model.Tours)
             {
                 <a asp-action="Details" asp-route-id="@tour.Id" style="text-decoration:none;color:inherit;display:block" class="tcard">
                     <div class="tcard-img-wrap">
@@ -700,7 +705,7 @@
         .flatpickr-months .flatpickr-month {
             background: #fff !important;
         }
-        /* Autocomplete dropdown styling */
+
         .pac-container {
             border-radius: 12px;
             border: 1px solid #E5E7EB;
@@ -794,12 +799,10 @@
             const input = document.getElementById("searchInput");
             const parent = input.parentElement;
 
-            // Create the new autocomplete element
             const placeAuto = new PlaceAutocompleteElement({
                 types: ["(regions)"]
             });
 
-            // Style it to match our input
             placeAuto.style.cssText = `
                 position: absolute;
                 top: 0; left: 0; right: 0; bottom: 0;
@@ -808,12 +811,9 @@
                 z-index: 10;
             `;
 
-            // Use a simpler approach - just enhance the existing input
-            // by listening to place_changed on a hidden autocomplete service
             const autocompleteService = new google.maps.places.AutocompleteService();
             const sessionToken = new google.maps.places.AutocompleteSessionToken();
 
-            // Create suggestions dropdown
             const dropdown = document.createElement("div");
             dropdown.style.cssText = "position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid #E5E7EB;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:1000;display:none;margin-top:4px;overflow:hidden;font-family:'Poppins',sans-serif";
             parent.style.position = "relative";
@@ -829,8 +829,8 @@
                         types: ["(regions)"],
                         sessionToken,
                         locationBias: new google.maps.LatLngBounds(
-                            new google.maps.LatLng(35.0, -10.0),  // SW Europe
-                            new google.maps.LatLng(70.0, 40.0)    // NE Europe
+                            new google.maps.LatLng(35.0, -10.0),
+                            new google.maps.LatLng(70.0, 40.0)
                         )
                     },
                     function(predictions, status) {
@@ -852,7 +852,6 @@
                                 </div>`;
                             item.addEventListener("mousedown", function(e) {
                                 e.preventDefault();
-                                // Use only the city name (first part before comma)
                                 const cityName = p.description.split(",")[0].trim();
                                 input.value = cityName;
                                 dropdown.style.display = "none";

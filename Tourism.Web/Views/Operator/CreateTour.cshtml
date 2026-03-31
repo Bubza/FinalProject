@@ -1,4 +1,4 @@
-﻿@model Tourism.Data.Models.Entities.Tour
+﻿@model Tourism.Web.Models.ViewModels.CreateTourViewModel
 @{
     ViewData["Title"] = "New Tour";
 }
@@ -67,8 +67,15 @@
 
             <div class="op-field">
                 <label class="op-label">Destination</label>
-                <select asp-for="DestinationId" asp-items="ViewBag.Destinations" class="op-input">
+                <select asp-for="DestinationId" asp-items="Model.Destinations" class="op-input">
                     <option value="">— Select destination —</option>
+                </select>
+            </div>
+
+            <div class="op-field">
+                <label class="op-label">Category</label>
+                <select asp-for="CategoryId" asp-items="Model.Categories" class="op-input">
+                    <option value="">— Select category —</option>
                 </select>
             </div>
 

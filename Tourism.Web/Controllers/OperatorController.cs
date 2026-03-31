@@ -15,6 +15,7 @@ namespace Tourism.Web.Controllers
         private readonly ITourService _tourService;
         private readonly IBookingService _bookingService;
         private readonly IDestinationService _destinationService;
+        private readonly ICategoryService _categoryService;
         private readonly ITourOperatorService _operatorService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<OperatorController> _logger;
@@ -23,6 +24,7 @@ namespace Tourism.Web.Controllers
             ITourService tourService,
             IBookingService bookingService,
             IDestinationService destinationService,
+            ICategoryService categoryService,
             ITourOperatorService operatorService,
             UserManager<ApplicationUser> userManager,
             ILogger<OperatorController> logger)
@@ -30,6 +32,7 @@ namespace Tourism.Web.Controllers
             _tourService = tourService;
             _bookingService = bookingService;
             _destinationService = destinationService;
+            _categoryService = categoryService;
             _operatorService = operatorService;
             _userManager = userManager;
             _logger = logger;
@@ -98,30 +101,49 @@ namespace Tourism.Web.Controllers
             if (op == null) return RedirectToAction("NoOperator");
 
             var destinations = await _destinationService.GetAllAsync();
-            ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
-            ViewBag.Operator = op;
-            return View();
+            var categories = await _categoryService.GetAllAsync();
+
+            var vm = new CreateTourViewModel
+            {
+                Destinations = destinations.Select(d => new SelectListItem(d.Name, d.Id.ToString())),
+                Categories = categories.Select(c => new SelectListItem(c.Name, c.Id.ToString()))
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateTour(Tour tour)
+        public async Task<IActionResult> CreateTour(CreateTourViewModel vm)
         {
             var op = await GetMyOperatorAsync();
             if (op == null) return RedirectToAction("NoOperator");
 
-            ModelState.Remove("Destination");
-            ModelState.Remove("TourOperator");
-
             if (!ModelState.IsValid)
             {
                 var destinations = await _destinationService.GetAllAsync();
-                ViewBag.Destinations = new SelectList(destinations, "Id", "Name");
-                ViewBag.Operator = op;
-                return View(tour);
+                var categories = await _categoryService.GetAllAsync();
+                vm.Destinations = destinations.Select(d => new SelectListItem(d.Name, d.Id.ToString()));
+                vm.Categories = categories.Select(c => new SelectListItem(c.Name, c.Id.ToString()));
+                return View(vm);
             }
 
-            tour.TourOperatorId = op.Id;
+            var tour = new Tour
+            {
+                Title = vm.Title,
+                Description = vm.Description,
+                PricePerPerson = vm.PricePerPerson,
+                DiscountPercent = vm.DiscountPercent,
+                DurationDays = vm.DurationDays,
+                MaxParticipants = vm.MaxParticipants,
+                ImageUrl = vm.ImageUrl,
+                StartDate = vm.StartDate,
+                EndDate = vm.EndDate,
+                DestinationId = vm.DestinationId,
+                CategoryId = vm.CategoryId,
+                TourOperatorId = op.Id
+            };
+
             await _tourService.CreateAsync(tour);
             _logger.LogInformation("Operator {User} created tour '{Title}'", User.Identity?.Name, tour.Title);
             TempData["Success"] = "Tour added successfully!";

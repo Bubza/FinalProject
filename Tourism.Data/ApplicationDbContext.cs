@@ -26,7 +26,6 @@ namespace Tourism.Data
         {
             base.OnModelCreating(builder);
 
-            // Decimal precision
             builder.Entity<Booking>()
                 .Property(b => b.TotalPrice)
                 .HasPrecision(18, 2);
@@ -43,42 +42,42 @@ namespace Tourism.Data
                 .Property(p => p.Amount)
                 .HasPrecision(18, 2);
 
-            // Tour → Destination
+            // Tour - Destination
             builder.Entity<Tour>()
                 .HasOne(t => t.Destination)
                 .WithMany(d => d.Tours)
                 .HasForeignKey(t => t.DestinationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Tour → TourOperator
+            // Tour - TourOperator
             builder.Entity<Tour>()
                 .HasOne(t => t.TourOperator)
                 .WithMany(o => o.Tours)
                 .HasForeignKey(t => t.TourOperatorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Tour → Category
+            // Tour - Category
             builder.Entity<Tour>()
                 .HasOne(t => t.Category)
                 .WithMany(c => c.Tours)
                 .HasForeignKey(t => t.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Booking → Tour
+            // Booking - Tour
             builder.Entity<Booking>()
                 .HasOne(b => b.Tour)
                 .WithMany(t => t.Bookings)
                 .HasForeignKey(b => b.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Review → Tour
+            // Review - Tour
             builder.Entity<Review>()
                 .HasOne(r => r.Tour)
                 .WithMany(t => t.Reviews)
                 .HasForeignKey(r => r.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // FavoriteTour → Tour
+            // FavoriteTour - Tour
             builder.Entity<FavoriteTour>()
                 .HasOne(f => f.Tour)
                 .WithMany()
@@ -89,14 +88,14 @@ namespace Tourism.Data
                 .HasIndex(f => new { f.UserId, f.TourId })
                 .IsUnique();
 
-            // TourImage → Tour
+            // TourImage - Tour
             builder.Entity<TourImage>()
                 .HasOne(i => i.Tour)
                 .WithMany(t => t.Images)
                 .HasForeignKey(i => i.TourId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Payment → Booking
+            // Payment - Booking
             builder.Entity<Payment>()
                 .HasOne(p => p.Booking)
                 .WithMany()

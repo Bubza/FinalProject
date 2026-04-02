@@ -1,4 +1,5 @@
 ﻿@model Tourism.Web.Models.ViewModels.ToursIndexViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = "Tour Catalog";
     var qSearch = Context.Request.Query["search"].ToString();
@@ -877,6 +878,6 @@
         window.initMaps = initAutocomplete;
     </script>
     <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initMaps">
+            src="https://maps.googleapis.com/maps/api/js?key=@Configuration["ApiKeys:GoogleMaps"]&libraries=places&callback=initMaps">
     </script>
 }

@@ -155,7 +155,7 @@ namespace Tourism.Web.Controllers
                     Rating = r.Rating,
                     Comment = r.Comment,
                     CreatedAt = r.CreatedAt,
-                    UserName = !string.IsNullOrEmpty(user?.FullName) ? user.FullName : user?.Email ?? "Анонимен"
+                    UserName = !string.IsNullOrEmpty(user?.FullName) ? user.FullName : user?.Email ?? "Anonymous"
                 });
             }
             ViewBag.Reviews = reviews;

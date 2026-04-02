@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<Tourism.Web.Models.ViewModels.TourViewModel>
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = "Home";
 }
@@ -653,5 +654,5 @@
         }
         window.initHomeMaps = initHomeAutocomplete;
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&libraries=places&callback=initHomeMaps"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=@Configuration["ApiKeys:GoogleMaps"]&libraries=places&callback=initHomeMaps"></script>
 }

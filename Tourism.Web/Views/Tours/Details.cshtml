@@ -1,4 +1,5 @@
 ﻿@model Tourism.Web.Models.ViewModels.TourViewModel
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 @{
     ViewData["Title"] = Model.Title;
 }
@@ -1161,7 +1162,7 @@
         // Weather Widget
         (function() {
             var city = "@Model.DestinationName";
-            var apiKey = "77673c28f0620c7b3fb3c6cddc60c421";
+            var apiKey = "@Configuration["ApiKeys:OpenWeatherMap"]";
             fetch("https://api.openweathermap.org/data/2.5/weather?q=" + encodeURIComponent(city) + "&appid=" + apiKey + "&units=metric")
                 .then(function(r) { return r.json(); })
                 .then(function(data) {
@@ -1209,5 +1210,5 @@
             });
         }
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCGQ6q74bpBejjpvAt1VQpHxZ7rtynPEy8&callback=initMap"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=@Configuration["ApiKeys:GoogleMaps"]&callback=initMap"></script>
 }
